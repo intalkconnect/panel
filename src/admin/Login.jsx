@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 function Login() {
   const [email, setEmail] = useState("");
-  const [pwd, setPwd] = useState("");
+  const [senha, setsenha] = useState("");
   const [lembrar, setLembrar] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -28,7 +28,7 @@ function Login() {
   }, []);
 
   const handleLogin = async () => {
-    if (!email || !pwd) {
+    if (!email || !senha) {
       toast.warning("Preencha todos os campos.");
       return;
     }
@@ -40,7 +40,7 @@ function Login() {
         .from("users")
         .select("email, perfil_id, empresa_id")
         .eq("email", email)
-        .eq("pwd", pwd)
+        .eq("senha", senha)
         .maybeSingle();
 
       if (!user || error) {
@@ -116,8 +116,8 @@ function Login() {
           <input
             type="password"
             placeholder="••••••••"
-            value={pwd}
-            onChange={(e) => setPwd(e.target.value)}
+            value={senha}
+            onChange={(e) => setsenha(e.target.value)}
             className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
           />
         </div>
