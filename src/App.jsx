@@ -41,6 +41,15 @@ function App() {
   const [aguardandoPagamento, setAguardandoPagamento] = useState(false);
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
 
+  useEffect(() => {
+    // Carrega apenas o nome da empresa se ainda não estiver carregado
+    if (!empresa && empresaId) {
+      carregarDados(empresaId).then(({ empresa }) => {
+        setEmpresa(empresa);
+      });
+    }
+  }, [empresaId]);
+
   // ⏳ Reseta após tempo de inatividade
   useInatividade(
     iniciarTela,
@@ -109,16 +118,18 @@ function App() {
     <AnimatePresence mode="wait">
       {!iniciarTela ? (
         <motion.div key="inicio" {...motionFade}>
-          <TelaInicial onIniciar={() => setIniciarTela(true)} />
+          <TelaInicial
+            onIniciar={() => setIniciarTela(true)}
+            empresa={empresa}
+          />
         </motion.div>
       ) : loading ? (
         <motion.div key="loading" {...motionFade}>
-          <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-gray-900 text-gray-800 dark:text-white gap-6 px-4">
-            {/* Spinner animado */}
+          <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6 text-center">
+            {/* Spinner */}
+
             <svg
               className="animate-spin h-16 w-16 text-red-600"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
               viewBox="0 0 24 24"
             >
               <circle
@@ -128,16 +139,14 @@ function App() {
                 r="10"
                 stroke="currentColor"
                 strokeWidth="4"
-              ></circle>
+                fill="none"
+              />
               <path
                 className="opacity-75"
                 fill="currentColor"
-                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-              ></path>
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
             </svg>
-
-            {/* Mensagem */}
-            <p className="text-xl font-semibold">Carregando...</p>
           </div>
         </motion.div>
       ) : solicitandoNome ? (

@@ -1,17 +1,17 @@
 import React from "react";
 
-function TelaInicial({ onIniciar }) {
+function TelaInicial({ onIniciar, empresa }) {
   return (
     <div
       onClick={onIniciar}
       className="w-full h-screen bg-gradient-to-br from-white via-red-50 to-red-100 flex flex-col items-center justify-center text-center cursor-pointer select-none"
     >
       {/* Ícone ou emoji */}
-      <div className="text-7xl mb-6 animate-bounce">🍔</div>
+      <div className="text-7xl mb-6 animate-bounce">{empresa?.icone}</div>
 
       {/* Título principal */}
       <h1 className="text-4xl font-extrabold text-red-600 mb-4">
-        Bem-vindo ao McTotem
+        Bem-vindo ao {empresa?.nome_exibicao}
       </h1>
 
       {/* Subtítulo explicativo */}

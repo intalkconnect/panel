@@ -95,12 +95,12 @@ function LayoutPrincipal({
           {empresa?.logo_url && (
             <img
               src={empresa.logo_url}
-              alt={empresa.nome}
+              alt={empresa.nome_exibicao}
               className="h-12 w-auto object-contain"
             />
           )}
           <div>
-            <h1 className="text-2xl font-bold">{empresa?.nome}</h1>
+            <h1 className="text-2xl font-bold">{empresa?.nome_exibicao}</h1>
             <p className="text-sm text-gray-500">
               {modoConsumo === "Comer aqui" && mesaSelecionada
                 ? `Mesa ${mesaSelecionada}`

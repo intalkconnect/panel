@@ -16,10 +16,12 @@ function EscolherMesa({ onSelecionarMesa }) {
             <div
               key={mesa}
               onClick={() => onSelecionarMesa(mesa)}
-              className="cursor-pointer border border-red-500 text-red-600 rounded-xl p-4 flex flex-col items-center justify-center shadow-sm hover:shadow-md hover:scale-105 transition-all duration-200"
+              className="cursor-pointer border bg-red-500 hover:bg-red-600 rounded-xl p-4 flex flex-col items-center justify-center shadow-sm hover:shadow-md hover:scale-105 transition-all duration-200"
             >
-              <BuildingStorefrontIcon className="w-8 h-8 mb-2" />
-              <span className="font-medium text-sm">Mesa {mesa}</span>
+              <BuildingStorefrontIcon className="w-8 h-8 mb-2 text-white" />
+              <span className="font-medium text-sm text-white font-bold">
+                Mesa {mesa}
+              </span>
             </div>
           ))}
         </div>
