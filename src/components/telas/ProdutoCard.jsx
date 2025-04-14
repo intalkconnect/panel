@@ -35,7 +35,7 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0 }) {
     }
 
     setMostrarDetalhes(false);
-    setQuantidadeSelecionada(1); // resetar para o próximo
+    setQuantidadeSelecionada(1);
   };
 
   const handleCliqueAdicionar = () => {
@@ -45,14 +45,16 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0 }) {
 
   return (
     <>
-      <div className="bg-white rounded-3xl shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 p-6 flex flex-col items-center">
+      <div className="bg-white rounded-3xl shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 p-6 flex flex-col items-center justify-between w-full max-w-sm mx-auto">
         <img
           src={produto.imagem_url}
           alt={produto.nome}
           loading="lazy"
           className="w-20 h-20 object-contain mb-2"
         />
-        <h2 className="text-base font-bold text-center">{produto.nome}</h2>
+        <h2 className="text-base font-bold text-center text-gray-800">
+          {produto.nome}
+        </h2>
         <p className="text-emerald-600 font-semibold text-sm mb-2">
           {produto.preco.toLocaleString("pt-BR", {
             style: "currency",
@@ -107,14 +109,14 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0 }) {
             className="bg-white p-6 rounded-2xl shadow-xl max-w-md w-full text-left relative max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-xl font-bold text-center mb-2">
+            <h3 className="text-xl font-bold text-center mb-2 text-gray-800">
               {produto.nome}
             </h3>
             <p className="text-gray-700 text-sm mb-4 whitespace-pre-wrap">
-              {produto.detalhamento.descricao}
+              {produto.detalhamento?.descricao}
             </p>
 
-            {produto.detalhamento.remover?.length > 0 && (
+            {produto.detalhamento?.remover?.length > 0 && (
               <div className="mb-4">
                 <h4 className="text-sm font-semibold mb-1 text-gray-700">
                   Remover:
@@ -141,7 +143,7 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0 }) {
               </div>
             )}
 
-            {produto.detalhamento.extras?.length > 0 && (
+            {produto.detalhamento?.extras?.length > 0 && (
               <div className="mb-4">
                 <h4 className="text-sm font-semibold mb-1 text-gray-700">
                   Adicionar:
@@ -167,6 +169,7 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0 }) {
                 ))}
               </div>
             )}
+
             <div className="flex items-center justify-between mt-6">
               <label className="text-sm font-semibold text-gray-700">
                 Quantidade:
