@@ -289,7 +289,17 @@ const Produtos = () => {
                     <button
                       className="p-2 rounded-full hover:bg-blue-600 hover:text-white text-blue-600 dark:text-blue-400 dark:hover:bg-blue-700 transition"
                       onClick={() => {
-                        setNovoProduto(produto);
+                        setNovoProduto({
+                          id: produto.id,
+                          nome: produto.nome,
+                          preco: produto.preco,
+                          quantidade: produto.quantidade ?? 0,
+                          imagem_url: produto.imagem_url,
+                          ativo: produto.ativo,
+                          categoria_id: produto.categoria_id,
+                          detalhamento: produto.detalhamento ?? null,
+                        });
+
                         setEditando(produto);
                         setShowModal(true);
                       }}
