@@ -81,7 +81,7 @@ function App() {
 
         // Se for mobile, já define o modo de consumo e pula telas
         if (isMobile) {
-          setModoConsumo("Para Levar"); // ou "Delivery" se quiser renomear
+          setModoConsumo("Delivery"); // ou "Delivery" se quiser renomear
           setSolicitandoNome(true); // ainda pede o nome
         }
       })
