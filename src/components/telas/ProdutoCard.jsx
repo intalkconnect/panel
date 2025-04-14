@@ -62,7 +62,11 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0 }) {
           })}
         </p>
 
-        {quantidade === 0 ? (
+        {produto.quantidade === 0 ? (
+          <div className="mt-2 px-6 py-2 bg-red-100 text-red-500 rounded-full text-sm font-semibold shadow-inner">
+            Esgotado
+          </div>
+        ) : quantidade === 0 ? (
           <button
             onClick={handleCliqueAdicionar}
             className="mt-2 bg-red-500 text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-red-600 transition-all shadow-md hover:shadow-lg"
