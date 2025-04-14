@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { isMobile } from "react-device-detect";
 
 import { useInatividade } from "./hooks/useInatividade";
 import { carregarDados } from "./utils/api";
@@ -77,6 +78,12 @@ function App() {
         setCategorias(categorias);
         setProdutos(produtos);
         setCategoriaSelecionada(categorias[0]?.id || null);
+
+        // Se for mobile, já define o modo de consumo e pula telas
+        if (isMobile) {
+          setModoConsumo("Para Levar"); // ou "Delivery" se quiser renomear
+          setSolicitandoNome(true); // ainda pede o nome
+        }
       })
       .finally(() => setLoading(false));
   }, [iniciarTela]);
