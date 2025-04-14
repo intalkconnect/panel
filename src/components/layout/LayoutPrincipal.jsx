@@ -92,9 +92,9 @@ function LayoutPrincipal({
       </aside>
 
       {/* Conteúdo principal */}
-      <main className="flex-1 p-6 overflow-y-auto flex flex-col">
-        <header className="bg-white border-b pb-4 mb-6">
-          <h1 className="text-3xl font-extrabold text-red-600">
+      <main className="flex-1 p-4 sm:p-6 overflow-y-auto flex flex-col">
+        <header className="bg-white border-b pb-4 mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-red-600">
             {empresa?.nome_exibicao}
           </h1>
           <p className="text-sm text-gray-600 font-medium">
@@ -106,8 +106,7 @@ function LayoutPrincipal({
           </p>
         </header>
 
-        {/* Produtos */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {produtosFiltrados.map((produto) => {
             const quantidade = carrinho
               .filter((p) => p.id === produto.id)
@@ -127,10 +126,9 @@ function LayoutPrincipal({
       </main>
 
       {/* Carrinho */}
-      <aside className="md:w-80 w-full bg-gray-50 p-6 border-t md:border-t-0 md:border-l flex flex-col justify-between">
+      <aside className="md:w-80 w-full bg-gray-50 p-4 sm:p-6 border-t md:border-t-0 md:border-l flex flex-col justify-between">
         <div>
           <h2 className="text-xl font-bold mb-4 text-gray-800">Pedido</h2>
-
           {carrinho.length === 0 ? (
             <div className="bg-red-50 border border-red-200 p-6 rounded-xl text-center flex flex-col items-center gap-3 shadow-inner">
               <svg
@@ -206,7 +204,6 @@ function LayoutPrincipal({
           )}
         </div>
 
-        {/* Botões */}
         <div className="mt-6 space-y-3">
           <button
             onClick={() => setShowConfirmCancel(true)}
