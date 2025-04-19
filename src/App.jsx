@@ -20,7 +20,10 @@ import {
 import LayoutPrincipal from "./components/layout/LayoutPrincipal";
 
 function App() {
-  const { empresaId } = useParams();
+  const { encoded } = useParams();
+  const [empresaId, setEmpresaId] = useState(null);
+  const [telefoneCliente, setTelefoneCliente] = useState("");
+  const [instance, setInstance] = useState(null);
 
   const [empresa, setEmpresa] = useState(null);
   const [iniciarTela, setIniciarTela] = useState(false);
@@ -41,6 +44,19 @@ function App() {
   const [formaPagamento, setFormaPagamento] = useState(null);
   const [aguardandoPagamento, setAguardandoPagamento] = useState(false);
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
+
+  useEffect(() => {
+    if (encoded) {
+      // é um pedido via link com telefone (Delivery)
+      const decoded = atob(encoded);
+      const [empresa, whatsappId, instance] = decoded.split(":");
+      setEmpresaId(empresa);
+      setTelefoneCliente(whatsappId || "");
+      setInstance(instance);
+      setSolicitandoNome(true);
+      setModoConsumo("Delivery");
+    }
+  }, [encoded]);
 
   useEffect(() => {
     // Carrega apenas o nome da empresa se ainda não estiver carregado
@@ -162,7 +178,6 @@ function App() {
             nome={nomeCliente}
             onChange={setNomeCliente}
             onConfirmar={() => {
-              setModoConsumo("Para Levar");
               setSolicitandoNome(false);
             }}
           />
@@ -197,6 +212,11 @@ function App() {
             )}
             onVoltar={() => setConfirmarPedido(false)}
             onContinuar={() => setFormaPagamento("escolher")}
+            modoConsumo={modoConsumo}
+            nomeCliente={nomeCliente}
+            empresaId={empresaId}
+            whatsappId={telefoneCliente}
+            instance={instance}
           />
         </motion.div>
       ) : formaPagamento === "escolher" ? (
