@@ -100,6 +100,8 @@ function LayoutPrincipal({
           <p className="text-sm text-gray-600 font-medium">
             {modoConsumo === "Comer aqui" && mesaSelecionada
               ? `Mesa ${mesaSelecionada}`
+              : modoConsumo === "Delivery" && nomeCliente
+              ? `Delivery - ${nomeCliente}`
               : nomeCliente
               ? `Para Levar - ${nomeCliente}`
               : ""}
