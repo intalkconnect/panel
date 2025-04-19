@@ -15,6 +15,7 @@ import Categorias from "./admin/Categorias";
 import Usuarios from "./admin/Usuarios";
 import Configuracoes from "./admin/Configuracoes";
 import TotemNaoConfigurado from "./components/telas/TotemNaoConfigurado";
+import RegistrarPedido from "./components/telas/RegistrarPedido";
 import DarkWrapper from "./components/layout/DarkWrapper"; // 👈 aqui
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -23,7 +24,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <DarkWrapper>
         <Routes>
           <Route path="/" element={<TotemNaoConfigurado />} />
-          <Route path="/identity/:empresaId" element={<App />} />
+          <Route path="/:encoded" element={<App />} />
+          <Route path="/registrar" element={<RegistrarPedido />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
