@@ -1,15 +1,42 @@
 import React from "react";
 
-function ConfirmarPedido({ carrinho, total, onVoltar, onContinuar }) {
+function ConfirmarPedido({
+  carrinho,
+  total,
+  onVoltar,
+  onContinuar,
+  modoConsumo,
+  nomeCliente,
+  empresaId,
+  whatsappId,
+  instance,
+}) {
+  const handleConfirmar = () => {
+    if (modoConsumo === "Delivery") {
+      const pedido = {
+        carrinho,
+        total,
+        nomeCliente,
+        modoConsumo,
+        empresaId,
+        whatsappId,
+        instance, // 👈 garanta que isso esteja aqui
+      };
+
+      localStorage.setItem("pedido_para_registrar", JSON.stringify(pedido));
+      window.open("/registrar", "_self");
+    } else {
+      onContinuar();
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-red-50 px-4 py-10">
       <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 border border-gray-200">
-        {/* Título */}
         <h2 className="text-2xl font-extrabold text-red-600 mb-6 text-center">
           Sua Comanda
         </h2>
 
-        {/* Lista de itens */}
         <ul className="divide-y divide-dashed divide-gray-300 mb-6">
           {carrinho.map((item, index) => (
             <li key={index} className="py-3 text-gray-800 text-left">
@@ -25,7 +52,6 @@ function ConfirmarPedido({ carrinho, total, onVoltar, onContinuar }) {
                 </span>
               </div>
 
-              {/* Adicionais */}
               {item.extrasSelecionados?.length > 0 && (
                 <p className="text-xs text-gray-600 mt-1">
                   <strong>Adicionar:</strong>{" "}
@@ -35,7 +61,6 @@ function ConfirmarPedido({ carrinho, total, onVoltar, onContinuar }) {
                 </p>
               )}
 
-              {/* Sem ingredientes */}
               {item.removerSelecionados?.length > 0 && (
                 <p className="text-xs text-gray-600">
                   <strong>Remover:</strong>{" "}
@@ -48,7 +73,6 @@ function ConfirmarPedido({ carrinho, total, onVoltar, onContinuar }) {
           ))}
         </ul>
 
-        {/* Total */}
         <div className="text-right text-xl font-bold text-gray-900 border-t pt-4 mb-6">
           Total:{" "}
           {(Number(total) || 0).toLocaleString("pt-BR", {
@@ -57,7 +81,6 @@ function ConfirmarPedido({ carrinho, total, onVoltar, onContinuar }) {
           })}
         </div>
 
-        {/* Botões */}
         <div className="flex gap-4">
           <button
             onClick={onVoltar}
@@ -66,7 +89,7 @@ function ConfirmarPedido({ carrinho, total, onVoltar, onContinuar }) {
             Voltar
           </button>
           <button
-            onClick={onContinuar}
+            onClick={handleConfirmar}
             className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold"
           >
             Confirmar
