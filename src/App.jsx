@@ -24,6 +24,7 @@ function App() {
   const [empresaId, setEmpresaId] = useState(null);
   const [telefoneCliente, setTelefoneCliente] = useState("");
   const [instance, setInstance] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const [empresa, setEmpresa] = useState(null);
   const [iniciarTela, setIniciarTela] = useState(false);
@@ -49,9 +50,10 @@ function App() {
     if (encoded) {
       // é um pedido via link com telefone (Delivery)
       const decoded = atob(encoded);
-      const [empresa, whatsappId, instance] = decoded.split(":");
+      const [empresa, whatsappId, instance, phoneNumber] = decoded.split(":");
       setEmpresaId(empresa);
       setTelefoneCliente(whatsappId || "");
+      setPhoneNumber(phoneNumber);
       setInstance(instance);
       setSolicitandoNome(true);
       setModoConsumo("Delivery");
@@ -217,6 +219,7 @@ console.log(phoneNumber);
             empresaId={empresaId}
             whatsappId={telefoneCliente}
             instance={instance}
+            phoneNumber={phoneNumber}
           />
         </motion.div>
       ) : formaPagamento === "escolher" ? (
