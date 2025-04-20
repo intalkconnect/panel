@@ -10,6 +10,7 @@ function ConfirmarPedido({
   empresaId,
   whatsappId,
   instance,
+  phoneNumber,
 }) {
   const handleConfirmar = () => {
     const pedido = {
@@ -20,6 +21,7 @@ function ConfirmarPedido({
       empresaId,
       whatsappId,
       instance,
+      phoneNumber,
     };
 
     localStorage.setItem("pedido_para_registrar", JSON.stringify(pedido));
