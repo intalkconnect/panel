@@ -2,11 +2,21 @@ import React, { useEffect, useState } from "react";
 
 function RegistroPedido({ formaPagamento }) {
   const [status, setStatus] = useState("enviando");
+  const [redirect, setRedirect] = useState(false);
+  const [telefone, setTelefone] = useState("");
 
   useEffect(() => {
-    const pedido = JSON.parse(localStorage.getItem("pedido_para_registrar"));
+    const pedidoData = localStorage.getItem("pedido_para_registrar");
+    if (!pedidoData) return;
 
-    if (!pedido) return;
+    const pedido = JSON.parse(pedidoData);
+    console.log("📦 Pedido recuperado do localStorage:", pedido);
+
+    if (!pedido || !pedido.phoneNumber) {
+      console.error("Número de telefone ausente no pedido.");
+      setStatus("erro");
+      return;
+    }
 
     const registrar = async () => {
       try {
@@ -39,13 +49,13 @@ function RegistroPedido({ formaPagamento }) {
           throw new Error(`Erro HTTP ${res.status}`);
         }
 
+        setTelefone(pedido.phoneNumber);
         localStorage.removeItem("pedido_para_registrar");
         setStatus("enviado");
 
         setTimeout(() => {
-          const numero = pedido.phoneNumber.replace(/[^0-9]/g, "");
-          window.location.href = `https://wa.me/${numero}`;
-        }, 2000);
+          setRedirect(true);
+        }, 1500);
       } catch (err) {
         console.error("Erro ao registrar o pedido:", err);
         setStatus("erro");
@@ -54,6 +64,13 @@ function RegistroPedido({ formaPagamento }) {
 
     registrar();
   }, [formaPagamento]);
+
+  useEffect(() => {
+    if (redirect && telefone) {
+      const numero = telefone.replace(/[^0-9]/g, "");
+      window.location.href = `https://wa.me/${numero}`;
+    }
+  }, [redirect, telefone]);
 
   if (status === "enviando") {
     return (
