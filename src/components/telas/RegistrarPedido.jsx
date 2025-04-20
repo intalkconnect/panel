@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 function RegistroPedido({ formaPagamento }) {
   const [status, setStatus] = useState("enviando");
   const [redirect, setRedirect] = useState(false);
+  const [telefone, setTelefone] = useState("");
 
   useEffect(() => {
     const pedido = JSON.parse(localStorage.getItem("pedido_para_registrar"));
@@ -40,6 +41,7 @@ function RegistroPedido({ formaPagamento }) {
           throw new Error(`Erro HTTP ${res.status}`);
         }
 
+        setTelefone(pedido.phoneNumber);
         localStorage.removeItem("pedido_para_registrar");
         setStatus("enviado");
 
@@ -56,15 +58,11 @@ function RegistroPedido({ formaPagamento }) {
   }, [formaPagamento]);
 
   useEffect(() => {
-    if (redirect) {
-      const pedido = JSON.parse(localStorage.getItem("pedido_para_registrar"));
-      if (pedido && pedido.phoneNumber) {
-        const numero = pedido.phoneNumber.replace(/[^0-9]/g, "");
-        const mensagem = encodeURIComponent("Pedido registrado com sucesso! 😋 Clique aqui para acompanhar ou falar com a gente!");
-        window.location.href = `https://wa.me/${numero}?text=${mensagem}`;
-      }
+    if (redirect && telefone) {
+      const numero = telefone.replace(/[^0-9]/g, "");
+      window.location.href = `https://wa.me/${numero}`;
     }
-  }, [redirect]);
+  }, [redirect, telefone]);
 
   if (status === "enviando") {
     return (
