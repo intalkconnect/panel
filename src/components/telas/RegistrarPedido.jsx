@@ -6,9 +6,16 @@ function RegistroPedido({ formaPagamento }) {
   const [telefone, setTelefone] = useState("");
 
   useEffect(() => {
-    const pedido = JSON.parse(localStorage.getItem("pedido_para_registrar"));
+    const pedidoData = localStorage.getItem("pedido_para_registrar");
+    if (!pedidoData) return;
 
-    if (!pedido) return;
+    const pedido = JSON.parse(pedidoData);
+
+    if (!pedido || !pedido.phoneNumber) {
+      console.error("Número de telefone ausente no pedido.");
+      setStatus("erro");
+      return;
+    }
 
     const registrar = async () => {
       try {
@@ -60,6 +67,8 @@ function RegistroPedido({ formaPagamento }) {
   useEffect(() => {
     if (redirect && telefone) {
       const numero = telefone.replace(/[^0-9]/g, "");
+      console.log(numero);
+      console.log(telefone);
       window.location.href = `https://wa.me/${numero}`;
     }
   }, [redirect, telefone]);
