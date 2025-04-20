@@ -12,22 +12,18 @@ function ConfirmarPedido({
   instance,
 }) {
   const handleConfirmar = () => {
-    if (modoConsumo === "Delivery") {
-      const pedido = {
-        carrinho,
-        total,
-        nomeCliente,
-        modoConsumo,
-        empresaId,
-        whatsappId,
-        instance, // 👈 garanta que isso esteja aqui
-      };
+    const pedido = {
+      carrinho,
+      total,
+      nomeCliente,
+      modoConsumo,
+      empresaId,
+      whatsappId,
+      instance,
+    };
 
-      localStorage.setItem("pedido_para_registrar", JSON.stringify(pedido));
-      window.open("/registrar", "_self");
-    } else {
-      onContinuar();
-    }
+    localStorage.setItem("pedido_para_registrar", JSON.stringify(pedido));
+    onContinuar(); // Redireciona para o componente Pagamento
   };
 
   return (
