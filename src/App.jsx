@@ -136,7 +136,7 @@ function App() {
     exit: { opacity: 0, y: -20 },
     transition: { duration: 0.3 },
   };
-
+console.log(phoneNumber);
   return (
     <AnimatePresence mode="wait">
       {!iniciarTela ? (
