@@ -25,8 +25,8 @@ const Chatbot = () => {
             byEvents: false,
             base64: true,
             headers: {
-              autorization:
-                "Bearer nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+              apikey:
+                "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
               "Content-Type": "application/json",
             },
             events: ["MESSAGES_UPSERT"],
