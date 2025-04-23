@@ -1,4 +1,3 @@
-// components/admin/Chatbot.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Bot } from "lucide-react";
@@ -11,8 +10,10 @@ const Chatbot = () => {
 
   useEffect(() => {
     let interval;
+    let tentativas = 0;
 
     if (chatbotAtivo) {
+      // Criação da instância
       axios
         .post(
           "https://wa-srv.dkdevs.com.br/instance/create",
@@ -46,6 +47,7 @@ const Chatbot = () => {
           setQrcodeBase64(base64);
           setStatusConexao("Aguardando conexão...");
 
+          // Checagem de status a cada 5s (até 4 tentativas)
           interval = setInterval(() => {
             axios
               .get(
@@ -63,9 +65,22 @@ const Chatbot = () => {
                   setStatusConexao("Conectado ✅");
                   setQrcodeBase64("");
                   clearInterval(interval);
+                } else {
+                  tentativas++;
+                  if (tentativas >= 4) {
+                    clearInterval(interval);
+                    setStatusConexao("❌ Tentativas expiradas. Tente novamente.");
+                  }
                 }
               })
-              .catch(console.error);
+              .catch((err) => {
+                console.error("Erro ao verificar conexão:", err);
+                tentativas++;
+                if (tentativas >= 4) {
+                  clearInterval(interval);
+                  setStatusConexao("❌ Tentativas expiradas. Tente novamente.");
+                }
+              });
           }, 5000);
         })
         .catch((err) => {
@@ -74,6 +89,20 @@ const Chatbot = () => {
 
       return () => clearInterval(interval);
     } else {
+      // Desconectar a instância
+      axios
+        .delete(`https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`, {
+          headers: {
+            apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+          },
+        })
+        .then(() => {
+          console.log("Instância deslogada com sucesso.");
+        })
+        .catch((err) => {
+          console.error("Erro ao deslogar instância:", err);
+        });
+
       setQrcodeBase64("");
       setStatusConexao("");
     }
