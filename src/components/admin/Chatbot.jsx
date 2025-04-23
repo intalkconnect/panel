@@ -15,26 +15,26 @@ const Chatbot = () => {
   // Verifica o estado da conexão ao carregar o componente
   useEffect(() => {
     axios
-      .get(
-        `https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`,
-        {
-          headers: {
-            apikey:
-              "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-          },
-        }
-      )
-      .then((res) => {
-        const isConnected = res.data.instance?.state === "connected";
-        setChatbotAtivo(isConnected);
-        if (isConnected) {
-          setStatusConexao("Conectado ✅");
-        }
-      })
-      .catch((err) => {
-        console.error("Erro ao verificar conexão inicial:", err);
-        setChatbotAtivo(false);
-      });
+  .get(`https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`, {
+    headers: {
+      apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+    },
+  })
+  .then((res) => {
+    const isConnected = res.data.instance?.state === "connected";
+    setChatbotAtivo(isConnected);
+    if (isConnected) {
+      setStatusConexao("Conectado ✅");
+    }
+  })
+  .catch((err) => {
+    if (err.response?.status === 404) {
+      // instância ainda não criada
+      setChatbotAtivo(false);
+    } else {
+      console.error("Erro ao verificar conexão inicial:", err);
+    }
+  });
   }, []);
 
   useEffect(() => {
