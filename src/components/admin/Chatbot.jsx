@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Bot } from "lucide-react";
+import { Bot, RotateCw } from "lucide-react";
 
 const Chatbot = () => {
   const [chatbotAtivo, setChatbotAtivo] = useState(false);
   const [qrcodeBase64, setQrcodeBase64] = useState("");
   const [statusConexao, setStatusConexao] = useState("");
+  const [tentativasEsgotadas, setTentativasEsgotadas] = useState(false);
   const empresaId = localStorage.getItem("empresa_id");
 
   useEffect(() => {
@@ -13,7 +14,9 @@ const Chatbot = () => {
     let tentativas = 0;
 
     if (chatbotAtivo) {
-      // Criação da instância
+      setTentativasEsgotadas(false);
+      setStatusConexao("Iniciando...");
+
       axios
         .post(
           "https://wa-srv.dkdevs.com.br/instance/create",
@@ -47,8 +50,8 @@ const Chatbot = () => {
           setQrcodeBase64(base64);
           setStatusConexao("Aguardando conexão...");
 
-          // Checagem de status a cada 5s (até 4 tentativas)
           interval = setInterval(() => {
+            tentativas++;
             axios
               .get(
                 `https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`,
@@ -65,31 +68,33 @@ const Chatbot = () => {
                   setStatusConexao("Conectado ✅");
                   setQrcodeBase64("");
                   clearInterval(interval);
-                } else {
-                  tentativas++;
-                  if (tentativas >= 4) {
-                    clearInterval(interval);
-                    setStatusConexao("❌ Tentativas expiradas. Tente novamente.");
-                  }
+                } else if (tentativas >= 4) {
+                  setStatusConexao("❌ Conexão falhou. Tente novamente.");
+                  setQrcodeBase64("");
+                  setTentativasEsgotadas(true);
+                  clearInterval(interval);
                 }
               })
               .catch((err) => {
                 console.error("Erro ao verificar conexão:", err);
-                tentativas++;
                 if (tentativas >= 4) {
+                  setStatusConexao("❌ Erro ao conectar. Tente novamente.");
+                  setQrcodeBase64("");
+                  setTentativasEsgotadas(true);
                   clearInterval(interval);
-                  setStatusConexao("❌ Tentativas expiradas. Tente novamente.");
                 }
               });
           }, 5000);
         })
         .catch((err) => {
           console.error("Erro ao criar instância:", err);
+          setStatusConexao("❌ Erro ao iniciar. Tente novamente.");
+          setTentativasEsgotadas(true);
         });
 
       return () => clearInterval(interval);
     } else {
-      // Desconectar a instância
+      // Deslogar instância apenas se toggle for desativado
       axios
         .delete(`https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`, {
           headers: {
@@ -105,8 +110,16 @@ const Chatbot = () => {
 
       setQrcodeBase64("");
       setStatusConexao("");
+      setTentativasEsgotadas(false);
     }
   }, [chatbotAtivo]);
+
+  const handleTentarNovamente = () => {
+    setChatbotAtivo(false);
+    setTimeout(() => {
+      setChatbotAtivo(true);
+    }, 500);
+  };
 
   return (
     <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 shadow border dark:border-gray-700 space-y-4">
@@ -139,6 +152,18 @@ const Chatbot = () => {
         <p className="text-center text-sm text-gray-700 dark:text-gray-300">
           {statusConexao}
         </p>
+      )}
+
+      {tentativasEsgotadas && (
+        <div className="flex justify-center">
+          <button
+            onClick={handleTentarNovamente}
+            className="flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+          >
+            <RotateCw size={16} />
+            Tentar novamente
+          </button>
+        </div>
       )}
     </div>
   );
