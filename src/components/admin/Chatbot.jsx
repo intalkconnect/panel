@@ -1,6 +1,9 @@
+// components/admin/Chatbot.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Bot } from "lucide-react";
+
+const API_KEY = "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f";
 
 const Chatbot = () => {
   const [chatbotAtivo, setChatbotAtivo] = useState(false);
@@ -8,33 +11,30 @@ const Chatbot = () => {
   const [statusConexao, setStatusConexao] = useState("");
   const [tentativas, setTentativas] = useState(0);
   const [tentativasEsgotadas, setTentativasEsgotadas] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [carregandoQRCode, setCarregandoQRCode] = useState(false);
 
   const empresaId = localStorage.getItem("empresa_id");
 
-  // Verifica o estado da conexão ao carregar o componente
   useEffect(() => {
     axios
-  .get(`https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`, {
-    headers: {
-      apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-    },
-  })
-  .then((res) => {
-    const isConnected = res.data.instance?.state === "connected";
-    setChatbotAtivo(isConnected);
-    if (isConnected) {
-      setStatusConexao("Conectado ✅");
-    }
-  })
-  .catch((err) => {
-    if (err.response?.status === 404) {
-      // instância ainda não criada
-      setChatbotAtivo(false);
-    } else {
-      console.error("Erro ao verificar conexão inicial:", err);
-    }
-  });
+      .get(
+        `https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`,
+        { headers: { apikey: API_KEY } }
+      )
+      .then((res) => {
+        const conectado = res.data.instance?.state === "connected";
+        setChatbotAtivo(conectado);
+        if (conectado) {
+          setStatusConexao("Conectado ✅");
+        }
+      })
+      .catch((err) => {
+        if (err.response?.status === 404) {
+          setChatbotAtivo(false);
+        } else {
+          console.error("Erro ao verificar conexão inicial:", err);
+        }
+      });
   }, []);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const Chatbot = () => {
     if (chatbotAtivo) {
       setTentativas(0);
       setTentativasEsgotadas(false);
-      setIsLoading(true);
+      setCarregandoQRCode(true);
 
       axios
         .post(
@@ -58,91 +58,72 @@ const Chatbot = () => {
               byEvents: false,
               base64: true,
               headers: {
-                autorization:
-                  "Bearer nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+                autorization: `Bearer ${API_KEY}`,
                 "Content-Type": "application/json",
               },
               events: ["MESSAGES_UPSERT"],
             },
           },
-          {
-            headers: {
-              apikey:
-                "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-            },
-          }
+          { headers: { apikey: API_KEY } }
         )
         .then((res) => {
           const base64 = res.data.qrcode?.base64;
           setQrcodeBase64(base64);
           setStatusConexao("Aguardando conexão...");
-          setIsLoading(false);
+          setCarregandoQRCode(false);
 
           interval = setInterval(() => {
             setTentativas((prev) => {
-              const nova = prev + 1;
+              const novaTentativa = prev + 1;
 
               axios
                 .get(
                   `https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`,
-                  {
-                    headers: {
-                      apikey:
-                        "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-                    },
-                  }
+                  { headers: { apikey: API_KEY } }
                 )
                 .then((response) => {
-                  const state = response.data.instance?.state;
-                  if (state === "connected") {
+                  if (response.data.instance?.state === "connected") {
                     setStatusConexao("Conectado ✅");
                     setQrcodeBase64("");
                     clearInterval(interval);
                   }
-                })
-                .catch(console.error);
+                });
 
-              if (nova >= 4) {
+              if (novaTentativa >= 4) {
                 clearInterval(interval);
                 setQrcodeBase64("");
                 setStatusConexao("Falha na conexão. Tente novamente.");
                 setTentativasEsgotadas(true);
               }
 
-              return nova;
+              return novaTentativa;
             });
           }, 5000);
         })
         .catch((err) => {
           console.error("Erro ao criar instância:", err);
-          setIsLoading(false);
+          setCarregandoQRCode(false);
         });
 
       return () => clearInterval(interval);
     } else {
-      if (tentativas > 0 || statusConexao === "Conectado ✅") {
+      if (statusConexao === "Conectado ✅") {
+        // Apenas se estava conectado, então desloga e deleta
         axios
           .delete(
             `https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`,
-            {
-              headers: {
-                apikey:
-                  "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-              },
-            }
+            { headers: { apikey: API_KEY } }
           )
           .catch(() => {
-            // fallback para delete
+            // Tenta delete direto se logout falhar
+          })
+          .finally(() => {
             axios
               .delete(
                 `https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`,
-                {
-                  headers: {
-                    apikey:
-                      "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-                  },
-                }
+                { headers: { apikey: API_KEY } }
               )
+              .then(() => console.log("Instância deletada"))
               .catch((err) =>
                 console.error("Erro ao deletar instância:", err)
               );
@@ -155,11 +136,51 @@ const Chatbot = () => {
     }
   }, [chatbotAtivo]);
 
+  const iniciarChecagemConexao = () => {
+    let tentativasInternas = 0;
+    setStatusConexao("Aguardando conexão...");
+    const interval = setInterval(() => {
+      tentativasInternas++;
+      axios
+        .get(
+          `https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`,
+          { headers: { apikey: API_KEY } }
+        )
+        .then((res) => {
+          if (res.data.instance?.state === "connected") {
+            setStatusConexao("Conectado ✅");
+            setQrcodeBase64("");
+            clearInterval(interval);
+          }
+        });
+      if (tentativasInternas >= 4) {
+        clearInterval(interval);
+        setQrcodeBase64("");
+        setStatusConexao("Falha na conexão. Tente novamente.");
+        setTentativasEsgotadas(true);
+      }
+    }, 5000);
+  };
+
   const handleRetry = () => {
-    setTentativas(0);
     setTentativasEsgotadas(false);
-    setChatbotAtivo(false);
-    setTimeout(() => setChatbotAtivo(true), 500);
+    setStatusConexao("Aguardando conexão...");
+    setCarregandoQRCode(true);
+
+    axios
+      .get(
+        `https://wa-srv.dkdevs.com.br/instance/connect/${empresaId}`,
+        { headers: { apikey: API_KEY } }
+      )
+      .then((res) => {
+        setQrcodeBase64(res.data.qrcode?.base64);
+        setCarregandoQRCode(false);
+        iniciarChecagemConexao();
+      })
+      .catch((err) => {
+        console.error("Erro ao tentar reconectar:", err);
+        setCarregandoQRCode(false);
+      });
   };
 
   return (
@@ -183,10 +204,10 @@ const Chatbot = () => {
         </button>
       </div>
 
-      {isLoading && (
+      {carregandoQRCode && (
         <div className="flex justify-center items-center h-64">
           <svg
-            className="animate-spin h-10 w-10 text-blue-500"
+            className="animate-spin h-10 w-10 text-black"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -213,7 +234,7 @@ const Chatbot = () => {
           <img
             src={qrcodeBase64}
             alt="QRCode"
-            className="w-64 h-64 filter grayscale contrast-200 invert"
+            className="w-64 h-64 filter contrast-200"
           />
         </div>
       )}
