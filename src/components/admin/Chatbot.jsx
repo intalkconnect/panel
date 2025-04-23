@@ -8,8 +8,34 @@ const Chatbot = () => {
   const [statusConexao, setStatusConexao] = useState("");
   const [tentativas, setTentativas] = useState(0);
   const [tentativasEsgotadas, setTentativasEsgotadas] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const empresaId = localStorage.getItem("empresa_id");
+
+  // Verifica o estado da conexão ao carregar o componente
+  useEffect(() => {
+    axios
+      .get(
+        `https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`,
+        {
+          headers: {
+            apikey:
+              "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+          },
+        }
+      )
+      .then((res) => {
+        const isConnected = res.data.instance?.state === "connected";
+        setChatbotAtivo(isConnected);
+        if (isConnected) {
+          setStatusConexao("Conectado ✅");
+        }
+      })
+      .catch((err) => {
+        console.error("Erro ao verificar conexão inicial:", err);
+        setChatbotAtivo(false);
+      });
+  }, []);
 
   useEffect(() => {
     let interval;
@@ -17,6 +43,7 @@ const Chatbot = () => {
     if (chatbotAtivo) {
       setTentativas(0);
       setTentativasEsgotadas(false);
+      setIsLoading(true);
 
       axios
         .post(
@@ -49,10 +76,11 @@ const Chatbot = () => {
           const base64 = res.data.qrcode?.base64;
           setQrcodeBase64(base64);
           setStatusConexao("Aguardando conexão...");
+          setIsLoading(false);
 
           interval = setInterval(() => {
             setTentativas((prev) => {
-              const novaTentativa = prev + 1;
+              const nova = prev + 1;
 
               axios
                 .get(
@@ -74,57 +102,56 @@ const Chatbot = () => {
                 })
                 .catch(console.error);
 
-              if (novaTentativa >= 4) {
+              if (nova >= 4) {
                 clearInterval(interval);
                 setQrcodeBase64("");
                 setStatusConexao("Falha na conexão. Tente novamente.");
                 setTentativasEsgotadas(true);
               }
 
-              return novaTentativa;
+              return nova;
             });
           }, 5000);
         })
         .catch((err) => {
           console.error("Erro ao criar instância:", err);
+          setIsLoading(false);
         });
 
       return () => clearInterval(interval);
     } else {
+      if (tentativas > 0 || statusConexao === "Conectado ✅") {
+        axios
+          .delete(
+            `https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`,
+            {
+              headers: {
+                apikey:
+                  "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+              },
+            }
+          )
+          .catch(() => {
+            // fallback para delete
+            axios
+              .delete(
+                `https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`,
+                {
+                  headers: {
+                    apikey:
+                      "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+                  },
+                }
+              )
+              .catch((err) =>
+                console.error("Erro ao deletar instância:", err)
+              );
+          });
+      }
+
       setQrcodeBase64("");
       setStatusConexao("");
       setTentativasEsgotadas(false);
-
-      // Logout da instância
-      axios
-        .delete(
-          `https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`,
-          {
-            headers: {
-              apikey:
-                "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-            },
-          }
-        )
-        .then(() => console.log("Logout realizado"))
-        .catch((err) => {
-          console.warn("Falha no logout, tentando delete direto...");
-        })
-        .finally(() => {
-          // Delete forçado da instância
-          axios
-            .delete(
-              `https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`,
-              {
-                headers: {
-                  apikey:
-                    "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-                },
-              }
-            )
-            .then(() => console.log("Instância deletada"))
-            .catch((err) => console.error("Erro ao deletar instância:", err));
-        });
     }
   }, [chatbotAtivo]);
 
@@ -156,41 +183,46 @@ const Chatbot = () => {
         </button>
       </div>
 
-      {statusConexao === "Aguardando conexão..." && !qrcodeBase64 && (
-  <div className="flex justify-center items-center h-64">
-    <svg
-      className="animate-spin h-10 w-10 text-blue-500"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-    >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      ></circle>
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
-      ></path>
-    </svg>
-  </div>
-)}
+      {isLoading && (
+        <div className="flex justify-center items-center h-64">
+          <svg
+            className="animate-spin h-10 w-10 text-blue-500"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
+            ></path>
+          </svg>
+        </div>
+      )}
 
-{qrcodeBase64 && (
-  <div className="flex justify-center">
-    <img
-      src={qrcodeBase64}
-      alt="QRCode"
-      className="w-64 h-64 filter grayscale contrast-200"
-    />
-  </div>
-)}
+      {qrcodeBase64 && (
+        <div className="flex justify-center">
+          <img
+            src={qrcodeBase64}
+            alt="QRCode"
+            className="w-64 h-64 filter grayscale contrast-200 invert"
+          />
+        </div>
+      )}
 
+      {statusConexao && (
+        <p className="text-center text-sm text-gray-700 dark:text-gray-300">
+          {statusConexao}
+        </p>
+      )}
 
       {tentativasEsgotadas && (
         <div className="text-center">
