@@ -13,31 +13,39 @@ const Chatbot = () => {
     let interval;
 
     if (chatbotAtivo) {
-      // Criação da instância
       axios
-        .post("https://wa-srv.dkdevs.com.br/instance/create", {
-          instanceName: empresaId,
-          qrcode: true,
-          integration: "WHATSAPP-BAILEYS",
-          groupsIgnore: true,
-          webhook: {
-            url: "https://mensageria-backend-n8n.9j9goo.easypanel.host/webhook/2add3ce5-aa7a-42dd-8ff4-f94ef7f08955",
-            byEvents: false,
-            base64: true,
+        .post(
+          "https://wa-srv.dkdevs.com.br/instance/create",
+          {
+            instanceName: empresaId,
+            qrcode: true,
+            integration: "WHATSAPP-BAILEYS",
+            groupsIgnore: true,
+            webhook: {
+              url: "https://mensageria-backend-n8n.9j9goo.easypanel.host/webhook/2add3ce5-aa7a-42dd-8ff4-f94ef7f08955",
+              byEvents: false,
+              base64: true,
+              headers: {
+                autorization:
+                  "Bearer nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+                "Content-Type": "application/json",
+              },
+              events: ["MESSAGES_UPSERT"],
+            },
+          },
+          {
             headers: {
+              "Content-Type": "application/json",
               apikey:
                 "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-              "Content-Type": "application/json",
             },
-            events: ["MESSAGES_UPSERT"],
-          },
-        })
+          }
+        )
         .then((res) => {
           const base64 = res.data.qrcode?.base64;
           setQrcodeBase64(base64);
           setStatusConexao("Aguardando conexão...");
 
-          // Inicia checagem a cada 5s
           interval = setInterval(() => {
             axios
               .get(
@@ -64,7 +72,6 @@ const Chatbot = () => {
           console.error("Erro ao criar instância:", err);
         });
 
-      // Limpa o interval ao desativar
       return () => clearInterval(interval);
     } else {
       setQrcodeBase64("");
