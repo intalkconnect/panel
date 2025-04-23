@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Bot, Moon, Settings, Building2, Palette } from "lucide-react";
 import HorariosFuncionamento from "../components/admin/HorariosFuncionamento";
+import Chatbot from "../components/admin/Chatbot";
 
 const Configuracoes = () => {
   const [chatbotAtivo, setChatbotAtivo] = useState(false);
@@ -77,25 +78,7 @@ const Configuracoes = () => {
       <HorariosFuncionamento />
 
       {/* Ativar/Desativar Chatbot */}
-      <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 shadow border dark:border-gray-700 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Bot className="text-blue-500" />
-          <h2 className="text-lg font-semibold">Chatbot Virtual</h2>
-        </div>
-        {/* Toggle */}
-        <button
-          onClick={() => setChatbotAtivo(!chatbotAtivo)}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-            chatbotAtivo ? "bg-blue-600" : "bg-gray-400"
-          }`}
-        >
-          <span
-            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-              chatbotAtivo ? "translate-x-6" : "translate-x-1"
-            }`}
-          />
-        </button>
-      </div>
+<Chatbot />
     </div>
   );
 };
