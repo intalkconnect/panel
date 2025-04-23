@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Bot, Moon, Settings, Building2, Palette } from "lucide-react";
+import HorariosFuncionamento from "../components/admin/HorariosFuncionamento";
 
 const Configuracoes = () => {
   const [chatbotAtivo, setChatbotAtivo] = useState(false);
@@ -73,6 +74,7 @@ const Configuracoes = () => {
           className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         />
       </div>
+      <HorariosFuncionamento />
 
       {/* Ativar/Desativar Chatbot */}
       <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 shadow border dark:border-gray-700 flex items-center justify-between">
