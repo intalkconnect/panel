@@ -130,17 +130,24 @@ const HorariosFuncionamento = () => {
                   className="border p-2 rounded dark:bg-gray-700 dark:text-white col-span-1"
                 />
 
-                <label className="col-span-2 flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={horario.ativo}
-                    onChange={(e) =>
-                      handleHorarioChange(index, "ativo", e.target.checked)
-                    }
-                    className="form-checkbox h-4 w-4 text-green-600"
-                  />
-                  Dia ativo
-                </label>
+<div className="col-span-2 flex items-center gap-2 text-sm">
+  <span>Ativo</span>
+  <button
+    onClick={() =>
+      handleHorarioChange(index, "ativo", !horario.ativo)
+    }
+    className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 ${
+      horario.ativo ? "bg-green-500" : "bg-gray-400"
+    }`}
+  >
+    <div
+      className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+        horario.ativo ? "translate-x-6" : "translate-x-0"
+      }`}
+    />
+  </button>
+</div>
+
               </div>
             ) : null;
           })}
