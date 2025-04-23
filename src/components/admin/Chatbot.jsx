@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Bot, RotateCw } from "lucide-react";
+import { Bot } from "lucide-react";
 
 const Chatbot = () => {
   const [chatbotAtivo, setChatbotAtivo] = useState(false);
   const [qrcodeBase64, setQrcodeBase64] = useState("");
   const [statusConexao, setStatusConexao] = useState("");
+  const [tentativas, setTentativas] = useState(0);
   const [tentativasEsgotadas, setTentativasEsgotadas] = useState(false);
+
   const empresaId = localStorage.getItem("empresa_id");
 
   useEffect(() => {
     let interval;
-    let tentativas = 0;
 
     if (chatbotAtivo) {
+      setTentativas(0);
       setTentativasEsgotadas(false);
-      setStatusConexao("Iniciando...");
 
       axios
         .post(
@@ -39,7 +40,6 @@ const Chatbot = () => {
           },
           {
             headers: {
-              "Content-Type": "application/json",
               apikey:
                 "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
             },
@@ -51,74 +51,88 @@ const Chatbot = () => {
           setStatusConexao("Aguardando conexão...");
 
           interval = setInterval(() => {
-            tentativas++;
-            axios
-              .get(
-                `https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`,
-                {
-                  headers: {
-                    apikey:
-                      "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-                  },
-                }
-              )
-              .then((response) => {
-                const state = response.data.instance?.state;
-                if (state === "connected") {
-                  setStatusConexao("Conectado ✅");
-                  setQrcodeBase64("");
-                  clearInterval(interval);
-                } else if (tentativas >= 4) {
-                  setStatusConexao("❌ Conexão falhou. Tente novamente.");
-                  setQrcodeBase64("");
-                  setTentativasEsgotadas(true);
-                  clearInterval(interval);
-                }
-              })
-              .catch((err) => {
-                console.error("Erro ao verificar conexão:", err);
-                if (tentativas >= 4) {
-                  setStatusConexao("❌ Erro ao conectar. Tente novamente.");
-                  setQrcodeBase64("");
-                  setTentativasEsgotadas(true);
-                  clearInterval(interval);
-                }
-              });
+            setTentativas((prev) => {
+              const novaTentativa = prev + 1;
+
+              axios
+                .get(
+                  `https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`,
+                  {
+                    headers: {
+                      apikey:
+                        "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+                    },
+                  }
+                )
+                .then((response) => {
+                  const state = response.data.instance?.state;
+                  if (state === "connected") {
+                    setStatusConexao("Conectado ✅");
+                    setQrcodeBase64("");
+                    clearInterval(interval);
+                  }
+                })
+                .catch(console.error);
+
+              if (novaTentativa >= 4) {
+                clearInterval(interval);
+                setQrcodeBase64("");
+                setStatusConexao("Falha na conexão. Tente novamente.");
+                setTentativasEsgotadas(true);
+              }
+
+              return novaTentativa;
+            });
           }, 5000);
         })
         .catch((err) => {
           console.error("Erro ao criar instância:", err);
-          setStatusConexao("❌ Erro ao iniciar. Tente novamente.");
-          setTentativasEsgotadas(true);
         });
 
       return () => clearInterval(interval);
     } else {
-      // Deslogar instância apenas se toggle for desativado
-      axios
-        .delete(`https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`, {
-          headers: {
-            apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-          },
-        })
-        .then(() => {
-          console.log("Instância deslogada com sucesso.");
-        })
-        .catch((err) => {
-          console.error("Erro ao deslogar instância:", err);
-        });
-
       setQrcodeBase64("");
       setStatusConexao("");
       setTentativasEsgotadas(false);
+
+      // Logout da instância
+      axios
+        .delete(
+          `https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`,
+          {
+            headers: {
+              apikey:
+                "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+            },
+          }
+        )
+        .then(() => console.log("Logout realizado"))
+        .catch((err) => {
+          console.warn("Falha no logout, tentando delete direto...");
+        })
+        .finally(() => {
+          // Delete forçado da instância
+          axios
+            .delete(
+              `https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`,
+              {
+                headers: {
+                  apikey:
+                    "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+                },
+              }
+            )
+            .then(() => console.log("Instância deletada"))
+            .catch((err) => console.error("Erro ao deletar instância:", err));
+        });
     }
   }, [chatbotAtivo]);
 
-  const handleTentarNovamente = () => {
+  const handleRetry = () => {
+    setTentativas(0);
+    setTentativasEsgotadas(false);
     setChatbotAtivo(false);
-    setTimeout(() => {
-      setChatbotAtivo(true);
-    }, 500);
+    setTimeout(() => setChatbotAtivo(true), 500);
   };
 
   return (
@@ -142,25 +156,48 @@ const Chatbot = () => {
         </button>
       </div>
 
-      {qrcodeBase64 && (
-        <div className="flex justify-center">
-          <img src={qrcodeBase64} alt="QRCode" className="w-64 h-64" />
-        </div>
-      )}
+      {statusConexao === "Aguardando conexão..." && !qrcodeBase64 && (
+  <div className="flex justify-center items-center h-64">
+    <svg
+      className="animate-spin h-10 w-10 text-blue-500"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      ></circle>
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
+      ></path>
+    </svg>
+  </div>
+)}
 
-      {statusConexao && (
-        <p className="text-center text-sm text-gray-700 dark:text-gray-300">
-          {statusConexao}
-        </p>
-      )}
+{qrcodeBase64 && (
+  <div className="flex justify-center">
+    <img
+      src={qrcodeBase64}
+      alt="QRCode"
+      className="w-64 h-64 filter grayscale contrast-200"
+    />
+  </div>
+)}
+
 
       {tentativasEsgotadas && (
-        <div className="flex justify-center">
+        <div className="text-center">
           <button
-            onClick={handleTentarNovamente}
-            className="flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            onClick={handleRetry}
+            className="px-4 py-2 mt-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
-            <RotateCw size={16} />
             Tentar novamente
           </button>
         </div>
