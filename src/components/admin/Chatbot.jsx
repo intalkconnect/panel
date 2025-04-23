@@ -3,6 +3,18 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Bot } from "lucide-react";
 
+// Criação do silentAxios para suprimir logs 404
+const silentAxios = axios.create();
+silentAxios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 404) {
+      return Promise.reject({ silent: true }); // marca como silencioso
+    }
+    return Promise.reject(error);
+  }
+);
+
 const Chatbot = () => {
   const [chatbotAtivo, setChatbotAtivo] = useState(false);
   const [qrcodeBase64, setQrcodeBase64] = useState("");
@@ -13,8 +25,8 @@ const Chatbot = () => {
   const empresaId = localStorage.getItem("empresa_id");
 
   useEffect(() => {
-    // Verifica conexão inicial ao montar
-    axios
+    // Verifica conexão inicial ao montar (usando silentAxios)
+    silentAxios
       .get(`https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`, {
         headers: {
           apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
@@ -27,10 +39,9 @@ const Chatbot = () => {
         }
       })
       .catch((err) => {
-        if (err.response?.status !== 404) {
+        if (!err?.silent) {
           console.error("Erro ao verificar conexão inicial:", err);
         }
-        // 404 = instância não existe, não faz nada
       });
   }, []);
 
