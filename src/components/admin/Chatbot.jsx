@@ -1,3 +1,4 @@
+// components/admin/Chatbot.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Bot, RotateCcw } from "lucide-react";
@@ -11,6 +12,33 @@ const Chatbot = () => {
   const [carregandoQRCode, setCarregandoQRCode] = useState(false);
   const empresaId = localStorage.getItem("empresa_id");
 
+  // Verifica se já está conectado ao carregar o componente
+  useEffect(() => {
+    const verificarStatusInicial = async () => {
+      try {
+        const res = await axios.get(
+          `https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`,
+          {
+            headers: {
+              apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+            },
+          }
+        );
+
+        if (res.data.instance?.state === "open") {
+          setChatbotAtivo(true);
+          setStatusConexao("Conectado ✅");
+          setQrcodeBase64("");
+        }
+      } catch (_) {
+        // silencioso
+      }
+    };
+
+    verificarStatusInicial();
+  }, []);
+
+  // Loop para verificar se conectou
   useEffect(() => {
     let interval;
 
@@ -30,15 +58,17 @@ const Chatbot = () => {
                 clearInterval(interval);
                 setStatusConexao("Conectado ✅");
                 setQrcodeBase64("");
+                setTentativasEsgotadas(false);
+                setTentativas(0);
               }
             })
             .catch(() => {
-              // ignora erro
+              // ignora
             });
 
           if (nova >= 4) {
             clearInterval(interval);
-            setQrcodeBase64(""); // <-- Remove QRCode ao esgotar
+            setQrcodeBase64("");
             setTentativasEsgotadas(true);
             setStatusConexao("Falha na conexão");
           }
@@ -53,10 +83,10 @@ const Chatbot = () => {
 
   const handleToggle = async () => {
     if (chatbotAtivo) {
+      // Desligando
       setChatbotAtivo(false);
       setStatusConexao("Desconectando...");
 
-      // Apenas logout
       try {
         await axios.delete(`https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`, {
           headers: {
@@ -69,6 +99,7 @@ const Chatbot = () => {
       setQrcodeBase64("");
       setTentativasEsgotadas(false);
     } else {
+      // Ligando
       setChatbotAtivo(true);
       setCarregandoQRCode(true);
 
@@ -101,6 +132,7 @@ const Chatbot = () => {
     setCarregandoQRCode(true);
     setTentativas(0);
     setTentativasEsgotadas(false);
+    setQrcodeBase64("");
 
     try {
       const res = await axios.get(
