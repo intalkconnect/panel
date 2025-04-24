@@ -1,5 +1,4 @@
-// components/admin/Chatbot.jsx
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { Bot } from "lucide-react";
 
@@ -9,83 +8,65 @@ const Chatbot = () => {
   const [statusConexao, setStatusConexao] = useState("");
   const [tentativasEsgotadas, setTentativasEsgotadas] = useState(false);
   const [carregandoQRCode, setCarregandoQRCode] = useState(false);
+
   const empresaId = localStorage.getItem("empresa_id");
-
-  const verificarStatus = async () => {
-    setCarregandoQRCode(true);
-    try {
-      const res = await axios.get(
-        `https://mensageria-backend-n8n.9j9goo.easypanel.host/webhook/instance?id=${empresaId}`
-      );
-
-      const { status, base64 } = res.data;
-
-      if (status === "conectado") {
-        setChatbotAtivo(true);
-        setStatusConexao("Conectado ✅");
-        setQrcodeBase64("");
-      } else if (status === "conectando") {
-        setChatbotAtivo(false); // ainda não está conectado de fato
-        setStatusConexao("Aguardando conexão...");
-        setQrcodeBase64(base64 || "");
-      } else {
-        setStatusConexao("Falha na conexão. Tente novamente.");
-        setTentativasEsgotadas(true);
-      }
-    } catch (err) {
-      console.error("Erro ao verificar status:", err);
-      setStatusConexao("Erro ao conectar.");
-    } finally {
-      setCarregandoQRCode(false);
-    }
-  };
-
-  useEffect(() => {
-    verificarStatus();
-  }, []);
 
   const handleToggle = async () => {
     if (chatbotAtivo) {
-      // Se desativando, apaga a instância
+      // Desativar: faz logout e delete
       setChatbotAtivo(false);
       setStatusConexao("Desconectando...");
 
       try {
-        await axios.delete(
-          `https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`,
-          {
-            headers: {
-              apikey:
-                "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-            },
-          }
-        );
+        await axios.delete(`https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`, {
+          headers: {
+            apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+          },
+        });
       } catch (_) {
-        // ignora
+        // ignora erro de logout
       } finally {
-        await axios.delete(
-          `https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`,
-          {
-            headers: {
-              apikey:
-                "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-            },
-          }
-        );
+        await axios.delete(`https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`, {
+          headers: {
+            apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+          },
+        });
 
         setStatusConexao("");
         setQrcodeBase64("");
         setTentativasEsgotadas(false);
       }
     } else {
-      // Se ativando, tenta conectar (gera QRCode ou ativa direto)
-      await verificarStatus();
-    }
-  };
+      // Ativar: consulta status e gera QRCode se necessário
+      setChatbotAtivo(true);
+      setCarregandoQRCode(true);
 
-  const handleRetry = () => {
-    setTentativasEsgotadas(false);
-    verificarStatus();
+      try {
+        const res = await axios.get(
+          `https://mensageria-backend-n8n.9j9goo.easypanel.host/webhook/instance?id=${empresaId}`
+        );
+
+        const { status, base64 } = res.data;
+
+        if (status === "conectado") {
+          setStatusConexao("Conectado ✅");
+          setQrcodeBase64("");
+        } else if (status === "conectando") {
+          setStatusConexao("Aguardando conexão...");
+          setQrcodeBase64(base64 || "");
+        } else {
+          setChatbotAtivo(false);
+          setStatusConexao("Falha ao conectar");
+          setTentativasEsgotadas(true);
+        }
+      } catch (err) {
+        console.error("Erro ao consultar status:", err);
+        setChatbotAtivo(false);
+        setStatusConexao("Erro ao conectar");
+      } finally {
+        setCarregandoQRCode(false);
+      }
+    }
   };
 
   return (
@@ -111,20 +92,8 @@ const Chatbot = () => {
 
       {carregandoQRCode && (
         <div className="flex justify-center items-center h-64">
-          <svg
-            className="animate-spin h-10 w-10 text-black"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
+          <svg className="animate-spin h-10 w-10 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path
               className="opacity-75"
               fill="currentColor"
@@ -146,12 +115,7 @@ const Chatbot = () => {
 
       {tentativasEsgotadas && (
         <div className="text-center">
-          <button
-            onClick={handleRetry}
-            className="px-4 py-2 mt-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Tentar novamente
-          </button>
+          <p className="text-red-600">Falha na conexão. Tente novamente.</p>
         </div>
       )}
 
