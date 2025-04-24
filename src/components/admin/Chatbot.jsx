@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Bot } from "lucide-react";
+import { Bot, RotateCcw } from "lucide-react";
 
 const Chatbot = () => {
   const [chatbotAtivo, setChatbotAtivo] = useState(false);
@@ -38,6 +38,7 @@ const Chatbot = () => {
 
           if (nova >= 4) {
             clearInterval(interval);
+            setQrcodeBase64(""); // <-- Remove QRCode ao esgotar
             setTentativasEsgotadas(true);
             setStatusConexao("Falha na conexão");
           }
@@ -54,6 +55,8 @@ const Chatbot = () => {
     if (chatbotAtivo) {
       setChatbotAtivo(false);
       setStatusConexao("Desconectando...");
+
+      // Apenas logout
       try {
         await axios.delete(`https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`, {
           headers: {
@@ -61,11 +64,6 @@ const Chatbot = () => {
           },
         });
       } catch (_) {}
-      await axios.delete(`https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`, {
-        headers: {
-          apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-        },
-      });
 
       setStatusConexao("");
       setQrcodeBase64("");
@@ -73,6 +71,7 @@ const Chatbot = () => {
     } else {
       setChatbotAtivo(true);
       setCarregandoQRCode(true);
+
       try {
         const res = await axios.get(
           `https://mensageria-backend-n8n.9j9goo.easypanel.host/webhook/instance?id=${empresaId}`
@@ -157,7 +156,7 @@ const Chatbot = () => {
         </div>
       )}
 
-      {qrcodeBase64 && (
+      {qrcodeBase64 && !tentativasEsgotadas && (
         <div className="flex justify-center">
           <img
             src={qrcodeBase64}
@@ -168,12 +167,13 @@ const Chatbot = () => {
       )}
 
       {tentativasEsgotadas && (
-        <div className="text-center">
+        <div className="flex justify-center">
           <button
             onClick={handleRetry}
-            className="px-4 py-2 mt-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="text-blue-600 hover:text-blue-800"
+            title="Tentar novamente"
           >
-            Tentar novamente
+            <RotateCcw size={28} />
           </button>
         </div>
       )}
