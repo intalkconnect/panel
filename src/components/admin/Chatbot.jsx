@@ -1,7 +1,7 @@
 // components/admin/Chatbot.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Bot, RotateCcw } from "lucide-react";
+import { Bot, RotateCcw, CheckCircle, XCircle, Loader  } from "lucide-react";
 
 const Chatbot = () => {
   const [chatbotAtivo, setChatbotAtivo] = useState(false);
@@ -210,11 +210,26 @@ const Chatbot = () => {
         </div>
       )}
 
-      {statusConexao && (
-        <p className="text-center text-sm text-gray-700 dark:text-gray-300">
-          {statusConexao}
-        </p>
+{statusConexao && (
+  <div className="flex justify-center">
+    <span
+      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${
+        statusConexao.includes("Conectado")
+          ? "bg-green-100 text-green-800"
+          : statusConexao.includes("Falha")
+          ? "bg-red-100 text-red-800"
+          : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100"
+      }`}
+    >
+      {statusConexao.includes("Conectado") && <CheckCircle size={16} />}
+      {statusConexao.includes("Falha") && <XCircle size={16} />}
+      {statusConexao.includes("Aguardando") && (
+        <Loader size={16} className="animate-spin" />
       )}
+      {statusConexao}
+    </span>
+  </div>
+)}
     </div>
   );
 };
