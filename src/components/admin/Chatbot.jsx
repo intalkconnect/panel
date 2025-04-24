@@ -3,19 +3,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Bot } from "lucide-react";
 
-// Criação do silentAxios para suprimir logs 404
-const silentAxios = axios.create();
-silentAxios.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 404) {
-      // Retorna uma resposta "vazia" com status 404, não rejeita a promise
-      return Promise.resolve({ status: 404, data: {}, silent: true });
-    }
-    return Promise.reject(error);
-  }
-);
-
 const Chatbot = () => {
   const [chatbotAtivo, setChatbotAtivo] = useState(false);
   const [qrcodeBase64, setQrcodeBase64] = useState("");
@@ -25,36 +12,35 @@ const Chatbot = () => {
   const [carregandoQRCode, setCarregandoQRCode] = useState(false);
   const empresaId = localStorage.getItem("empresa_id");
 
-useEffect(() => {
-  const checkConnectionSilently = async () => {
-    try {
-      const res = await axios.get(
-        `https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`,
-        {
-          headers: {
-            apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-          },
-          validateStatus: (status) => status < 500, // evita que 404 vire erro
+  useEffect(() => {
+    const verificarStatusInicial = async () => {
+      try {
+        const res = await axios.get(
+          `https://mensageria-backend-n8n.9j9goo.easypanel.host/webhook/instance?id=${empresaId}`
+        );
+
+        const { status, base64 } = res.data;
+
+        if (status === "conectado") {
+          setChatbotAtivo(true);
+          setStatusConexao("Conectado ✅");
+          setQrcodeBase64("");
+        } else if (status === "conectando") {
+          setChatbotAtivo(true);
+          setStatusConexao("Aguardando conexão...");
+          setQrcodeBase64(base64 || "");
+        } else {
+          setChatbotAtivo(false);
+          setStatusConexao("");
+          setQrcodeBase64("");
         }
-      );
-
-      if (res.status === 404) {
-        // Instância não existe, OK
-        return;
+      } catch (err) {
+        console.error("Erro ao consultar status via API simplificada:", err);
       }
+    };
 
-      if (res.data.instance?.state === "connected") {
-        setChatbotAtivo(true);
-        setStatusConexao("Conectado ✅");
-      }
-    } catch (err) {
-      console.error("Erro ao verificar conexão inicial:", err);
-    }
-  };
-
-  checkConnectionSilently();
-}, []);
-
+    verificarStatusInicial();
+  }, []);
 
   useEffect(() => {
     let interval;
@@ -101,15 +87,12 @@ useEffect(() => {
 
               axios
                 .get(
-                  `https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`,
-                  {
-                    headers: {
-                      apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-                    },
-                  }
+                  `https://mensageria-backend-n8n.9j9goo.easypanel.host/webhook/instance?id=${empresaId}`
                 )
                 .then((response) => {
-                  if (response.data.instance?.state === "connected") {
+                  const { status } = response.data;
+
+                  if (status === "conectado") {
                     setStatusConexao("Conectado ✅");
                     setQrcodeBase64("");
                     clearInterval(interval);
@@ -138,23 +121,28 @@ useEffect(() => {
       return () => clearInterval(interval);
     } else {
       if (statusConexao === "Conectado ✅") {
-        // Logout apenas se estava conectado
         axios
-  .delete(`https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`, {
-    headers: {
-      apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-    },
-  })
-  .catch(() => {
-    // ignora erro do logout, segue para o delete
-  })
-  .finally(() => {
-    axios.delete(`https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`, {
-      headers: {
-        apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-      },
-    });
-  });
+          .delete(
+            `https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`,
+            {
+              headers: {
+                apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+              },
+            }
+          )
+          .catch(() => {
+            // ignora erro do logout
+          })
+          .finally(() => {
+            axios.delete(
+              `https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`,
+              {
+                headers: {
+                  apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+                },
+              }
+            );
+          });
       }
 
       setQrcodeBase64("");
@@ -210,8 +198,20 @@ useEffect(() => {
 
       {carregandoQRCode && (
         <div className="flex justify-center items-center h-64">
-          <svg className="animate-spin h-10 w-10 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <svg
+            className="animate-spin h-10 w-10 text-black"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
             <path
               className="opacity-75"
               fill="currentColor"
