@@ -25,30 +25,36 @@ const Chatbot = () => {
   const [carregandoQRCode, setCarregandoQRCode] = useState(false);
   const empresaId = localStorage.getItem("empresa_id");
 
-  useEffect(() => {
-    // Verifica conexão inicial ao montar (usando silentAxios)
-    silentAxios
-      .get(`https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`, {
-        headers: {
-          apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-        },
-      })
-.then((res) => {
-  if (res.status === 404) {
-    // Silencioso, esperado
-    return;
-  }
-  if (res.data.instance?.state === "connected") {
-    setChatbotAtivo(true);
-    setStatusConexao("Conectado ✅");
-  }
-})
-.catch((err) => {
-        if (!err?.silent) {
-          console.error("Erro ao verificar conexão inicial:", err);
+useEffect(() => {
+  const checkConnectionSilently = async () => {
+    try {
+      const res = await axios.get(
+        `https://wa-srv.dkdevs.com.br/instance/connectionState/${empresaId}`,
+        {
+          headers: {
+            apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+          },
+          validateStatus: (status) => status < 500, // evita que 404 vire erro
         }
-      });
-  }, []);
+      );
+
+      if (res.status === 404) {
+        // Instância não existe, OK
+        return;
+      }
+
+      if (res.data.instance?.state === "connected") {
+        setChatbotAtivo(true);
+        setStatusConexao("Conectado ✅");
+      }
+    } catch (err) {
+      console.error("Erro ao verificar conexão inicial:", err);
+    }
+  };
+
+  checkConnectionSilently();
+}, []);
+
 
   useEffect(() => {
     let interval;
@@ -134,24 +140,21 @@ const Chatbot = () => {
       if (statusConexao === "Conectado ✅") {
         // Logout apenas se estava conectado
         axios
-          .delete(
-            `https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`,
-            {
-              headers: {
-                apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-              },
-            }
-          )
-          .catch(() => {
-            return axios.delete(
-              `https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`,
-              {
-                headers: {
-                  apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-                },
-              }
-            );
-          });
+  .delete(`https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`, {
+    headers: {
+      apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+    },
+  })
+  .catch(() => {
+    // ignora erro do logout, segue para o delete
+  })
+  .finally(() => {
+    axios.delete(`https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`, {
+      headers: {
+        apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+      },
+    });
+  });
       }
 
       setQrcodeBase64("");
