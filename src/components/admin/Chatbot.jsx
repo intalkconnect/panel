@@ -156,24 +156,47 @@ const Chatbot = () => {
 
   return (
     <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 shadow border dark:border-gray-700 space-y-4">
-      <div className="flex items-center gap-2 justify-between">
-        <div className="flex items-center gap-2">
-          <Bot className="text-blue-500" />
-          <h2 className="text-lg font-semibold">Chatbot</h2>
-        </div>
-        <button
-          onClick={handleToggle}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-            chatbotAtivo ? "bg-blue-600" : "bg-gray-400"
-          }`}
-        >
-          <span
-            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-              chatbotAtivo ? "translate-x-6" : "translate-x-1"
-            }`}
-          />
-        </button>
-      </div>
+<div className="relative flex items-center justify-between">
+  <div className="flex items-center gap-2">
+    <Bot className="text-blue-500" />
+    <h2 className="text-lg font-semibold">Chatbot</h2>
+  </div>
+
+  {statusConexao && (
+    <div className="absolute left-1/2 transform -translate-x-1/2">
+      <span
+        className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${
+          statusConexao.includes("Conectado")
+            ? "bg-green-100 text-green-800"
+            : statusConexao.includes("Falha")
+            ? "bg-red-100 text-red-800"
+            : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100"
+        }`}
+      >
+        {statusConexao.includes("Conectado") && <CheckCircle size={16} />}
+        {statusConexao.includes("Falha") && <XCircle size={16} />}
+        {statusConexao.includes("Aguardando") && (
+          <Loader size={16} className="animate-spin" />
+        )}
+        {statusConexao}
+      </span>
+    </div>
+  )}
+
+  <button
+    onClick={handleToggle}
+    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+      chatbotAtivo ? "bg-blue-600" : "bg-gray-400"
+    }`}
+  >
+    <span
+      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+        chatbotAtivo ? "translate-x-6" : "translate-x-1"
+      }`}
+    />
+  </button>
+</div>
+
 
       {carregandoQRCode && (
         <div className="flex justify-center items-center h-64">
@@ -209,27 +232,6 @@ const Chatbot = () => {
           </button>
         </div>
       )}
-
-{statusConexao && (
-  <div className="flex justify-center items-center h-12">
-    <span
-      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${
-        statusConexao.includes("Conectado")
-          ? "bg-green-100 text-green-800"
-          : statusConexao.includes("Falha")
-          ? "bg-red-100 text-red-800"
-          : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100"
-      }`}
-    >
-      {statusConexao.includes("Conectado") && <CheckCircle size={16} />}
-      {statusConexao.includes("Falha") && <XCircle size={16} />}
-      {statusConexao.includes("Aguardando") && (
-        <Loader size={16} className="animate-spin" />
-      )}
-      {statusConexao}
-    </span>
-  </div>
-)}
     </div>
   );
 };
