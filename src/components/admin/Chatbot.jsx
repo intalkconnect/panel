@@ -161,7 +161,7 @@ const Chatbot = () => {
           <img
             src={qrcodeBase64}
             alt="QRCode"
-            className="w-64 h-64 filter grayscale contrast-200"
+            className="w-64 h-64"
           />
         </div>
       )}
