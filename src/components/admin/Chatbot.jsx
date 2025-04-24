@@ -9,7 +9,8 @@ silentAxios.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 404) {
-      return Promise.reject({ silent: true }); // marca como silencioso
+      // Retorna uma resposta "vazia" com status 404, não rejeita a promise
+      return Promise.resolve({ status: 404, data: {}, silent: true });
     }
     return Promise.reject(error);
   }
@@ -32,13 +33,17 @@ const Chatbot = () => {
           apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
         },
       })
-      .then((res) => {
-        if (res.data.instance?.state === "connected") {
-          setChatbotAtivo(true);
-          setStatusConexao("Conectado ✅");
-        }
-      })
-      .catch((err) => {
+.then((res) => {
+  if (res.status === 404) {
+    // Silencioso, esperado
+    return;
+  }
+  if (res.data.instance?.state === "connected") {
+    setChatbotAtivo(true);
+    setStatusConexao("Conectado ✅");
+  }
+})
+.catch((err) => {
         if (!err?.silent) {
           console.error("Erro ao verificar conexão inicial:", err);
         }
