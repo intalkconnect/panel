@@ -21,9 +21,11 @@ const Chatbot = () => {
       const { status, base64 } = res.data;
 
       if (status === "conectado") {
+        setChatbotAtivo(true);
         setStatusConexao("Conectado ✅");
         setQrcodeBase64("");
       } else if (status === "conectando") {
+        setChatbotAtivo(false); // ainda não está conectado de fato
         setStatusConexao("Aguardando conexão...");
         setQrcodeBase64(base64 || "");
       } else {
@@ -31,7 +33,7 @@ const Chatbot = () => {
         setTentativasEsgotadas(true);
       }
     } catch (err) {
-      console.error("Erro ao verificar status do chatbot:", err);
+      console.error("Erro ao verificar status:", err);
       setStatusConexao("Erro ao conectar.");
     } finally {
       setCarregandoQRCode(false);
@@ -39,37 +41,47 @@ const Chatbot = () => {
   };
 
   useEffect(() => {
-    verificarStatus(); // Verificação inicial
+    verificarStatus();
   }, []);
 
-  useEffect(() => {
+  const handleToggle = async () => {
     if (chatbotAtivo) {
-      verificarStatus(); // Ativou -> tenta conectar/verificar
-    } else {
-      // Desativou -> faz logout e delete
-      axios
-        .delete(`https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`, {
-          headers: {
-            apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-          },
-        })
-        .catch(() => {})
-        .finally(() => {
-          axios.delete(
-            `https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`,
-            {
-              headers: {
-                apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-              },
-            }
-          );
-        });
+      // Se desativando, apaga a instância
+      setChatbotAtivo(false);
+      setStatusConexao("Desconectando...");
 
-      setQrcodeBase64("");
-      setStatusConexao("");
-      setTentativasEsgotadas(false);
+      try {
+        await axios.delete(
+          `https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`,
+          {
+            headers: {
+              apikey:
+                "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+            },
+          }
+        );
+      } catch (_) {
+        // ignora
+      } finally {
+        await axios.delete(
+          `https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`,
+          {
+            headers: {
+              apikey:
+                "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+            },
+          }
+        );
+
+        setStatusConexao("");
+        setQrcodeBase64("");
+        setTentativasEsgotadas(false);
+      }
+    } else {
+      // Se ativando, tenta conectar (gera QRCode ou ativa direto)
+      await verificarStatus();
     }
-  }, [chatbotAtivo]);
+  };
 
   const handleRetry = () => {
     setTentativasEsgotadas(false);
@@ -84,7 +96,7 @@ const Chatbot = () => {
           <h2 className="text-lg font-semibold">Chatbot</h2>
         </div>
         <button
-          onClick={() => setChatbotAtivo((prev) => !prev)}
+          onClick={handleToggle}
           className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
             chatbotAtivo ? "bg-blue-600" : "bg-gray-400"
           }`}
