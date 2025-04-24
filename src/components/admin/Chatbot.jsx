@@ -211,7 +211,7 @@ const Chatbot = () => {
       )}
 
 {statusConexao && (
-  <div className="flex justify-center">
+  <div className="flex justify-center items-center h-12">
     <span
       className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${
         statusConexao.includes("Conectado")
