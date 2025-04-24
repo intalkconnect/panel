@@ -7,143 +7,63 @@ const Chatbot = () => {
   const [chatbotAtivo, setChatbotAtivo] = useState(false);
   const [qrcodeBase64, setQrcodeBase64] = useState("");
   const [statusConexao, setStatusConexao] = useState("");
-  const [tentativas, setTentativas] = useState(0);
   const [tentativasEsgotadas, setTentativasEsgotadas] = useState(false);
   const [carregandoQRCode, setCarregandoQRCode] = useState(false);
   const empresaId = localStorage.getItem("empresa_id");
 
-  useEffect(() => {
-    const verificarStatusInicial = async () => {
-      try {
-        const res = await axios.get(
-          `https://mensageria-backend-n8n.9j9goo.easypanel.host/webhook/instance?id=${empresaId}`
-        );
+  const verificarStatus = async () => {
+    setCarregandoQRCode(true);
+    try {
+      const res = await axios.get(
+        `https://mensageria-backend-n8n.9j9goo.easypanel.host/webhook/instance?id=${empresaId}`
+      );
 
-        const { status, base64 } = res.data;
+      const { status, base64 } = res.data;
 
-        if (status === "conectado") {
-          setChatbotAtivo(true);
-          setStatusConexao("Conectado ✅");
-          setQrcodeBase64("");
-        } else if (status === "conectando") {
-          setChatbotAtivo(true);
-          setStatusConexao("Aguardando conexão...");
-          setQrcodeBase64(base64 || "");
-        } else {
-          setChatbotAtivo(false);
-          setStatusConexao("");
-          setQrcodeBase64("");
-        }
-      } catch (err) {
-        console.error("Erro ao consultar status via API simplificada:", err);
+      if (status === "conectado") {
+        setStatusConexao("Conectado ✅");
+        setQrcodeBase64("");
+      } else if (status === "conectando") {
+        setStatusConexao("Aguardando conexão...");
+        setQrcodeBase64(base64 || "");
+      } else {
+        setStatusConexao("Falha na conexão. Tente novamente.");
+        setTentativasEsgotadas(true);
       }
-    };
+    } catch (err) {
+      console.error("Erro ao verificar status do chatbot:", err);
+      setStatusConexao("Erro ao conectar.");
+    } finally {
+      setCarregandoQRCode(false);
+    }
+  };
 
-    verificarStatusInicial();
+  useEffect(() => {
+    verificarStatus(); // Verificação inicial
   }, []);
 
   useEffect(() => {
-    let interval;
-
     if (chatbotAtivo) {
-      setTentativas(0);
-      setTentativasEsgotadas(false);
-      setStatusConexao("Aguardando conexão...");
-      setCarregandoQRCode(true);
-
-      axios
-        .post(
-          "https://wa-srv.dkdevs.com.br/instance/create",
-          {
-            instanceName: empresaId,
-            qrcode: true,
-            integration: "WHATSAPP-BAILEYS",
-            groupsIgnore: true,
-            webhook: {
-              url: "https://mensageria-backend-n8n.9j9goo.easypanel.host/webhook/2add3ce5-aa7a-42dd-8ff4-f94ef7f08955",
-              byEvents: false,
-              base64: true,
-              headers: {
-                autorization:
-                  "Bearer nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-                "Content-Type": "application/json",
-              },
-              events: ["MESSAGES_UPSERT"],
-            },
-          },
-          {
-            headers: {
-              apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-            },
-          }
-        )
-        .then((res) => {
-          setQrcodeBase64(res.data.qrcode?.base64 || "");
-          setCarregandoQRCode(false);
-
-          interval = setInterval(() => {
-            setTentativas((prev) => {
-              const novaTentativa = prev + 1;
-
-              axios
-                .get(
-                  `https://mensageria-backend-n8n.9j9goo.easypanel.host/webhook/instance?id=${empresaId}`
-                )
-                .then((response) => {
-                  const { status } = response.data;
-
-                  if (status === "conectado") {
-                    setStatusConexao("Conectado ✅");
-                    setQrcodeBase64("");
-                    clearInterval(interval);
-                  }
-                })
-                .catch(() => {
-                  // ignora
-                });
-
-              if (novaTentativa >= 4) {
-                clearInterval(interval);
-                setQrcodeBase64("");
-                setStatusConexao("Falha na conexão. Tente novamente.");
-                setTentativasEsgotadas(true);
-              }
-
-              return novaTentativa;
-            });
-          }, 5000);
-        })
-        .catch((err) => {
-          console.error("Erro ao criar instância:", err);
-          setCarregandoQRCode(false);
-        });
-
-      return () => clearInterval(interval);
+      verificarStatus(); // Ativou -> tenta conectar/verificar
     } else {
-      if (statusConexao === "Conectado ✅") {
-        axios
-          .delete(
-            `https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`,
+      // Desativou -> faz logout e delete
+      axios
+        .delete(`https://wa-srv.dkdevs.com.br/instance/logout/${empresaId}`, {
+          headers: {
+            apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
+          },
+        })
+        .catch(() => {})
+        .finally(() => {
+          axios.delete(
+            `https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`,
             {
               headers: {
                 apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
               },
             }
-          )
-          .catch(() => {
-            // ignora erro do logout
-          })
-          .finally(() => {
-            axios.delete(
-              `https://wa-srv.dkdevs.com.br/instance/delete/${empresaId}`,
-              {
-                headers: {
-                  apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-                },
-              }
-            );
-          });
-      }
+          );
+        });
 
       setQrcodeBase64("");
       setStatusConexao("");
@@ -152,27 +72,8 @@ const Chatbot = () => {
   }, [chatbotAtivo]);
 
   const handleRetry = () => {
-    setTentativas(0);
     setTentativasEsgotadas(false);
-    setCarregandoQRCode(true);
-    axios
-      .get(
-        `https://wa-srv.dkdevs.com.br/instance/connect/${empresaId}`,
-        {
-          headers: {
-            apikey: "nxSU2UP8m9p5bfjh32FR5KqDeq5cdp7PtETBI67d04cf59437f",
-          },
-        }
-      )
-      .then((res) => {
-        setQrcodeBase64(res.data.base64 || "");
-        setStatusConexao("Aguardando conexão...");
-        setCarregandoQRCode(false);
-      })
-      .catch((err) => {
-        console.error("Erro ao tentar reconectar:", err);
-        setCarregandoQRCode(false);
-      });
+    verificarStatus();
   };
 
   return (
