@@ -26,7 +26,7 @@ const Chatbot = () => {
               },
             })
             .then((res) => {
-              if (res.data.instance?.state === "connected") {
+              if (res.data.instance?.state === "open") {
                 clearInterval(interval);
                 setStatusConexao("Conectado ✅");
                 setQrcodeBase64("");
