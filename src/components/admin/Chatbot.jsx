@@ -27,7 +27,7 @@ const Chatbot = () => {
 
         if (res.data.instance?.state === "open") {
           setChatbotAtivo(true);
-          setStatusConexao("Conectado ✅");
+          setStatusConexao("Conectado");
           setQrcodeBase64("");
         }
       } catch (_) {
@@ -56,7 +56,7 @@ const Chatbot = () => {
             .then((res) => {
               if (res.data.instance?.state === "open") {
                 clearInterval(interval);
-                setStatusConexao("Conectado ✅");
+                setStatusConexao("Conectado");
                 setQrcodeBase64("");
                 setTentativasEsgotadas(false);
                 setTentativas(0);
@@ -111,7 +111,7 @@ const Chatbot = () => {
         const { status, base64 } = res.data;
 
         if (status === "conectado") {
-          setStatusConexao("Conectado ✅");
+          setStatusConexao("Conectado");
         } else if (status === "conectando") {
           setStatusConexao("Aguardando conexão...");
           setQrcodeBase64(base64 || "");
