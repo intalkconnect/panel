@@ -6,7 +6,8 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
   const [removerSelecionados, setRemoverSelecionados] = useState([]);
   const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(1);
 
-  const temDetalhamento = typeof produto.detalhamento === "object" && produto.detalhamento !== null;
+  const temDetalhamento =
+    typeof produto.detalhamento === "object" && produto.detalhamento !== null;
 
   const abrirDetalhes = () => {
     setExtrasSelecionados([]);
@@ -42,11 +43,19 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
     else onAdicionar(produto);
   };
 
+  // Cores do tema com fallback
+  const corFundo = tema?.cor_fundo || "#ffffff";
+  const corSecundaria = tema?.cor_secundaria || "#f3f4f6";
+  const corTexto = tema?.cor_texto || "#1f2937";
+  const corPrimaria = tema?.cor_primaria || "#059669";
+  const corBotao = tema?.cor_botao || "#ef4444";
+  const corBotaoTexto = tema?.cor_botao_texto || "#ffffff";
+
   return (
     <>
       <div
         className="rounded-3xl shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 p-6 flex flex-col items-center justify-between w-full max-w-sm mx-auto"
-        style={{ backgroundColor: tema?.cor_fundo || "white" }}
+        style={{ backgroundColor: corFundo }}
       >
         <img
           src={produto.imagem_url}
@@ -54,10 +63,10 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
           loading="lazy"
           className="w-20 h-20 object-contain mb-2"
         />
-        <h2 className="text-base font-bold text-center" style={{ color: tema?.cor_texto || "#1F2937" }}>
+        <h2 className="text-base font-bold text-center" style={{ color: corTexto }}>
           {produto.nome}
         </h2>
-        <p className="font-semibold text-sm mb-2" style={{ color: tema?.cor_primaria || "#059669" }}>
+        <p className="font-semibold text-sm mb-2" style={{ color: corPrimaria }}>
           {produto.preco.toLocaleString("pt-BR", {
             style: "currency",
             currency: "BRL",
@@ -73,8 +82,8 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
             onClick={handleCliqueAdicionar}
             className="mt-2 px-6 py-2 rounded-full text-sm font-semibold transition-all shadow-md hover:shadow-lg"
             style={{
-              backgroundColor: tema?.cor_botao || "#EF4444",
-              color: tema?.cor_botao_texto || "#FFFFFF",
+              backgroundColor: corBotao,
+              color: corBotaoTexto,
             }}
           >
             Adicionar
@@ -93,8 +102,8 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
               }
               className="w-8 h-8 rounded-full text-lg font-bold"
               style={{
-                backgroundColor: tema?.cor_botao || "#EF4444",
-                color: tema?.cor_botao_texto || "#FFFFFF",
+                backgroundColor: corBotao,
+                color: corBotaoTexto,
               }}
             >
               –
@@ -108,8 +117,8 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
               }
               className="w-8 h-8 rounded-full text-lg font-bold"
               style={{
-                backgroundColor: tema?.cor_botao || "#EF4444",
-                color: tema?.cor_botao_texto || "#FFFFFF",
+                backgroundColor: corBotao,
+                color: corBotaoTexto,
               }}
             >
               +
@@ -125,7 +134,7 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
         >
           <div
             className="p-6 rounded-2xl shadow-xl max-w-md w-full text-left relative max-h-[90vh] overflow-y-auto"
-            style={{ backgroundColor: tema?.cor_fundo || "#fff", color: tema?.cor_texto || "#000" }}
+            style={{ backgroundColor: corFundo, color: corTexto }}
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-xl font-bold text-center mb-2">
@@ -183,22 +192,26 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
               <label className="text-sm font-semibold">Quantidade:</label>
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => setQuantidadeSelecionada((q) => Math.max(1, q - 1))}
+                  onClick={() =>
+                    setQuantidadeSelecionada((q) => Math.max(1, q - 1))
+                  }
                   className="w-8 h-8 rounded-full text-xl font-bold"
                   style={{
-                    backgroundColor: tema?.cor_secundaria || "#E5E7EB",
-                    color: tema?.cor_texto || "#000",
+                    backgroundColor: corSecundaria,
+                    color: corTexto,
                   }}
                 >
                   –
                 </button>
-                <span className="text-base font-bold">{quantidadeSelecionada}</span>
+                <span className="text-base font-bold">
+                  {quantidadeSelecionada}
+                </span>
                 <button
                   onClick={() => setQuantidadeSelecionada((q) => q + 1)}
                   className="w-8 h-8 rounded-full text-xl font-bold"
                   style={{
-                    backgroundColor: tema?.cor_secundaria || "#E5E7EB",
-                    color: tema?.cor_texto || "#000",
+                    backgroundColor: corSecundaria,
+                    color: corTexto,
                   }}
                 >
                   +
@@ -211,8 +224,8 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
                 onClick={() => setMostrarDetalhes(false)}
                 className="px-4 py-2 rounded-lg font-semibold"
                 style={{
-                  backgroundColor: tema?.cor_secundaria || "#E5E7EB",
-                  color: tema?.cor_texto || "#000",
+                  backgroundColor: corSecundaria,
+                  color: corTexto,
                 }}
               >
                 Cancelar
@@ -221,8 +234,8 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
                 onClick={handleAdicionar}
                 className="px-4 py-2 rounded-lg font-bold"
                 style={{
-                  backgroundColor: tema?.cor_botao || "#EF4444",
-                  color: tema?.cor_botao_texto || "#FFFFFF",
+                  backgroundColor: corBotao,
+                  color: corBotaoTexto,
                 }}
               >
                 Adicionar ao pedido
