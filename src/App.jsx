@@ -69,19 +69,23 @@ function App() {
     }
   }, [empresaId]);
 
-  useEffect(() => {
-    if (empresa?.id) {
-      supabase
-        .from("temas")
-        .select("*")
-        .eq("empresa_id", empresa.id)
-        .single()
-        .then(({ data, error }) => {
-          if (error) console.error("Erro ao carregar tema:", error);
-          else setTema(data);
-        });
-    }
-  }, [empresa]);
+useEffect(() => {
+  if (!empresaId) return;
+
+  supabase
+    .from("temas")
+    .select("*")
+    .eq("empresa_id", empresaId)
+    .single()
+    .then(({ data, error }) => {
+      if (error) {
+        console.error("Erro ao carregar tema:", error);
+      } else {
+        setTema(data);
+      }
+    });
+}, [empresaId]);
+
 
   useInatividade(
     iniciarTela,
