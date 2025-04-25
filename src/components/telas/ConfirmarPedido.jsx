@@ -9,7 +9,6 @@ function ConfirmarPedido({
   nomeCliente,
   empresaId,
   whatsappId,
-  instance,
   phoneNumber,
 }) {
   const handleConfirmar = () => {
@@ -20,7 +19,6 @@ function ConfirmarPedido({
       modoConsumo,
       empresaId,
       whatsappId,
-      instance,
       phoneNumber,
     };
 
