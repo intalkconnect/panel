@@ -15,20 +15,7 @@ const Configuracoes = () => {
       </div>
 
       {/* Temas do Totem */}
-      <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 shadow border dark:border-gray-700">
-        <div className="flex items-center gap-2 mb-4">
-          <Palette className="text-purple-500" />
-          <h2 className="text-xl font-semibold">Temas do Totem</h2>
-        </div>
-        <label className="block mb-2 text-sm font-medium">
-          Selecione o tema:
-        </label>
-        <select className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-          <option>Claro</option>
-          <option>Escuro</option>
-          <option>Automático</option>
-        </select>
-      </div>
+<SelecionarTema />
 
       {/* Configurações do Totem */}
       <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 shadow border dark:border-gray-700">
