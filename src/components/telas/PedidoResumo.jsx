@@ -11,10 +11,7 @@ function PedidoResumo({ carrinho, total, onRemover, onFinalizar, tema }) {
   return (
     <div
       className="border-t p-4"
-      style={{
-        backgroundColor: corFundo,
-        color: corTexto,
-      }}
+      style={{ backgroundColor: corFundo, color: corTexto }}
     >
       <h2 className="text-xl font-bold mb-2">Meu Pedido</h2>
 
@@ -34,14 +31,13 @@ function PedidoResumo({ carrinho, total, onRemover, onFinalizar, tema }) {
       ) : (
         <>
           <ul className="divide-y max-h-40 overflow-y-auto text-base">
-            {carrinho.map((item) => (
+            {carrinho.map((item, index) => (
               <li
-                key={item.id}
+                key={`${item.id}-${index}`}
                 className="py-2 flex justify-between items-center"
               >
                 <div>
-                  <span className="font-medium">{item.nome}</span> x
-                  {item.quantidade}
+                  <span className="font-medium">{item.nome}</span> x{item.quantidade}
                 </div>
                 <div className="flex items-center gap-3">
                   <span>
