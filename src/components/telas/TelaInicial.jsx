@@ -1,66 +1,55 @@
-import React, { useEffect, useState } from "react";
-import { supabase } from "../../data/supabaseClient";
-import { Loader2 } from "lucide-react";
+import React from "react";
 
-function TelaInicial({ onIniciar, empresa }) {
-  const [tema, setTema] = useState(null);
+function NomeCliente({ nome, onChange, onConfirmar, tema }) {
+  const corFundo = tema?.cor_fundo || "#ffffff";
+  const corTexto = tema?.cor_texto || "#000000";
+  const corSecundaria = tema?.cor_secundaria || "#fff1f2";
+  const corPrimaria = tema?.cor_primaria || "#dc2626";
+  const corBotao = tema?.cor_botao || "#16a34a";
+  const corBotaoTexto = tema?.cor_botao_texto || "#ffffff";
 
-  useEffect(() => {
-    const buscarTema = async () => {
-      if (!empresa?.id) return;
-
-      const { data, error } = await supabase
-        .from("temas")
-        .select("*")
-        .eq("empresa_id", empresa.id)
-        .single();
-
-      if (error) {
-        console.error("Erro ao carregar tema:", error);
-      } else {
-        setTema(data);
-      }
-    };
-
-    buscarTema();
-  }, [empresa]);
-
-  if (!tema) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <Loader2 className="h-10 w-10 text-gray-400 animate-spin" />
-      </div>
-    );
-  }
-
-  const corFundo = tema.cor_fundo || "#ffffff";
-  const corSecundaria = tema.cor_secundaria || "#f3f4f6";
-  const corTexto = tema.cor_texto || "#1f2937";
-  const corPrimaria = tema.cor_primaria || "#ef4444";
+  const nomeValido = nome.trim().length > 0;
 
   return (
     <div
-      onClick={onIniciar}
-      className="w-full h-screen flex flex-col items-center justify-center text-center cursor-pointer select-none"
-      style={{
-        background: linear-gradient(to bottom right, ${corFundo}, ${corSecundaria}),
-        color: corTexto,
-      }}
+      className="min-h-screen flex items-center justify-center px-4"
+      style={{ backgroundColor: corFundo, color: corTexto }}
     >
-      <div className="text-7xl mb-6 animate-bounce">{empresa?.icone}</div>
-
-      <h1
-        className="text-4xl font-extrabold mb-4"
-        style={{ color: corPrimaria }}
+      <div
+        className="p-8 rounded-2xl shadow-xl max-w-md w-full text-center"
+        style={{ backgroundColor: corSecundaria }}
       >
-        Bem-vindo ao {empresa?.nome_exibicao}
-      </h1>
+        <h2 className="text-2xl font-bold mb-6" style={{ color: corPrimaria }}>
+          Informe seu nome
+        </h2>
 
-      <p className="text-lg" style={{ color: corTexto }}>
-        Toque na tela para iniciar seu pedido
-      </p>
+        <input
+          type="text"
+          placeholder="Seu nome"
+          value={nome}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full px-4 py-3 rounded-lg border border-gray-300 mb-4 text-lg"
+          style={{
+            outlineColor: corPrimaria,
+            color: corTexto,
+          }}
+        />
+
+        <button
+          disabled={!nomeValido}
+          onClick={onConfirmar}
+          className="w-full py-3 rounded-lg font-bold transition"
+          style={{
+            backgroundColor: nomeValido ? corBotao : "#d1d5db",
+            color: nomeValido ? corBotaoTexto : "#9ca3af",
+            cursor: nomeValido ? "pointer" : "not-allowed",
+          }}
+        >
+          Confirmar
+        </button>
+      </div>
     </div>
   );
 }
 
-export default TelaInicial;
+export default NomeCliente;
