@@ -50,11 +50,10 @@ function App() {
     if (encoded) {
       // é um pedido via link com telefone (Delivery)
       const decoded = atob(encoded);
-      const [empresa, whatsappId, instance, phoneNumber] = decoded.split(":");
+      const [empresa, whatsappId, phoneNumber] = decoded.split(":");
       setEmpresaId(empresa);
       setTelefoneCliente(whatsappId || "");
       setPhoneNumber(phoneNumber);
-      setInstance(instance);
       setSolicitandoNome(true);
       setModoConsumo("Delivery");
     }
@@ -218,7 +217,6 @@ function App() {
             nomeCliente={nomeCliente}
             empresaId={empresaId}
             whatsappId={telefoneCliente}
-            instance={instance}
             phoneNumber={phoneNumber}
           />
         </motion.div>
