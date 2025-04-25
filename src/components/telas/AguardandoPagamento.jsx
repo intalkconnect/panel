@@ -1,9 +1,9 @@
 import React from "react";
 
 function AguardandoPagamento({ forma, tema }) {
-  const corPrimaria = tema?.cor_primaria || "#ef4444"; // fallback red-600
-  const corTexto = tema?.cor_texto || "#1f2937";
   const corFundo = tema?.cor_fundo || "#ffffff";
+  const corTexto = tema?.cor_texto || "#1f2937";
+  const corPrimaria = tema?.cor_primaria || "#ef4444";
 
   return (
     <div
@@ -34,7 +34,7 @@ function AguardandoPagamento({ forma, tema }) {
         </svg>
       </div>
 
-      {/* Mensagem principal */}
+      {/* Título */}
       <h1
         className="text-3xl md:text-4xl font-extrabold mb-4"
         style={{ color: corPrimaria }}
@@ -42,7 +42,7 @@ function AguardandoPagamento({ forma, tema }) {
         Aguardando pagamento via {forma}...
       </h1>
 
-      {/* Mensagem secundária */}
+      {/* Mensagem */}
       <p className="text-lg md:text-xl font-medium max-w-xl">
         Assim que o pagamento for confirmado, seu pedido será processado!
       </p>
