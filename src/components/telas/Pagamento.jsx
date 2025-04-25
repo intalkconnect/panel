@@ -9,6 +9,7 @@ import RegistroPedido from "./RegistroPedido";
 function Pagamento({ tema }) {
   const [formaSelecionada, setFormaSelecionada] = useState(null);
 
+  // Cores com fallback
   const corFundo = tema?.cor_fundo || "#ffffff";
   const corTexto = tema?.cor_texto || "#1f2937";
   const corBotao = tema?.cor_botao || "#ef4444";
