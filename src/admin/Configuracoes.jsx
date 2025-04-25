@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Bot, Moon, Settings, Building2, Palette } from "lucide-react";
 import HorariosFuncionamento from "../components/admin/HorariosFuncionamento";
 import Chatbot from "../components/admin/Chatbot";
+import SelecionarTema from "../components/admin/SelecionarTema";
 
 const Configuracoes = () => {
   const [chatbotAtivo, setChatbotAtivo] = useState(false);
