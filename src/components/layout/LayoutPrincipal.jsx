@@ -147,14 +147,14 @@ function LayoutPrincipal({
       {/* Carrinho */}
       <aside
         className="md:w-80 w-full p-4 sm:p-6 border-t md:border-t-0 md:border-l flex flex-col justify-between"
-        style={{ backgroundColor: corSecundaria }}
+        style={{ backgroundColor: corSecundaria, color: corTexto }}
       >
         <div>
           <h2 className="text-xl font-bold mb-4">Pedido</h2>
           {carrinho.length === 0 ? (
             <div
               className="p-6 rounded-xl text-center flex flex-col items-center gap-3 shadow-inner"
-              style={{ backgroundColor: "#fff4f4" }}
+              style={{ backgroundColor: corFundo }}
             >
               <p className="text-base font-semibold" style={{ color: corPrimaria }}>
                 Seu carrinho está vazio
@@ -214,7 +214,7 @@ function LayoutPrincipal({
           <button
             onClick={() => setShowConfirmCancel(true)}
             className="w-full py-2 rounded-lg font-semibold"
-            style={{ backgroundColor: "#e2e8f0", color: "#1a202c" }}
+            style={{ backgroundColor: corSecundaria, color: corTexto }}
           >
             Cancelar Pedido
           </button>
@@ -250,8 +250,8 @@ function LayoutPrincipal({
                 onClick={() => setShowConfirmCancel(false)}
                 className="px-4 py-2 rounded-lg font-semibold"
                 style={{
-                  backgroundColor: "#e2e8f0",
-                  color: "#1a202c",
+                  backgroundColor: corSecundaria,
+                  color: corTexto,
                 }}
               >
                 Voltar
@@ -260,8 +260,8 @@ function LayoutPrincipal({
                 onClick={cancelarPedido}
                 className="px-4 py-2 rounded-lg font-bold"
                 style={{
-                  backgroundColor: "#dc2626",
-                  color: "white",
+                  backgroundColor: corBotao,
+                  color: corBotaoTexto,
                 }}
               >
                 Confirmar
