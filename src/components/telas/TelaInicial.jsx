@@ -2,36 +2,8 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../../data/supabaseClient";
 import { Loader2 } from "lucide-react";
 
-function TelaInicial({ onIniciar, empresa }) {
-  const [tema, setTema] = useState(null);
-
-  useEffect(() => {
-    const buscarTema = async () => {
-      if (!empresa?.id) return;
-
-      const { data, error } = await supabase
-        .from("temas")
-        .select("*")
-        .eq("empresa_id", empresa.id)
-        .single();
-
-      if (error) {
-        console.error("Erro ao carregar tema:", error);
-      } else {
-        setTema(data);
-      }
-    };
-
-    buscarTema();
-  }, [empresa]);
-
-  if (!tema) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <Loader2 className="h-10 w-10 text-gray-400 animate-spin" />
-      </div>
-    );
-  }
+function TelaInicial({ onIniciar, empresa, tema }) {
+  if (!tema) return null;
 
   const corFundo = tema.cor_fundo || "#ffffff";
   const corSecundaria = tema.cor_secundaria || "#f3f4f6";
