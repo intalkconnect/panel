@@ -30,6 +30,7 @@ function NomeCliente({ nome, onChange, onConfirmar, tema }) {
           onChange={(e) => onChange(e.target.value)}
           className="w-full px-4 py-3 rounded-lg border border-gray-300 mb-4 text-lg"
           style={{
+            backgroundColor: "#ffffff", // garante contraste em fundo escuro
             outlineColor: corPrimaria,
             color: corTexto,
           }}
