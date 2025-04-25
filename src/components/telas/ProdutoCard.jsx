@@ -53,6 +53,7 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
 
   return (
     <>
+      {/* CARD DO PRODUTO */}
       <div
         className="rounded-3xl shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 p-6 flex flex-col items-center justify-between w-full max-w-sm mx-auto"
         style={{ backgroundColor: corFundo }}
@@ -73,6 +74,7 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
           })}
         </p>
 
+        {/* Botões do produto */}
         {produto.quantidade === 0 ? (
           <div className="mt-2 px-6 py-2 bg-red-100 text-red-500 rounded-full text-sm font-semibold shadow-inner">
             Esgotado
@@ -81,10 +83,7 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
           <button
             onClick={handleCliqueAdicionar}
             className="mt-2 px-6 py-2 rounded-full text-sm font-semibold transition-all shadow-md hover:shadow-lg"
-            style={{
-              backgroundColor: corBotao,
-              color: corBotaoTexto,
-            }}
+            style={{ backgroundColor: corBotao, color: corBotaoTexto }}
           >
             Adicionar
           </button>
@@ -93,18 +92,11 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
             <button
               onClick={() =>
                 temDetalhamento
-                  ? onRemover({
-                      ...produto,
-                      extrasSelecionados,
-                      removerSelecionados,
-                    })
+                  ? onRemover({ ...produto, extrasSelecionados, removerSelecionados })
                   : onRemover(produto)
               }
               className="w-8 h-8 rounded-full text-lg font-bold"
-              style={{
-                backgroundColor: corBotao,
-                color: corBotaoTexto,
-              }}
+              style={{ backgroundColor: corBotao, color: corBotaoTexto }}
             >
               –
             </button>
@@ -116,10 +108,7 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
                 temDetalhamento ? abrirDetalhes() : onAdicionar(produto)
               }
               className="w-8 h-8 rounded-full text-lg font-bold"
-              style={{
-                backgroundColor: corBotao,
-                color: corBotaoTexto,
-              }}
+              style={{ backgroundColor: corBotao, color: corBotaoTexto }}
             >
               +
             </button>
@@ -127,6 +116,7 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
         )}
       </div>
 
+      {/* MODAL DE DETALHES */}
       {mostrarDetalhes && (
         <div
           className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center p-4"
@@ -144,6 +134,7 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
               {produto.detalhamento?.descricao}
             </p>
 
+            {/* Remover opções */}
             {produto.detalhamento?.remover?.length > 0 && (
               <div className="mb-4">
                 <h4 className="text-sm font-semibold mb-1">Remover:</h4>
@@ -153,11 +144,7 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
                       type="checkbox"
                       checked={removerSelecionados.some((r) => r.id === op.id)}
                       onChange={() =>
-                        toggleOpcao(
-                          removerSelecionados,
-                          setRemoverSelecionados,
-                          op
-                        )
+                        toggleOpcao(removerSelecionados, setRemoverSelecionados, op)
                       }
                     />
                     {op.label}
@@ -166,6 +153,7 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
               </div>
             )}
 
+            {/* Adicionar extras */}
             {produto.detalhamento?.extras?.length > 0 && (
               <div className="mb-4">
                 <h4 className="text-sm font-semibold mb-1">Adicionar:</h4>
@@ -175,11 +163,7 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
                       type="checkbox"
                       checked={extrasSelecionados.some((e) => e.id === op.id)}
                       onChange={() =>
-                        toggleOpcao(
-                          extrasSelecionados,
-                          setExtrasSelecionados,
-                          op
-                        )
+                        toggleOpcao(extrasSelecionados, setExtrasSelecionados, op)
                       }
                     />
                     {op.label}
@@ -188,55 +172,41 @@ function ProdutoCard({ produto, onAdicionar, onRemover, quantidade = 0, tema }) 
               </div>
             )}
 
+            {/* Quantidade */}
             <div className="flex items-center justify-between mt-6">
               <label className="text-sm font-semibold">Quantidade:</label>
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() =>
-                    setQuantidadeSelecionada((q) => Math.max(1, q - 1))
-                  }
+                  onClick={() => setQuantidadeSelecionada((q) => Math.max(1, q - 1))}
                   className="w-8 h-8 rounded-full text-xl font-bold"
-                  style={{
-                    backgroundColor: corSecundaria,
-                    color: corTexto,
-                  }}
+                  style={{ backgroundColor: corSecundaria, color: corTexto }}
                 >
                   –
                 </button>
-                <span className="text-base font-bold">
-                  {quantidadeSelecionada}
-                </span>
+                <span className="text-base font-bold">{quantidadeSelecionada}</span>
                 <button
                   onClick={() => setQuantidadeSelecionada((q) => q + 1)}
                   className="w-8 h-8 rounded-full text-xl font-bold"
-                  style={{
-                    backgroundColor: corSecundaria,
-                    color: corTexto,
-                  }}
+                  style={{ backgroundColor: corSecundaria, color: corTexto }}
                 >
                   +
                 </button>
               </div>
             </div>
 
+            {/* Ações */}
             <div className="flex justify-end gap-4 mt-6">
               <button
                 onClick={() => setMostrarDetalhes(false)}
                 className="px-4 py-2 rounded-lg font-semibold"
-                style={{
-                  backgroundColor: corSecundaria,
-                  color: corTexto,
-                }}
+                style={{ backgroundColor: corSecundaria, color: corTexto }}
               >
                 Cancelar
               </button>
               <button
                 onClick={handleAdicionar}
                 className="px-4 py-2 rounded-lg font-bold"
-                style={{
-                  backgroundColor: corBotao,
-                  color: corBotaoTexto,
-                }}
+                style={{ backgroundColor: corBotao, color: corBotaoTexto }}
               >
                 Adicionar ao pedido
               </button>
