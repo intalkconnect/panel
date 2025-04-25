@@ -1,21 +1,13 @@
 import React from "react";
 
-function AguardandoPagamento({ forma, tema }) {
-  const corPrimaria = tema?.cor_primaria || "#ef4444"; // fallback red-600
-  const corTexto = tema?.cor_texto || "#1f2937";
-  const corFundo = tema?.cor_fundo || "#ffffff";
-
+function AguardandoPagamento({ forma }) {
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center px-6 text-center"
-      style={{ backgroundColor: corFundo, color: corTexto }}
-    >
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6 text-center">
       {/* Spinner */}
       <div className="mb-6">
         <svg
-          className="animate-spin h-16 w-16"
+          className="animate-spin h-16 w-16 text-red-600"
           viewBox="0 0 24 24"
-          style={{ color: corPrimaria }}
         >
           <circle
             className="opacity-25"
@@ -35,15 +27,12 @@ function AguardandoPagamento({ forma, tema }) {
       </div>
 
       {/* Mensagem principal */}
-      <h1
-        className="text-3xl md:text-4xl font-extrabold mb-4"
-        style={{ color: corPrimaria }}
-      >
+      <h1 className="text-3xl md:text-4xl font-extrabold text-red-600 mb-4">
         Aguardando pagamento via {forma}...
       </h1>
 
       {/* Mensagem secundária */}
-      <p className="text-lg md:text-xl font-medium max-w-xl">
+      <p className="text-lg md:text-xl text-gray-700 font-medium max-w-xl">
         Assim que o pagamento for confirmado, seu pedido será processado!
       </p>
     </div>
