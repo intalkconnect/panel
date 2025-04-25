@@ -91,40 +91,70 @@ function RegistroPedido({ formaPagamento }) {
     }
   }, [redirect, telefone]);
 
-  // Spinner
   if (!tema) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <svg className="animate-spin h-10 w-10 text-gray-400" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" className="opacity-25" />
-          <path fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z" className="opacity-75" />
+        <svg
+          className="animate-spin h-10 w-10 text-gray-400"
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+            className="opacity-25"
+          />
+          <path
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
+            className="opacity-75"
+          />
         </svg>
       </div>
     );
   }
 
-  const containerStyle = {
-    backgroundColor: tema.cor_fundo,
-    color: tema.cor_texto,
-  };
+  const corFundo = tema.cor_fundo || "#ffffff";
+  const corTexto = tema.cor_texto || "#1f2937";
+  const corPrimaria = tema.cor_primaria || "#ef4444";
+  const corBotao = tema.cor_botao || "#16a34a";
+  const corBotaoTexto = tema.cor_botao_texto || "#ffffff";
 
   const iconColor = {
-    enviando: tema.cor_primaria,
-    enviado: tema.cor_botao,
-    erro: "#dc2626", // Vermelho padrão
+    enviando: corPrimaria,
+    enviado: corBotao,
+    erro: "#dc2626",
   };
 
   const textColor = {
-    enviado: tema.cor_botao_texto,
-    erro: tema.cor_texto,
+    enviado: corBotaoTexto,
+    erro: corTexto,
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center text-center p-8" style={containerStyle}>
+    <div
+      className="min-h-screen flex flex-col items-center justify-center text-center p-8"
+      style={{ backgroundColor: corFundo, color: corTexto }}
+    >
       {status === "enviando" && (
         <>
-          <svg className="animate-spin h-16 w-16 mb-6" fill="none" viewBox="0 0 24 24" style={{ color: iconColor.enviando }}>
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <svg
+            className="animate-spin h-16 w-16 mb-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            style={{ color: iconColor.enviando }}
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
             <path
               className="opacity-75"
               fill="currentColor"
@@ -138,7 +168,11 @@ function RegistroPedido({ formaPagamento }) {
 
       {status === "enviado" && (
         <>
-          <svg className="h-16 w-16 mb-4 animate-bounce" viewBox="0 0 20 20" fill={iconColor.enviado}>
+          <svg
+            className="h-16 w-16 mb-4 animate-bounce"
+            viewBox="0 0 20 20"
+            fill={iconColor.enviado}
+          >
             <path
               fillRule="evenodd"
               d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -148,7 +182,7 @@ function RegistroPedido({ formaPagamento }) {
           <h1 className="text-2xl font-bold mb-2" style={{ color: textColor.enviado }}>
             Pedido registrado com sucesso!
           </h1>
-          <p style={{ color: tema.cor_texto }}>Redirecionando para o WhatsApp...</p>
+          <p>Redirecionando para o WhatsApp...</p>
         </>
       )}
 
@@ -157,7 +191,7 @@ function RegistroPedido({ formaPagamento }) {
           <h1 className="text-2xl font-bold mb-2" style={{ color: textColor.erro }}>
             Erro ao registrar o pedido ❌
           </h1>
-          <p style={{ color: tema.cor_texto }}>Tente novamente em alguns segundos</p>
+          <p>Tente novamente em alguns segundos</p>
         </>
       )}
     </div>
