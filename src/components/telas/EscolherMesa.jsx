@@ -7,7 +7,7 @@ function EscolherMesa({ onSelecionarMesa, tema }) {
   const corFundo = tema?.cor_fundo || "#ffffff";
   const corTexto = tema?.cor_texto || "#1f2937";
   const corPrimaria = tema?.cor_primaria || "#ef4444";
-  const corPrimariaHover = "#dc2626"; // opcionalmente derivado
+  const corBotaoTexto = tema?.cor_botao_texto || "#ffffff";
 
   return (
     <div
@@ -27,10 +27,11 @@ function EscolherMesa({ onSelecionarMesa, tema }) {
               className="cursor-pointer rounded-xl p-4 flex flex-col items-center justify-center shadow-sm hover:shadow-md hover:scale-105 transition-all duration-200"
               style={{
                 backgroundColor: corPrimaria,
+                color: corBotaoTexto,
               }}
             >
-              <BuildingStorefrontIcon className="w-8 h-8 mb-2 text-white" />
-              <span className="font-medium text-sm text-white font-bold">
+              <BuildingStorefrontIcon className="w-8 h-8 mb-2" />
+              <span className="font-medium text-sm font-bold">
                 Mesa {mesa}
               </span>
             </div>
