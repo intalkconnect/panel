@@ -19,6 +19,14 @@ function LayoutPrincipal({
   setShowConfirmCancel,
 }) {
   const tema = empresa?.tema || {};
+
+  const corFundo = tema.cor_fundo || "#ffffff";
+  const corTexto = tema.cor_texto || "#000000";
+  const corPrimaria = tema.cor_primaria || "#ef4444";
+  const corSecundaria = tema.cor_secundaria || "#f3f4f6";
+  const corBotao = tema.cor_botao || "#16a34a";
+  const corBotaoTexto = tema.cor_botao_texto || "#ffffff";
+
   const produtosFiltrados = produtos.filter(
     (p) => p.categoria_id === categoriaSelecionada
   );
@@ -79,10 +87,13 @@ function LayoutPrincipal({
   return (
     <div
       className="min-h-screen flex flex-col md:flex-row"
-      style={{ backgroundColor: tema.cor_fundo, color: tema.cor_texto }}
+      style={{ backgroundColor: corFundo, color: corTexto }}
     >
       {/* Sidebar */}
-      <aside className="md:w-48 w-full md:h-screen overflow-y-auto p-4 border-b md:border-b-0 md:border-r" style={{ backgroundColor: tema.cor_secundaria }}>
+      <aside
+        className="md:w-48 w-full md:h-screen overflow-y-auto p-4 border-b md:border-b-0 md:border-r"
+        style={{ backgroundColor: corSecundaria }}
+      >
         <div className="flex md:block overflow-x-auto gap-2 md:gap-0">
           {categorias.map((cat) => (
             <CategoriaCard
@@ -99,7 +110,7 @@ function LayoutPrincipal({
       {/* Conteúdo principal */}
       <main className="flex-1 p-4 sm:p-6 overflow-y-auto flex flex-col">
         <header className="border-b pb-4 mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-extrabold" style={{ color: tema.cor_primaria }}>
+          <h1 className="text-2xl sm:text-3xl font-extrabold" style={{ color: corPrimaria }}>
             {empresa?.nome_exibicao}
           </h1>
           <p className="text-sm font-medium">
@@ -134,12 +145,18 @@ function LayoutPrincipal({
       </main>
 
       {/* Carrinho */}
-      <aside className="md:w-80 w-full p-4 sm:p-6 border-t md:border-t-0 md:border-l flex flex-col justify-between" style={{ backgroundColor: tema.cor_secundaria }}>
+      <aside
+        className="md:w-80 w-full p-4 sm:p-6 border-t md:border-t-0 md:border-l flex flex-col justify-between"
+        style={{ backgroundColor: corSecundaria }}
+      >
         <div>
           <h2 className="text-xl font-bold mb-4">Pedido</h2>
           {carrinho.length === 0 ? (
-            <div className="p-6 rounded-xl text-center flex flex-col items-center gap-3 shadow-inner" style={{ backgroundColor: "#fff4f4" }}>
-              <p className="text-base font-semibold" style={{ color: tema.cor_primaria }}>
+            <div
+              className="p-6 rounded-xl text-center flex flex-col items-center gap-3 shadow-inner"
+              style={{ backgroundColor: "#fff4f4" }}
+            >
+              <p className="text-base font-semibold" style={{ color: corPrimaria }}>
                 Seu carrinho está vazio
               </p>
             </div>
@@ -173,7 +190,7 @@ function LayoutPrincipal({
                       <button
                         onClick={() => remover(item)}
                         className="text-xs font-bold hover:underline"
-                        style={{ color: tema.cor_primaria }}
+                        style={{ color: corPrimaria }}
                       >
                         Remover
                       </button>
@@ -206,8 +223,8 @@ function LayoutPrincipal({
             disabled={carrinho.length === 0}
             className="w-full py-2 rounded-lg font-bold"
             style={{
-              backgroundColor: carrinho.length === 0 ? "#a7f3d0" : tema.cor_botao,
-              color: tema.cor_botao_texto,
+              backgroundColor: carrinho.length === 0 ? "#a7f3d0" : corBotao,
+              color: corBotaoTexto,
               cursor: carrinho.length === 0 ? "not-allowed" : "pointer",
             }}
           >
@@ -219,21 +236,33 @@ function LayoutPrincipal({
       {/* Modal de confirmação */}
       {showConfirmCancel && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-2xl shadow-xl max-w-md w-full text-center">
+          <div
+            className="p-6 rounded-2xl shadow-xl max-w-md w-full text-center"
+            style={{
+              backgroundColor: corSecundaria,
+              color: corTexto,
+            }}
+          >
             <h2 className="text-xl font-bold mb-4">Cancelar pedido?</h2>
             <p className="mb-6">Você perderá todos os itens do pedido atual.</p>
             <div className="flex justify-center gap-4">
               <button
                 onClick={() => setShowConfirmCancel(false)}
                 className="px-4 py-2 rounded-lg font-semibold"
-                style={{ backgroundColor: "#e2e8f0", color: "#1a202c" }}
+                style={{
+                  backgroundColor: "#e2e8f0",
+                  color: "#1a202c",
+                }}
               >
                 Voltar
               </button>
               <button
                 onClick={cancelarPedido}
                 className="px-4 py-2 rounded-lg font-bold"
-                style={{ backgroundColor: "#dc2626", color: "white" }}
+                style={{
+                  backgroundColor: "#dc2626",
+                  color: "white",
+                }}
               >
                 Confirmar
               </button>
