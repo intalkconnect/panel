@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../data/supabaseClient";
+import { Loader2 } from "lucide-react";
 
 function TelaInicial({ onIniciar, empresa }) {
   const [tema, setTema] = useState(null);
@@ -27,7 +28,7 @@ function TelaInicial({ onIniciar, empresa }) {
   if (!tema) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
-        <p className="text-gray-500">Carregando tema...</p>
+        <Loader2 className="h-10 w-10 text-gray-400 animate-spin" />
       </div>
     );
   }
@@ -41,10 +42,8 @@ function TelaInicial({ onIniciar, empresa }) {
         color: tema.cor_texto,
       }}
     >
-      {/* Ícone ou emoji */}
       <div className="text-7xl mb-6 animate-bounce">{empresa?.icone}</div>
 
-      {/* Título principal */}
       <h1
         className="text-4xl font-extrabold mb-4"
         style={{ color: tema.cor_primaria }}
@@ -52,7 +51,6 @@ function TelaInicial({ onIniciar, empresa }) {
         Bem-vindo ao {empresa?.nome_exibicao}
       </h1>
 
-      {/* Subtítulo explicativo */}
       <p className="text-lg" style={{ color: tema.cor_texto }}>
         Toque na tela para iniciar seu pedido
       </p>
