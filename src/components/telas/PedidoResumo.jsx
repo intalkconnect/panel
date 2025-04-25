@@ -1,28 +1,13 @@
 import React from "react";
 import { ShoppingCartIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 
-function PedidoResumo({ carrinho, total, onRemover, onFinalizar, tema }) {
-  const corFundo = tema?.cor_fundo || "#ffffff";
-  const corTexto = tema?.cor_texto || "#000000";
-  const corPrimaria = tema?.cor_primaria || "#ef4444";
-  const corBotao = tema?.cor_botao || "#16a34a";
-  const corBotaoTexto = tema?.cor_botao_texto || "#ffffff";
-
+function PedidoResumo({ carrinho, total, onRemover, onFinalizar }) {
   return (
-    <div
-      className="border-t p-4"
-      style={{ backgroundColor: corFundo, color: corTexto }}
-    >
+    <div className="bg-white border-t p-4">
       <h2 className="text-xl font-bold mb-2">Meu Pedido</h2>
 
       {carrinho.length === 0 ? (
-        <div
-          className="flex items-center justify-center py-5 rounded-xl shadow-md gap-2"
-          style={{
-            backgroundColor: corPrimaria,
-            color: corBotaoTexto,
-          }}
-        >
+        <div className="bg-red-500 text-white flex items-center justify-center py-5 rounded-xl shadow-md gap-2">
           <ShoppingCartIcon className="w-6 h-6" />
           <span className="text-xl font-semibold">
             Seu carrinho está vazio.
@@ -31,13 +16,14 @@ function PedidoResumo({ carrinho, total, onRemover, onFinalizar, tema }) {
       ) : (
         <>
           <ul className="divide-y max-h-40 overflow-y-auto text-base">
-            {carrinho.map((item, index) => (
+            {carrinho.map((item) => (
               <li
-                key={`${item.id}-${index}`}
+                key={item.id}
                 className="py-2 flex justify-between items-center"
               >
                 <div>
-                  <span className="font-medium">{item.nome}</span> x{item.quantidade}
+                  <span className="font-medium">{item.nome}</span> x
+                  {item.quantidade}
                 </div>
                 <div className="flex items-center gap-3">
                   <span>
@@ -48,11 +34,7 @@ function PedidoResumo({ carrinho, total, onRemover, onFinalizar, tema }) {
                   </span>
                   <button
                     onClick={() => onRemover(item.id)}
-                    className="px-2 py-1 rounded-full text-sm font-bold"
-                    style={{
-                      backgroundColor: corPrimaria,
-                      color: corBotaoTexto,
-                    }}
+                    className="bg-red-500 text-white px-2 py-1 rounded-full text-sm"
                   >
                     –
                   </button>
@@ -71,11 +53,7 @@ function PedidoResumo({ carrinho, total, onRemover, onFinalizar, tema }) {
 
           <button
             onClick={onFinalizar}
-            className="mt-3 w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2"
-            style={{
-              backgroundColor: corBotao,
-              color: corBotaoTexto,
-            }}
+            className="mt-3 w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 flex items-center justify-center gap-2"
           >
             <CheckCircleIcon className="w-6 h-6" />
             Finalizar Pedido
