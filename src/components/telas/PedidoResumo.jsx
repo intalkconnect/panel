@@ -1,13 +1,25 @@
 import React from "react";
 import { ShoppingCartIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 
-function PedidoResumo({ carrinho, total, onRemover, onFinalizar }) {
+function PedidoResumo({ carrinho, total, onRemover, onFinalizar, tema }) {
   return (
-    <div className="bg-white border-t p-4">
+    <div
+      className="border-t p-4"
+      style={{
+        backgroundColor: tema?.cor_fundo || "#ffffff",
+        color: tema?.cor_texto || "#000000",
+      }}
+    >
       <h2 className="text-xl font-bold mb-2">Meu Pedido</h2>
 
       {carrinho.length === 0 ? (
-        <div className="bg-red-500 text-white flex items-center justify-center py-5 rounded-xl shadow-md gap-2">
+        <div
+          className="flex items-center justify-center py-5 rounded-xl shadow-md gap-2"
+          style={{
+            backgroundColor: tema?.cor_primaria || "#ef4444",
+            color: tema?.cor_botao_texto || "#ffffff",
+          }}
+        >
           <ShoppingCartIcon className="w-6 h-6" />
           <span className="text-xl font-semibold">
             Seu carrinho está vazio.
@@ -34,7 +46,11 @@ function PedidoResumo({ carrinho, total, onRemover, onFinalizar }) {
                   </span>
                   <button
                     onClick={() => onRemover(item.id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded-full text-sm"
+                    className="px-2 py-1 rounded-full text-sm"
+                    style={{
+                      backgroundColor: tema?.cor_primaria || "#ef4444",
+                      color: tema?.cor_botao_texto || "#ffffff",
+                    }}
                   >
                     –
                   </button>
@@ -53,7 +69,11 @@ function PedidoResumo({ carrinho, total, onRemover, onFinalizar }) {
 
           <button
             onClick={onFinalizar}
-            className="mt-3 w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 flex items-center justify-center gap-2"
+            className="mt-3 w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2"
+            style={{
+              backgroundColor: tema?.cor_botao || "#16a34a",
+              color: tema?.cor_botao_texto || "#ffffff",
+            }}
           >
             <CheckCircleIcon className="w-6 h-6" />
             Finalizar Pedido
