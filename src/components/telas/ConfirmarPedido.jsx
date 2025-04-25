@@ -31,7 +31,7 @@ function ConfirmarPedido({
     };
 
     localStorage.setItem("pedido_para_registrar", JSON.stringify(pedido));
-    onContinuar(); // Redireciona para o componente Pagamento
+    onContinuar(); // Redireciona para Pagamento
   };
 
   return (
@@ -57,7 +57,9 @@ function ConfirmarPedido({
           {carrinho.map((item, index) => (
             <li key={index} className="py-3 text-left">
               <div className="flex justify-between font-medium">
-                <span>{item.nome} x{item.quantidade}</span>
+                <span>
+                  {item.nome} x{item.quantidade}
+                </span>
                 <span>
                   {(item.preco * item.quantidade).toLocaleString("pt-BR", {
                     style: "currency",
