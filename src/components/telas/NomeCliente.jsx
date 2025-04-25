@@ -1,6 +1,7 @@
 import React from "react";
 
 function NomeCliente({ nome, onChange, onConfirmar, tema }) {
+  // Cores do tema com fallback
   const corFundo = tema?.cor_fundo || "#ffffff";
   const corTexto = tema?.cor_texto || "#000000";
   const corSecundaria = tema?.cor_secundaria || "#fff1f2";
@@ -19,7 +20,10 @@ function NomeCliente({ nome, onChange, onConfirmar, tema }) {
         className="p-8 rounded-2xl shadow-xl max-w-md w-full text-center"
         style={{ backgroundColor: corSecundaria }}
       >
-        <h2 className="text-2xl font-bold mb-6" style={{ color: corPrimaria }}>
+        <h2
+          className="text-2xl font-bold mb-6"
+          style={{ color: corPrimaria }}
+        >
           Informe seu nome
         </h2>
 
@@ -30,7 +34,6 @@ function NomeCliente({ nome, onChange, onConfirmar, tema }) {
           onChange={(e) => onChange(e.target.value)}
           className="w-full px-4 py-3 rounded-lg border border-gray-300 mb-4 text-lg"
           style={{
-            backgroundColor: "#ffffff", // garante contraste em fundo escuro
             outlineColor: corPrimaria,
             color: corTexto,
           }}
