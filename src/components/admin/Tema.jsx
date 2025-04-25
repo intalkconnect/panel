@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../data/supabaseClient";
 
-function SelecionarTema({ empresaId }) {
+function SelecionarTema() {
   const [temasBase, setTemasBase] = useState([]);
   const [temaSelecionado, setTemaSelecionado] = useState(null);
   const [carregando, setCarregando] = useState(false);
   const [mensagem, setMensagem] = useState("");
+
+  const empresaId = localStorage.getItem("empresa_id");
 
   useEffect(() => {
     const fetchTemas = async () => {
@@ -28,10 +30,11 @@ function SelecionarTema({ empresaId }) {
   }, []);
 
   const aplicarTema = async () => {
-    if (!temaSelecionado) return;
+    if (!temaSelecionado || !empresaId) return;
 
     setCarregando(true);
     const tema = temasBase.find((t) => t.id === temaSelecionado);
+
     const { error } = await supabase
       .from("temas")
       .upsert({
@@ -43,7 +46,7 @@ function SelecionarTema({ empresaId }) {
         cor_texto: tema.cor_texto,
         cor_botao: tema.cor_botao,
         cor_botao_texto: tema.cor_botao_texto,
-      }, { onConflict: ['empresa_id'] });
+      }, { onConflict: ["empresa_id"] });
 
     if (error) {
       console.error("Erro ao aplicar tema:", error);
@@ -88,4 +91,4 @@ function SelecionarTema({ empresaId }) {
   );
 }
 
-export default Tema;
+export default SelecionarTema;
