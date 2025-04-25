@@ -18,14 +18,18 @@ import {
 } from "./components/telas";
 
 import LayoutPrincipal from "./components/layout/LayoutPrincipal";
+import { supabase } from "./data/supabaseClient";
 
 function App() {
   const { encoded } = useParams();
+
   const [empresaId, setEmpresaId] = useState(null);
   const [telefoneCliente, setTelefoneCliente] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const [empresa, setEmpresa] = useState(null);
+  const [tema, setTema] = useState(null);
+
   const [iniciarTela, setIniciarTela] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -47,7 +51,6 @@ function App() {
 
   useEffect(() => {
     if (encoded) {
-      // é um pedido via link com telefone (Delivery)
       const decoded = atob(encoded);
       const [empresa, whatsappId, phoneNumber] = decoded.split(":");
       setEmpresaId(empresa);
@@ -59,7 +62,6 @@ function App() {
   }, [encoded]);
 
   useEffect(() => {
-    // Carrega apenas o nome da empresa se ainda não estiver carregado
     if (!empresa && empresaId) {
       carregarDados(empresaId).then(({ empresa }) => {
         setEmpresa(empresa);
@@ -67,10 +69,23 @@ function App() {
     }
   }, [empresaId]);
 
-  // ⏳ Reseta após tempo de inatividade
+  useEffect(() => {
+    if (empresa?.id) {
+      supabase
+        .from("temas")
+        .select("*")
+        .eq("empresa_id", empresa.id)
+        .single()
+        .then(({ data, error }) => {
+          if (error) console.error("Erro ao carregar tema:", error);
+          else setTema(data);
+        });
+    }
+  }, [empresa]);
+
   useInatividade(
     iniciarTela,
-    carrinho, // sem colchetes
+    carrinho,
     () => {
       setIniciarTela(false);
       setModoConsumo(null);
@@ -95,10 +110,9 @@ function App() {
         setProdutos(produtos);
         setCategoriaSelecionada(categorias[0]?.id || null);
 
-        // Se for mobile, já define o modo de consumo e pula telas
         if (isMobile) {
-          setModoConsumo("Delivery"); // ou "Delivery" se quiser renomear
-          setSolicitandoNome(true); // ainda pede o nome
+          setModoConsumo("Delivery");
+          setSolicitandoNome(true);
         }
       })
       .finally(() => setLoading(false));
@@ -144,13 +158,12 @@ function App() {
           <TelaInicial
             onIniciar={() => setIniciarTela(true)}
             empresa={empresa}
+            tema={tema}
           />
         </motion.div>
       ) : loading ? (
         <motion.div key="loading" {...motionFade}>
           <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6 text-center">
-            {/* Spinner */}
-
             <svg
               className="animate-spin h-16 w-16 text-red-600"
               viewBox="0 0 24 24"
@@ -180,11 +193,12 @@ function App() {
             onConfirmar={() => {
               setSolicitandoNome(false);
             }}
+            tema={tema}
           />
         </motion.div>
       ) : !modoConsumo ? (
         <motion.div key="modo" {...motionFade}>
-          <div className="min-h-screen flex items-center justify-center bg-white px-4">
+          <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: tema?.cor_fundo || "#fff" }}>
             <div className="w-full max-w-md">
               {escolhendoMesa ? (
                 <EscolherMesa
@@ -192,11 +206,13 @@ function App() {
                     setMesaSelecionada(mesa);
                     setModoConsumo("Comer aqui");
                   }}
+                  tema={tema}
                 />
               ) : (
                 <ModoConsumo
                   onComerAqui={() => setEscolhendoMesa(true)}
                   onParaLevar={() => setSolicitandoNome(true)}
+                  tema={tema}
                 />
               )}
             </div>
@@ -217,15 +233,16 @@ function App() {
             empresaId={empresaId}
             whatsappId={telefoneCliente}
             phoneNumber={phoneNumber}
+            tema={tema}
           />
         </motion.div>
       ) : formaPagamento === "escolher" ? (
         <motion.div key="pagamento" {...motionFade}>
-          <Pagamento onEscolherForma={setFormaPagamento} />
+          <Pagamento onEscolherForma={setFormaPagamento} tema={tema} />
         </motion.div>
       ) : aguardandoPagamento ? (
         <motion.div key="aguardando" {...motionFade}>
-          <AguardandoPagamento forma={formaPagamento} />
+          <AguardandoPagamento forma={formaPagamento} tema={tema} />
         </motion.div>
       ) : (
         <motion.div key="principal" {...motionFade}>
@@ -250,6 +267,7 @@ function App() {
             }}
             showConfirmCancel={showConfirmCancel}
             setShowConfirmCancel={setShowConfirmCancel}
+            tema={tema}
           />
         </motion.div>
       )}
