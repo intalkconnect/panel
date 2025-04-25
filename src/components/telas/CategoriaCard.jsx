@@ -24,7 +24,12 @@ function CategoriaCard({ categoria, selecionada, onClick, tema }) {
         loading="lazy"
         className="w-20 h-20 object-contain mb-1"
       />
-      <p className="text-sm font-medium text-center">{categoria.nome}</p>
+      <p
+        className="text-sm font-medium text-center"
+        style={{ color: selecionada ? textSelecionado : textNormal }}
+      >
+        {categoria.nome}
+      </p>
     </div>
   );
 }
