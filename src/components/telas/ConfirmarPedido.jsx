@@ -12,6 +12,13 @@ function ConfirmarPedido({
   phoneNumber,
   tema,
 }) {
+  const corFundo = tema?.cor_fundo || "#ffffff";
+  const corSecundaria = tema?.cor_secundaria || "#f3f4f6";
+  const corTexto = tema?.cor_texto || "#1f2937";
+  const corPrimaria = tema?.cor_primaria || "#dc2626";
+  const corBotao = tema?.cor_botao || "#16a34a";
+  const corBotaoTexto = tema?.cor_botao_texto || "#ffffff";
+
   const handleConfirmar = () => {
     const pedido = {
       carrinho,
@@ -30,19 +37,18 @@ function ConfirmarPedido({
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center px-4 py-10"
-      style={{ backgroundColor: tema?.cor_fundo || "#fff" }}
+      style={{ backgroundColor: corFundo, color: corTexto }}
     >
       <div
         className="rounded-2xl shadow-xl max-w-md w-full p-6 border"
         style={{
-          backgroundColor: tema?.cor_secundaria || "#ffffff",
+          backgroundColor: corSecundaria,
           borderColor: "#e5e7eb",
-          color: tema?.cor_texto || "#1f2937",
         }}
       >
         <h2
           className="text-2xl font-extrabold mb-6 text-center"
-          style={{ color: tema?.cor_primaria || "#dc2626" }}
+          style={{ color: corPrimaria }}
         >
           Sua Comanda
         </h2>
@@ -95,7 +101,7 @@ function ConfirmarPedido({
             className="flex-1 py-3 rounded-lg font-semibold"
             style={{
               backgroundColor: "#e5e7eb",
-              color: tema?.cor_texto || "#1f2937",
+              color: corTexto,
             }}
           >
             Voltar
@@ -104,8 +110,8 @@ function ConfirmarPedido({
             onClick={handleConfirmar}
             className="flex-1 py-3 rounded-lg font-bold"
             style={{
-              backgroundColor: tema?.cor_botao || "#16a34a",
-              color: tema?.cor_botao_texto || "#ffffff",
+              backgroundColor: corBotao,
+              color: corBotaoTexto,
             }}
           >
             Confirmar
