@@ -30,7 +30,6 @@ function RegistroPedido({ formaPagamento }) {
               modo_consumo: pedido.modoConsumo,
               empresa_id: pedido.empresaId,
               whatsapp_id: pedido.whatsappId,
-              instance: pedido.instance,
               total: Number(pedido.total.toFixed(2)),
               forma_pagamento: formaPagamento,
               itens: pedido.carrinho.map((item) => ({
