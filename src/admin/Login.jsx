@@ -89,65 +89,65 @@ function Login() {
     initial={{ opacity: 0, scale: 0.95, y: 30 }}
     animate={{ opacity: 1, scale: 1, y: 0 }}
     transition={{ duration: 0.5, ease: "easeOut" }}
-    className="bg-white shadow-xl p-8 rounded-2xl w-full max-w-sm border border-red-100"
+    className="bg-[#F74036] shadow-xl p-8 rounded-2xl w-full max-w-sm border border-white"
   >
-    {/* LOGO atualizada */}
+    {/* LOGO ajustada para fundo vermelho */}
     <div className="flex justify-center mb-8">
       <img
         src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logoWP.png"
         alt="Zapediu Logo"
-        className="w-32 h-auto object-contain"
+        className="w-24 h-auto object-contain"
       />
     </div>
 
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Email
-          </label>
-          <input
-            type="email"
-            placeholder="exemplo@empresa.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-        </div>
-
-        <div className="mb-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Senha
-          </label>
-          <input
-            type="password"
-            placeholder="••••••••"
-            value={senha}
-            onChange={(e) => setsenha(e.target.value)}
-            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-        </div>
-
-        {/* Lembrar-me */}
-        <div className="flex items-center justify-between mb-6 text-sm">
-          <label className="flex items-center gap-2 text-gray-700">
-            <input
-              type="checkbox"
-              checked={lembrar}
-              onChange={() => setLembrar(!lembrar)}
-              className="rounded"
-            />
-            Lembrar meu email
-          </label>
-        </div>
-
-        <button
-          onClick={handleLogin}
-          disabled={loading}
-          className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold transition duration-200"
-        >
-          {loading ? "Entrando..." : "Entrar"}
-        </button>
-      </motion.div>
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-white mb-1">
+        Email
+      </label>
+      <input
+        type="email"
+        placeholder="exemplo@empresa.com"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-black"
+      />
     </div>
+
+    <div className="mb-2">
+      <label className="block text-sm font-medium text-white mb-1">
+        Senha
+      </label>
+      <input
+        type="password"
+        placeholder="••••••••"
+        value={senha}
+        onChange={(e) => setsenha(e.target.value)}
+        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-black"
+      />
+    </div>
+
+    <div className="flex items-center justify-between mb-6 text-sm text-white">
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={lembrar}
+          onChange={() => setLembrar(!lembrar)}
+          className="rounded"
+        />
+        Lembrar meu email
+      </label>
+    </div>
+
+    <button
+      onClick={handleLogin}
+      disabled={loading}
+      className="w-full bg-white hover:bg-red-100 text-[#F74036] py-3 rounded-lg font-semibold transition duration-200"
+    >
+      {loading ? "Entrando..." : "Entrar"}
+    </button>
+  </motion.div>
+</div>
+
   );
 }
 
