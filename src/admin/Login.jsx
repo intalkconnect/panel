@@ -84,17 +84,21 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-white px-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 30 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="bg-white shadow-xl p-8 rounded-2xl w-full max-w-sm border"
-      >
-        {/* LOGO ou TEXTO */}
-        <div className="flex justify-center mb-8">
-          <img src="/logo.svg" alt="Logo" className="w-28 h-auto" />
-        </div>
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: '#F74036' }}>
+  <motion.div
+    initial={{ opacity: 0, scale: 0.95, y: 30 }}
+    animate={{ opacity: 1, scale: 1, y: 0 }}
+    transition={{ duration: 0.5, ease: "easeOut" }}
+    className="bg-white shadow-xl p-8 rounded-2xl w-full max-w-sm border"
+  >
+    {/* LOGO Zapediu */}
+    <div className="flex justify-center mb-8">
+      <img
+        src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//zapediuBG.png"
+        alt="Zapediu Logo"
+        className="w-28 h-auto object-contain"
+      />
+    </div>
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
