@@ -23,12 +23,6 @@ const AdminLayout = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [theme, setTheme] = useState("light");
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    setTheme(savedTheme);
-    document.documentElement.classList.toggle("dark", savedTheme === "dark");
-  }, []);
-
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
@@ -99,18 +93,10 @@ const AdminLayout = () => {
     <div className="min-h-screen flex transition-all bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
       <div className="relative"></div>
       <aside className="fixed left-0 top-0 h-screen w-64 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 p-4 flex flex-col justify-between shadow-md z-10">
-        {/* Botão de tema */}
-        <button
-          onClick={toggleTheme}
-          className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
-        >
-          {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
-
         <div>
-          <div className="flex items-center justify-between mb-6">
+{/*           <div className="flex items-center justify-between mb-6">
             <img src="/logo.svg" alt="Logo" className="w-24" />
-          </div>
+          </div> */}
 
           {userProfile && (
             <div className="flex items-center gap-3 mb-6">
@@ -141,7 +127,7 @@ const AdminLayout = () => {
                   to={item.to}
                   className={`flex items-center gap-3 px-3 py-2 rounded-lg transition font-medium ${
                     active
-                      ? "bg-gray-200 dark:bg-gray-700 text-blue-600 dark:text-indigo-400 shadow"
+                      ? "bg-gray-200 dark:bg-gray-700 text-red-600 dark:text-indigo-400 shadow"
                       : "hover:bg-gray-300 dark:hover:bg-gray-700"
                   }`}
                 >
@@ -156,7 +142,7 @@ const AdminLayout = () => {
         <div className="flex flex-col gap-4 mt-6">
           <button
             onClick={() => setShowLogoutModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 transition rounded-lg font-semibold text-white justify-center"
+            className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 transition rounded-lg font-semibold text-white justify-center"
           >
             <LogOut size={18} />
             Sair
