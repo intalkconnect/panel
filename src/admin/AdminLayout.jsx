@@ -74,7 +74,7 @@ const AdminLayout = () => {
 
         },
         {
-          to: "/admin/Pedidos",
+          to: "/admin/pedidos",
           label: "Pedidos",
           icon: <Receipt size={18} />,
         },
