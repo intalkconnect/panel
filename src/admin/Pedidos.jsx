@@ -110,4 +110,4 @@ const KanbanPedidos = () => {
   );
 };
 
-export default KanbanPedidos;
+export default Pedidos;
