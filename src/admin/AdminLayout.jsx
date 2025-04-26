@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   LogOut,
-  User,
   LayoutDashboard,
   Building,
   Users,
@@ -17,8 +16,6 @@ const AdminLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [userProfile, setUserProfile] = useState(null);
-  const [empresaNome, setEmpresaNome] = useState("");
   const [loading, setLoading] = useState(true);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [theme, setTheme] = useState("light");
@@ -33,20 +30,19 @@ const AdminLayout = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
   };
 
   useEffect(() => {
     const empresaId = localStorage.getItem("empresa_id");
     const perfilId = localStorage.getItem("perfil_id");
-    const perfilNome = localStorage.getItem("perfil_nome");
-    const empresaNomeLS = localStorage.getItem("empresa_nome");
 
     if (!empresaId || !perfilId) {
       navigate("/login");
-    } else {
-      setUserProfile({ perfilId, perfilNome });
-      setEmpresaNome(empresaNomeLS);
     }
 
     setLoading(false);
@@ -59,46 +55,20 @@ const AdminLayout = () => {
   };
 
   const navItems = [
-    {
-      to: "/admin",
-      label: "Dashboard",
-      icon: <LayoutDashboard size={18} />,
-    },
-    {
-      to: "/admin/empresas",
-      label: "Empresas",
-      requiredProfile: "master",
-      icon: <Building size={18} />,
-    },
-    {
-      to: "/admin/usuarios",
-      label: "Usuários",
-      requiredProfile: "master",
-      icon: <Users size={18} />,
-    },
-    {
-      to: "/admin/produtos",
-      label: "Produtos",
-      icon: <Boxes size={18} />,
-    },
-    {
-      to: "/admin/categorias",
-      label: "Categorias",
-      icon: <Folder size={18} />,
-    },
-    {
-      to: "/admin/configuracoes",
-      label: "Configurações",
-      icon: <Settings size={18} />,
-    },
+    { to: "/admin", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
+    { to: "/admin/empresas", label: "Empresas", requiredProfile: "master", icon: <Building size={18} /> },
+    { to: "/admin/usuarios", label: "Usuários", requiredProfile: "master", icon: <Users size={18} /> },
+    { to: "/admin/produtos", label: "Produtos", icon: <Boxes size={18} /> },
+    { to: "/admin/categorias", label: "Categorias", icon: <Folder size={18} /> },
+    { to: "/admin/configuracoes", label: "Configurações", icon: <Settings size={18} /> },
   ];
 
   if (loading) return null;
 
   return (
     <div className="min-h-screen flex transition-all bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-      <div className="relative"></div>
       <aside className="fixed left-0 top-0 h-screen w-64 bg-[#F74036] text-white p-4 flex flex-col justify-between shadow-md z-10">
+
         {/* Botão de tema */}
         <button
           onClick={toggleTheme}
@@ -116,27 +86,8 @@ const AdminLayout = () => {
             />
           </div>
 
-          {userProfile && (
-            <div className="flex items-center gap-3 mb-6 justify-center">
-              <div className="bg-white text-[#F74036] p-2 rounded-full">
-                <User size={20} />
-              </div>
-              <div className="leading-tight text-center">
-                <p className="text-sm">Bem-vindo</p>
-                <p className="font-bold">{empresaNome}</p>
-              </div>
-            </div>
-          )}
-
           <nav className="space-y-2 mt-4">
             {navItems.map((item) => {
-              if (
-                item.requiredProfile &&
-                item.requiredProfile !== userProfile?.perfilNome
-              ) {
-                return null;
-              }
-
               const active = location.pathname === item.to;
 
               return (
