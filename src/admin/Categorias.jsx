@@ -186,69 +186,64 @@ function Categorias() {
           onChange={(e) => setBusca(e.target.value)}
         />
       </div>
-      <div className="overflow-auto rounded-xl border border-gray-200 dark:border-gray-700 mb-6">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-gray-100 dark:bg-gray-800 font-bold text-gray-800 dark:text-white">
-            <tr>
-              <th className="p-3 border text-center">Nome</th>
-              <th className="p-3 border text-center">Ativo</th>
-              <th className="p-3 border text-center">Imagem</th>
-              {isMaster && <th className="p-3 border text-center">Empresa</th>}
-              <th className="p-3 border text-center">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categoriasFiltradas.map((categoria) => (
-              <tr
-                key={categoria.id}
-                className="border-t border-gray-200 dark:border-gray-700"
-              >
-                <td className="p-3 border text-center">{categoria.nome}</td>
-                <td className="p-3 border text-center">
-                  {categoria.ativo ? "Sim" : "Não"}
-                </td>
-                <td className="p-3 border">
-                  <div className="flex items-center justify-center h-full">
-                    {categoria.imagem_url ? (
-                      <img
-                        src={categoria.imagem_url}
-                        alt={categoria.nome}
-                        className="w-20 h-20 object-cover"
-                      />
-                    ) : (
-                      <span className="text-gray-500 dark:text-gray-400 text-center">
-                        Sem imagem
-                      </span>
-                    )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {categoriasFiltradas.length > 0 ? (
+          categoriasFiltradas.map((categoria, index) => (
+            <motion.div
+              key={categoria.id}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="border rounded-2xl p-4 flex flex-col bg-white dark:bg-gray-800 shadow hover:shadow-lg transition"
+            >
+              <div className="flex justify-center mb-4">
+                {categoria.imagem_url ? (
+                  <img
+                    src={categoria.imagem_url}
+                    alt={categoria.nome}
+                    className="w-32 h-32 object-cover rounded-md"
+                  />
+                ) : (
+                  <div className="w-32 h-32 flex items-center justify-center text-gray-400 bg-gray-100 rounded-md">
+                    Sem imagem
                   </div>
-                </td>
-
-                {isMaster && (
-                  <td className="p-3 border text-center">
-                    {categoria.empresas?.nome}
-                  </td>
                 )}
-                <td className="p-3 border text-center space-x-2">
-                  <button
-                    className="p-2 rounded-full hover:bg-blue-600 hover:text-white text-blue-600 dark:text-blue-400 dark:hover:bg-blue-700 transition"
-                    onClick={() => {
-                      setEditando(categoria);
-                      setShowModal(true);
-                    }}
-                  >
-                    <SquarePenIcon size={18} />
-                  </button>
-                  <button
-                    className="p-2 rounded-full hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 dark:hover:bg-red-700 transition"
-                    onClick={() => setConfirmDeleteId(categoria.id)}
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              </div>
+              <h3 className="text-lg font-bold text-center mb-2 text-gray-900 dark:text-white">
+                {categoria.nome}
+              </h3>
+              <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+                Ativo: {categoria.ativo ? "Sim" : "Não"}
+              </p>
+              {isMaster && (
+                <p className="text-center text-xs text-gray-400 mb-2">
+                  Empresa: {categoria.empresas?.nome || "—"}
+                </p>
+              )}
+              <div className="flex justify-center gap-2 mt-auto">
+                <button
+                  className="p-2 rounded-full hover:bg-blue-600 hover:text-white text-blue-600 dark:text-blue-400 dark:hover:bg-blue-700 transition"
+                  onClick={() => {
+                    setEditando(categoria);
+                    setShowModal(true);
+                  }}
+                >
+                  <SquarePenIcon size={18} />
+                </button>
+                <button
+                  className="p-2 rounded-full hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 dark:hover:bg-red-700 transition"
+                  onClick={() => setConfirmDeleteId(categoria.id)}
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            </motion.div>
+          ))
+        ) : (
+          <div className="col-span-full text-center text-gray-500 dark:text-gray-400">
+            Nenhuma categoria encontrada.
+          </div>
+        )}
       </div>
       {confirmDeleteId && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
