@@ -12,6 +12,7 @@ import {
   Tags,
   ChevronDown,
   ChevronRight,
+  Receipt,
 } from "lucide-react";
 
 const AdminLayout = () => {
@@ -73,7 +74,7 @@ const AdminLayout = () => {
                   {
           to: "/KanbanPedidos",
           label: "Pedidos",
-          icon: <KanbanPedidos size={18} />,
+          icon: <Receipt size={18} />,
         },
         },
       ],
