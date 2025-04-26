@@ -1,7 +1,7 @@
 // src/components/TotemNaoConfigurado.jsx
 import React from "react";
 
-const TotemNaoConfigurado = () => {
+const Padrao = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-red-600">
       <img
@@ -13,4 +13,4 @@ const TotemNaoConfigurado = () => {
   );
 };
 
-export default padrao;
+export default Padrao;
