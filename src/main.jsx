@@ -12,6 +12,7 @@ import Dashboard from "./admin/Dashboard";
 import Empresas from "./admin/Empresas";
 import Produtos from "./admin/Produtos";
 import Categorias from "./admin/Categorias";
+import Pedidos from "./admin/Pedidos";
 import Usuarios from "./admin/Usuarios";
 import Configuracoes from "./admin/Configuracoes";
 import Padrao from "./components/telas/Padrao";
