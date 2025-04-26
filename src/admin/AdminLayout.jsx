@@ -71,11 +71,12 @@ const AdminLayout = () => {
               icon: <Tags size={16} />,
             },
           ],
-                  {
+
+        },
+        {
           to: "/KanbanPedidos",
           label: "Pedidos",
           icon: <Receipt size={18} />,
-        },
         },
       ],
     },
