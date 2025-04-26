@@ -30,6 +30,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route path="empresas" element={<Empresas />} />
             <Route path="produtos" element={<Produtos />} />
             <Route path="categorias" element={<Categorias />} />
+            <Route path="pedidos" element={<Pedidos />} />
             <Route path="usuarios" element={<Usuarios />} />
             <Route path="configuracoes" element={<Configuracoes />} />
           </Route>
