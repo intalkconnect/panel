@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../data/supabaseClient";
 import { Receipt, MapPin, ArrowRightCircle } from "lucide-react";
 
-const KanbanPedidos = () => {
+const Pedidos = () => {
   const [pedidos, setPedidos] = useState([]);
   const [novosPedidos, setNovosPedidos] = useState([]);
   const [alertaNovoPedido, setAlertaNovoPedido] = useState(false);
