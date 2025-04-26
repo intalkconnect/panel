@@ -74,7 +74,7 @@ const AdminLayout = () => {
 
         },
         {
-          to: "/KanbanPedidos",
+          to: "/admin/Pedidos",
           label: "Pedidos",
           icon: <Receipt size={18} />,
         },
