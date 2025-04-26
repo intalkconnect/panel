@@ -67,10 +67,13 @@ const AdminLayout = () => {
 
   return (
     <div className="min-h-screen flex transition-all bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-<aside className={`fixed left-0 top-0 h-screen w-64 p-4 flex flex-col justify-between shadow-md z-10 transition-all ${
-  theme === "dark" ? "bg-gray-900 text-gray-100" : "bg-[#F74036] text-white"
-}`}>
-">
+<aside
+  className={`fixed left-0 top-0 h-screen w-64 p-4 flex flex-col justify-between shadow-md z-10 transition-all
+    ${theme === "dark"
+      ? "bg-[#1e1e1e] text-white border-r border-gray-700"
+      : "bg-white text-gray-800 border-r border-gray-200"}
+  `}
+>
 
         {/* Botão de tema */}
         <button
