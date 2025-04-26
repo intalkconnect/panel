@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../data/supabaseClient";
-import { Receipt, MapPin } from "lucide-react";
+import { Receipt, MapPin, ArrowRightCircle } from "lucide-react";
 
 const KanbanPedidos = () => {
   const [pedidos, setPedidos] = useState([]);
@@ -18,7 +18,7 @@ const KanbanPedidos = () => {
 
     const { data, error } = await supabase
       .from("pedidos")
-      .select("id, nome_cliente, whatsappId, total, status, clientes ( endereco )")
+      .select("id, nome_cliente, whatsappId, total, status, clientes ( endereco, id )")
       .eq("empresa_id", empresaId)
       .order("created_at", { ascending: false });
 
@@ -61,6 +61,11 @@ const KanbanPedidos = () => {
     }
   }
 
+  function formatPhone(phone) {
+    if (!phone) return "Sem telefone";
+    return phone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+  }
+
   const statusColumns = [
     { title: "Em Análise", status: "aguardando", color: "bg-orange-400" },
     { title: "Em Produção", status: "em_preparo", color: "bg-yellow-400" },
@@ -80,13 +85,16 @@ const KanbanPedidos = () => {
           return (
             <div
               key={column.status}
-              className={`flex-1 p-4 rounded-xl shadow-lg ${column.color} min-w-[300px]`}
+              className={`flex-1 rounded-t-md shadow-lg ${column.color} min-w-[300px] overflow-hidden`}
             >
-              <h2 className="text-white text-xl font-bold mb-4 flex items-center justify-center gap-2">
-                <Receipt size={20} />
-                {column.title} ({pedidosFiltrados.length})
-              </h2>
-              <div className="space-y-4">
+              <div className="flex items-center justify-between bg-opacity-70 px-4 py-2">
+                <h2 className="text-white text-lg font-bold flex items-center gap-2">
+                  <Receipt size={20} />
+                  {column.title}
+                </h2>
+                <span className="text-white font-semibold">{pedidosFiltrados.length}</span>
+              </div>
+              <div className="p-4 space-y-4">
                 {pedidosFiltrados.length > 0 ? (
                   pedidosFiltrados.map((pedido) => (
                     <div
@@ -100,7 +108,7 @@ const KanbanPedidos = () => {
                         <p className="font-bold">Pedido #{pedido.id.slice(0, 8)}</p>
                       </div>
                       <p className="text-sm">{pedido.nome_cliente || "Cliente não informado"}</p>
-                      <p className="text-xs text-gray-500">{pedido.whatsappId || "Sem telefone"}</p>
+                      <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
                       {pedido.clientes?.endereco ? (
                         <a
                           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`}
@@ -121,9 +129,9 @@ const KanbanPedidos = () => {
                       {pedido.status !== "pronto" && (
                         <button
                           onClick={() => avancarPedido(pedido.id, pedido.status)}
-                          className="mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
+                          className="mt-2 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-semibold transition"
                         >
-                          Avançar pedido →
+                          <ArrowRightCircle size={18} /> Atualizar Status
                         </button>
                       )}
                     </div>
@@ -140,4 +148,4 @@ const KanbanPedidos = () => {
   );
 };
 
-export default KanbanPedidos;
+export default Pedidos;
