@@ -84,19 +84,19 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: '#F74036' }}>
+    <div className="min-h-screen flex items-center justify-center bg-[#F74036] px-4">
   <motion.div
     initial={{ opacity: 0, scale: 0.95, y: 30 }}
     animate={{ opacity: 1, scale: 1, y: 0 }}
     transition={{ duration: 0.5, ease: "easeOut" }}
-    className="bg-white shadow-xl p-8 rounded-2xl w-full max-w-sm border"
+    className="bg-white shadow-xl p-8 rounded-2xl w-full max-w-sm border border-red-100"
   >
-    {/* LOGO Zapediu */}
+    {/* LOGO atualizada */}
     <div className="flex justify-center mb-8">
       <img
-        src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//zapediuBG.png"
+        src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logoWP.png"
         alt="Zapediu Logo"
-        className="w-28 h-auto object-contain"
+        className="w-32 h-auto object-contain"
       />
     </div>
 
