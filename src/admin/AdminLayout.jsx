@@ -70,6 +70,11 @@ const AdminLayout = () => {
               icon: <Tags size={16} />,
             },
           ],
+                  {
+          to: "/KanbanPedidos",
+          label: "Pedidos",
+          icon: <KanbanPedidos size={18} />,
+        },
         },
       ],
     },
