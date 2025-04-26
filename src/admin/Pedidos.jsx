@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../data/supabaseClient";
+import { Receipt, MapPin } from "lucide-react";
 
-const Pedidos = () => {
+const KanbanPedidos = () => {
   const [pedidos, setPedidos] = useState([]);
   const [novosPedidos, setNovosPedidos] = useState([]);
   const [alertaNovoPedido, setAlertaNovoPedido] = useState(false);
@@ -17,7 +18,7 @@ const Pedidos = () => {
 
     const { data, error } = await supabase
       .from("pedidos")
-      .select("id, nome_cliente, whatsappId, total, status")
+      .select("id, nome_cliente, whatsappId, total, status, clientes ( endereco )")
       .eq("empresa_id", empresaId)
       .order("created_at", { ascending: false });
 
@@ -74,40 +75,69 @@ const Pedidos = () => {
         </div>
       )}
       <div className="flex gap-4 p-6 overflow-x-auto min-h-screen">
-        {statusColumns.map((column) => (
-          <div
-            key={column.status}
-            className={`flex-1 p-4 rounded-xl shadow-lg ${column.color} min-w-[300px]`}
-          >
-            <h2 className="text-white text-xl font-bold mb-4 text-center">{column.title}</h2>
-            <div className="space-y-4">
-              {pedidos.filter((p) => p.status === column.status).map((pedido) => (
-                <div
-                  key={pedido.id}
-                  className={`bg-white text-gray-800 p-4 rounded-lg shadow flex flex-col gap-2 transition ${
+        {statusColumns.map((column) => {
+          const pedidosFiltrados = pedidos.filter((p) => p.status === column.status);
+          return (
+            <div
+              key={column.status}
+              className={`flex-1 p-4 rounded-xl shadow-lg ${column.color} min-w-[300px]`}
+            >
+              <h2 className="text-white text-xl font-bold mb-4 flex items-center justify-center gap-2">
+                <Receipt size={20} />
+                {column.title} ({pedidosFiltrados.length})
+              </h2>
+              <div className="space-y-4">
+                {pedidosFiltrados.length > 0 ? (
+                  pedidosFiltrados.map((pedido) => (
+                    <div
+                      key={pedido.id}
+                      className={`bg-white text-gray-800 p-4 rounded-lg shadow flex flex-col gap-2 transition ${
     novosPedidos.includes(pedido.id) ? "ring-4 ring-green-400 animate-pulse" : ""
   }`}
-                >
-                  <p className="font-bold">Pedido #{pedido.id.slice(0, 8)}</p>
-                  <p className="text-sm">{pedido.nome_cliente || "Cliente não informado"}</p>
-                  <p className="text-xs text-gray-500">{pedido.whatsappId || "Sem telefone"}</p>
-                  <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2) || 0}</p>
-                  {pedido.status !== "pronto" && (
-                    <button
-                      onClick={() => avancarPedido(pedido.id, pedido.status)}
-                      className="mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
                     >
-                      Avançar pedido →
-                    </button>
-                  )}
-                </div>
-              ))}
+                      <div className="flex items-center gap-2">
+                        <Receipt size={18} className="text-gray-600" />
+                        <p className="font-bold">Pedido #{pedido.id.slice(0, 8)}</p>
+                      </div>
+                      <p className="text-sm">{pedido.nome_cliente || "Cliente não informado"}</p>
+                      <p className="text-xs text-gray-500">{pedido.whatsappId || "Sem telefone"}</p>
+                      {pedido.clientes?.endereco ? (
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center text-xs text-gray-500 gap-1 hover:text-blue-600 transition"
+                        >
+                          <MapPin size={14} />
+                          {pedido.clientes.endereco}
+                        </a>
+                      ) : (
+                        <div className="flex items-center text-xs text-gray-500 gap-1">
+                          <MapPin size={14} />
+                          Endereço não disponível
+                        </div>
+                      )}
+                      <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2) || 0}</p>
+                      {pedido.status !== "pronto" && (
+                        <button
+                          onClick={() => avancarPedido(pedido.id, pedido.status)}
+                          className="mt-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
+                        >
+                          Avançar pedido →
+                        </button>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-white text-center text-sm">Nenhum pedido aqui ainda 😴</div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
 };
 
-export default Pedidos;
+export default KanbanPedidos;
