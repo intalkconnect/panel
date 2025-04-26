@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "../data/supabaseClient";
 import { toast } from "react-toastify";
 import { Plus, Search, Folder, SquarePenIcon, Trash2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 function Categorias() {
   const [categorias, setCategorias] = useState([]);
