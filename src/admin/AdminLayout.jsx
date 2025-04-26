@@ -6,11 +6,10 @@ import {
   LayoutDashboard,
   Building,
   Users,
-  Boxes,
-  Folder,
-  Sun,
-  Moon,
   Settings,
+  ClipboardList,
+  Package,
+  Tags,
   ChevronDown,
   ChevronRight,
 } from "lucide-react";
@@ -23,7 +22,6 @@ const AdminLayout = () => {
   const [empresaNome, setEmpresaNome] = useState("");
   const [loading, setLoading] = useState(true);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [theme, setTheme] = useState("light");
   const [openMenus, setOpenMenus] = useState({});
 
   useEffect(() => {
@@ -59,17 +57,17 @@ const AdminLayout = () => {
         },
         {
           label: "Cardápio",
-          icon: <Folder size={18} />,
+          icon: <ClipboardList size={18} />,
           children: [
             {
               to: "/admin/produtos",
               label: "Produtos",
-              icon: <Boxes size={16} />,
+              icon: <Package size={16} />,
             },
             {
               to: "/admin/categorias",
               label: "Categorias",
-              icon: <Folder size={16} />,
+              icon: <Tags size={16} />,
             },
           ],
         },
@@ -110,13 +108,15 @@ const AdminLayout = () => {
       <aside className="fixed left-0 top-0 h-screen w-64 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 p-4 flex flex-col justify-between shadow-md z-10">
         <div>
           {userProfile && (
-            <div className="flex items-center gap-3 mb-6">
-              <div className="bg-gray-200 dark:bg-gray-700 text-red-600 p-2 rounded-full">
-                <User size={20} />
+            <div className="flex flex-col items-center mb-6">
+              <div className="bg-gray-200 dark:bg-gray-700 text-red-600 p-3 rounded-full mb-2">
+                <User size={24} />
               </div>
-              <div className="leading-tight">
-                <p className="text-sm">Bem-vindo</p>
-                <p className="font-bold">{empresaNome}</p>
+              <div className="text-center">
+                <p className="text-sm text-gray-500 dark:text-gray-400">Bem-vindo</p>
+                <p className="font-bold text-gray-900 dark:text-white break-words">
+                  {empresaNome}
+                </p>
               </div>
             </div>
           )}
