@@ -235,106 +235,84 @@ const Produtos = () => {
           onChange={(e) => setBusca(e.target.value)}
         />
       </div>
-      <div className="overflow-auto rounded-xl border border-gray-200 dark:border-gray-700 mb-6">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-gray-100 dark:bg-gray-800 font-bold text-gray-800 dark:text-white">
-            <tr>
-              <th className="p-3 border text-center">Produto</th>
-              <th className="p-3 border text-center">Preço</th>
-              <th className="p-3 border text-center">Quantidade</th>
-              <th className="p-3 border text-center">Imagem</th>
-              <th className="p-3 border text-center">Categoria</th>
-              {isMaster && <th className="p-3 text-center border">Empresa</th>}
-              <th className="p-3 text-center border">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {produtosFiltrados.length > 0 ? (
-              produtosFiltrados.map((produto) => (
-                <tr
-                  key={produto.id}
-                  className="border-t border-gray-200 dark:border-gray-700"
-                >
-                  <td className="p-3 text-center border">{produto.nome}</td>
-                  <td className="p-3 text-center border">
-                    R$ {Number(produto.preco).toFixed(2)}
-                  </td>
-                  <td className="p-3 text-center border">
-                    {produto.quantidade ?? 0}
-                  </td>
-                  <td className="p-3 border">
-                    <div className="flex items-center justify-center h-full">
-                      {produto.imagem_url ? (
-                        <img
-                          src={produto.imagem_url}
-                          alt={produto.nome}
-                          className="w-20 h-20 object-cover"
-                        />
-                      ) : (
-                        <span className="text-gray-500 dark:text-gray-400 text-center">
-                          Sem imagem
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="p-3 text-center border">
-                    {produto.categorias?.nome || "—"}
-                  </td>
-                  {isMaster && (
-                    <td className="p-3 text-center border">
-                      {produto.empresas?.nome || "—"}
-                    </td>
-                  )}
-                  <td className="p-3 border text-center space-x-2">
-                    <button
-                      className="p-2 rounded-full hover:bg-blue-600 hover:text-white text-blue-600 dark:text-blue-400 dark:hover:bg-blue-700 transition"
-                      onClick={() => {
-                        setNovoProduto({
-                          id: produto.id,
-                          nome: produto.nome,
-                          preco: produto.preco,
-                          quantidade: produto.quantidade ?? 0,
-                          imagem_url: produto.imagem_url,
-                          ativo: produto.ativo,
-                          categoria_id: produto.categoria_id,
-                          detalhamento: produto.detalhamento ?? null,
-                        });
-
-                        setEditando(produto);
-                        setShowModal(true);
-                      }}
-                    >
-                      <SquarePenIcon size={18} />
-                    </button>
-                    <button
-                      className="p-2 rounded-full hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 dark:hover:bg-red-700 transition"
-                      onClick={() => setConfirmDeleteId(produto.id)}
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                    <button
-                      className="p-2 rounded-full hover:bg-yellow-500 hover:text-white text-yellow-600 dark:text-yellow-400 dark:hover:bg-yellow-600 transition"
-                      title="Detalhes"
-                      onClick={() => abrirDetalhamento(produto)}
-                    >
-                      <Eye size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan="7"
-                  className="p-4 text-center text-gray-500 dark:text-gray-400"
-                >
-                  Nenhum produto encontrado.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  {produtosFiltrados.length > 0 ? (
+    produtosFiltrados.map((produto) => (
+      <div
+        key={produto.id}
+        className="border rounded-xl p-4 flex flex-col bg-white dark:bg-gray-800 shadow hover:shadow-lg transition"
+      >
+        <div className="flex justify-center mb-4">
+          {produto.imagem_url ? (
+            <img
+              src={produto.imagem_url}
+              alt={produto.nome}
+              className="w-32 h-32 object-cover rounded-md"
+            />
+          ) : (
+            <div className="w-32 h-32 flex items-center justify-center text-gray-400 bg-gray-100 rounded-md">
+              Sem imagem
+            </div>
+          )}
+        </div>
+        <h3 className="text-lg font-bold text-center mb-2">{produto.nome}</h3>
+        <p className="text-center text-gray-600 dark:text-gray-400 mb-2">
+          R$ {Number(produto.preco).toFixed(2)}
+        </p>
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-4">
+          {produto.quantidade ?? 0} unidades
+        </p>
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-4">
+          {produto.categorias?.nome || "Sem categoria"}
+        </p>
+        {isMaster && (
+          <p className="text-center text-xs text-gray-400 mb-2">
+            Empresa: {produto.empresas?.nome || "—"}
+          </p>
+        )}
+        <div className="flex justify-center gap-2 mt-auto">
+          <button
+            className="p-2 rounded-full hover:bg-blue-600 hover:text-white text-blue-600 dark:text-blue-400 dark:hover:bg-blue-700 transition"
+            onClick={() => {
+              setNovoProduto({
+                id: produto.id,
+                nome: produto.nome,
+                preco: produto.preco,
+                quantidade: produto.quantidade ?? 0,
+                imagem_url: produto.imagem_url,
+                ativo: produto.ativo,
+                categoria_id: produto.categoria_id,
+                detalhamento: produto.detalhamento ?? null,
+              });
+              setEditando(produto);
+              setShowModal(true);
+            }}
+          >
+            <SquarePenIcon size={18} />
+          </button>
+          <button
+            className="p-2 rounded-full hover:bg-red-600 hover:text-white text-red-600 dark:text-red-400 dark:hover:bg-red-700 transition"
+            onClick={() => setConfirmDeleteId(produto.id)}
+          >
+            <Trash2 size={18} />
+          </button>
+          <button
+            className="p-2 rounded-full hover:bg-yellow-500 hover:text-white text-yellow-600 dark:text-yellow-400 dark:hover:bg-yellow-600 transition"
+            title="Detalhes"
+            onClick={() => abrirDetalhamento(produto)}
+          >
+            <Eye size={18} />
+          </button>
+        </div>
       </div>
+    ))
+  ) : (
+    <div className="col-span-full text-center text-gray-500 dark:text-gray-400">
+      Nenhum produto encontrado.
+    </div>
+  )}
+</div>
+
       {/* Modais */}
       {showDetalhesModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
