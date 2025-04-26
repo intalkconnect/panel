@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../data/supabaseClient";
 
-const KanbanPedidos = () => {
+const Pedidos = () => {
   const [pedidos, setPedidos] = useState([]);
   const [novosPedidos, setNovosPedidos] = useState([]);
   const [alertaNovoPedido, setAlertaNovoPedido] = useState(false);
