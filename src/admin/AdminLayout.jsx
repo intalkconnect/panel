@@ -23,13 +23,6 @@ const AdminLayout = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [theme, setTheme] = useState("light");
 
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-  };
-
   useEffect(() => {
     const empresaId = localStorage.getItem("empresa_id");
     const perfilId = localStorage.getItem("perfil_id");
@@ -91,7 +84,6 @@ const AdminLayout = () => {
 
   return (
     <div className="min-h-screen flex transition-all bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-      <div className="relative"></div>
       <aside className="fixed left-0 top-0 h-screen w-64 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 p-4 flex flex-col justify-between shadow-md z-10">
         <div>
 {/*           <div className="flex items-center justify-between mb-6">
