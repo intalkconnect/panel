@@ -10,7 +10,7 @@ const Pedidos = () => {
 
   useEffect(() => {
     fetchPedidos();
-    const interval = setInterval(fetchPedidos, 5000);
+    const interval = setInterval(fetchPedidos, 5000); // Atualiza a cada 1 minuto
     return () => clearInterval(interval);
   }, []);
 
@@ -29,9 +29,7 @@ const Pedidos = () => {
     }
 
     if (pedidos.length > 0) {
-      const novos = data.filter(
-        (pedido) => !pedidos.some((p) => p.id === pedido.id)
-      ).map((pedido) => pedido.id);
+      const novos = data.filter((pedido) => !pedidos.some((p) => p.id === pedido.id)).map((pedido) => pedido.id);
       if (novos.length > 0) {
         setNovosPedidos(novos);
         setAlertaNovoPedido(true);
@@ -86,8 +84,11 @@ const Pedidos = () => {
     return pedidos.filter((p) => p.whatsappId === whatsappId).length;
   }
 
-  function calcularTempo(createdAt) {
-    return dayjs().diff(dayjs(createdAt), 'minute');
+  function calcularTempo(pedido) {
+    if (pedido.status === "pronto" && pedido.tempo_para_pronto !== null) {
+      return pedido.tempo_para_pronto;
+    }
+    return dayjs().diff(dayjs(pedido.created_at), 'minute');
   }
 
   return (
@@ -129,7 +130,7 @@ const Pedidos = () => {
                       <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
                       <p className="text-xs text-gray-500">Histórico: {countPedidosCliente(pedido.whatsappId)} pedidos</p>
                       <p className="text-xs text-gray-500">Hora: {dayjs(pedido.created_at).format('HH:mm')}</p>
-                      <p className="text-xs text-gray-500">Tempo: {calcularTempo(pedido.created_at)} min</p>
+                      <p className="text-xs text-gray-500">Tempo: {calcularTempo(pedido)} min</p>
                       {pedido.clientes?.endereco ? (
                         <a
                           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`}
