@@ -149,7 +149,6 @@ function Categorias() {
     setEditando(null);
   }
 
-  // NOVO: filtro por nome
   const categoriasFiltradas = categorias.filter((cat) => {
     if (isMaster) {
       return cat.empresas?.nome?.toLowerCase().includes(busca.toLowerCase());
