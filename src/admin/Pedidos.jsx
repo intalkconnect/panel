@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../data/supabaseClient";
-import { Receipt, MapPin, ArrowRightCircle } from "lucide-react";
+import { Receipt, MapPin, ArrowRightCircle, Hourglass, ChefHat, Truck } from "lucide-react";
 
-const Pedidos = () => {
+const KanbanPedidos = () => {
   const [pedidos, setPedidos] = useState([]);
   const [novosPedidos, setNovosPedidos] = useState([]);
   const [alertaNovoPedido, setAlertaNovoPedido] = useState(false);
@@ -63,14 +63,19 @@ const Pedidos = () => {
 
   function formatPhone(phone) {
     if (!phone) return "Sem telefone";
+    phone = phone.replace(/^55/, "");
     return phone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
   }
 
   const statusColumns = [
-    { title: "Em Análise", status: "aguardando", color: "bg-orange-400" },
-    { title: "Em Produção", status: "em_preparo", color: "bg-yellow-400" },
-    { title: "Pronto para Entrega", status: "pronto", color: "bg-green-400" },
+    { title: "Em Análise", status: "aguardando", color: "bg-orange-500", icon: <Hourglass size={20} /> },
+    { title: "Em Produção", status: "em_preparo", color: "bg-yellow-500", icon: <ChefHat size={20} /> },
+    { title: "Pronto para Entrega", status: "pronto", color: "bg-green-500", icon: <Truck size={20} /> },
   ];
+
+  function countPedidosCliente(whatsappId) {
+    return pedidos.filter((p) => p.whatsappId === whatsappId).length;
+  }
 
   return (
     <div className="relative">
@@ -87,9 +92,9 @@ const Pedidos = () => {
               key={column.status}
               className={`flex-1 rounded-t-md shadow-lg ${column.color} min-w-[300px] overflow-hidden`}
             >
-              <div className="flex items-center justify-between bg-opacity-70 px-4 py-2">
+              <div className="flex items-center justify-between bg-black/20 px-4 py-2">
                 <h2 className="text-white text-lg font-bold flex items-center gap-2">
-                  <Receipt size={20} />
+                  {column.icon}
                   {column.title}
                 </h2>
                 <span className="text-white font-semibold">{pedidosFiltrados.length}</span>
@@ -100,14 +105,16 @@ const Pedidos = () => {
                     <div
                       key={pedido.id}
                       className={`bg-white text-gray-800 p-4 rounded-lg shadow flex flex-col gap-2 transition ${
-    novosPedidos.includes(pedido.id) ? "ring-4 ring-green-400 animate-pulse" : ""
+    novosPedidos.includes(pedido.id) ? "ring-4 ring-green-400 animate-bounce" : ""
   }`}
                     >
                       <div className="flex items-center gap-2">
+                        <Receipt size={18} className="text-gray-600" />
                         <p className="font-bold">Pedido #{pedido.id.slice(0, 8)}</p>
                       </div>
                       <p className="text-sm">{pedido.nome_cliente || "Cliente não informado"}</p>
                       <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
+                      <p className="text-xs text-gray-500">Histórico: {countPedidosCliente(pedido.whatsappId)} pedidos</p>
                       {pedido.clientes?.endereco ? (
                         <a
                           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`}
@@ -147,4 +154,4 @@ const Pedidos = () => {
   );
 };
 
-export default Pedidos;
+export default KanbanPedidos;
