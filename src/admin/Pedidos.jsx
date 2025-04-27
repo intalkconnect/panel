@@ -10,7 +10,7 @@ const Pedidos = () => {
 
   useEffect(() => {
     fetchPedidos();
-    const interval = setInterval(fetchPedidos, 5000); // Atualiza a cada 1 minuto
+    const interval = setInterval(fetchPedidos, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -74,6 +74,12 @@ const Pedidos = () => {
     return phone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
   }
 
+  function formatTempo(minutos) {
+    const hrs = Math.floor(minutos / 60).toString().padStart(2, '0');
+    const mins = (minutos % 60).toString().padStart(2, '0');
+    return `${hrs}:${mins}`;
+  }
+
   const statusColumns = [
     { title: "Em Análise", status: "aguardando", color: "bg-orange-500", icon: <Hourglass size={20} /> },
     { title: "Em Produção", status: "em_preparo", color: "bg-yellow-500", icon: <ChefHat size={20} /> },
@@ -118,36 +124,40 @@ const Pedidos = () => {
                   pedidosFiltrados.map((pedido) => (
                     <div
                       key={pedido.id}
-                      className={`bg-white text-gray-800 p-4 rounded-lg shadow flex flex-col gap-2 transition ${
+                      className={`bg-white text-gray-800 p-4 rounded-lg shadow flex flex-col gap-3 transition ${
     novosPedidos.includes(pedido.id) ? "ring-4 ring-green-400 animate-bounce" : ""
   }`}
                     >
-                      <div className="flex items-center gap-2">
-                        <Receipt size={18} className="text-gray-600" />
-                        <p className="font-bold">Pedido #{pedido.id.slice(0, 8)}</p>
-                      </div>
-                      <p className="text-sm">{pedido.nome_cliente || "Cliente não informado"}</p>
-                      <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
-                      <p className="text-xs text-gray-500">Histórico: {countPedidosCliente(pedido.whatsappId)} pedidos</p>
-                      <p className="text-xs text-gray-500">Hora: {dayjs(pedido.created_at).format('HH:mm')}</p>
-                      <p className="text-xs text-gray-500">Tempo: {calcularTempo(pedido)} min</p>
-                      {pedido.clientes?.endereco ? (
-                        <a
-                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center text-xs text-gray-500 gap-1 hover:text-blue-600 transition"
-                        >
-                          <MapPin size={14} />
-                          {pedido.clientes.endereco}
-                        </a>
-                      ) : (
-                        <div className="flex items-center text-xs text-gray-500 gap-1">
-                          <MapPin size={14} />
-                          Endereço não disponível
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Receipt size={18} className="text-gray-600" />
+                          <p className="font-bold">Pedido #{pedido.id.slice(0, 8)}</p>
                         </div>
-                      )}
-                      <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2) || 0}</p>
+                        <p className="text-xs text-gray-500">{dayjs(pedido.created_at).format('HH:mm')}</p>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <p className="text-sm font-semibold">{pedido.nome_cliente || "Cliente não informado"}</p>
+                        <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
+                        <p className="text-xs text-gray-500">Pedidos: {countPedidosCliente(pedido.whatsappId)}</p>
+                        <p className="text-xs text-gray-500">Tempo: {formatTempo(calcularTempo(pedido))}</p>
+                        {pedido.clientes?.endereco ? (
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center text-xs text-gray-500 gap-1 hover:text-blue-600 transition"
+                          >
+                            <MapPin size={14} />
+                            {pedido.clientes.endereco}
+                          </a>
+                        ) : (
+                          <div className="flex items-center text-xs text-gray-500 gap-1">
+                            <MapPin size={14} />
+                            Endereço não disponível
+                          </div>
+                        )}
+                      </div>
+                      <p className="font-semibold text-lg">Total: R$ {pedido.total?.toFixed(2) || 0}</p>
                       {pedido.status !== "pronto" && (
                         <button
                           onClick={() => avancarPedido(pedido.id, pedido.status, pedido.created_at)}
