@@ -240,7 +240,7 @@ const Produtos = () => {
     produtosFiltrados.map((produto) => (
       <div
   key={produto.id}
-  className="border rounded-lg p-3 flex flex-col items-center bg-white dark:bg-gray-800 shadow-sm w-[200px]"
+  className="border rounded-lg p-3 flex flex-col items-center bg-white dark:bg-gray-800 shadow-sm w-[180px]"
 >
   <div className="flex justify-center mb-3">
     {produto.imagem_url ? (
@@ -255,21 +255,28 @@ const Produtos = () => {
       </div>
     )}
   </div>
+
   <h3 className="text-sm font-bold text-center">{produto.nome}</h3>
+
   <p className="text-xs text-gray-600 mt-1">
     R$ {Number(produto.preco).toFixed(2)}
   </p>
-  <p className="text-xs text-gray-500">
-    {produto.quantidade ?? 0} unidades
-  </p>
-  <p className="text-xs text-gray-500 text-center">
-    {produto.categorias?.nome || "Sem categoria"}
-  </p>
+
+  <p className="text-xs text-gray-500">{produto.quantidade ?? 0} unidades</p>
+
+  {/* Categoria como Tag */}
+  {produto.categorias?.nome && (
+    <div className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs mt-2">
+      {produto.categorias.nome}
+    </div>
+  )}
+
 {/*   {isMaster && (
-    <p className="text-[10px] text-gray-400 text-center">
+    <p className="text-[10px] text-gray-400 text-center mt-1">
       {produto.empresas?.nome || "—"}
     </p>
-  )} */}
+  )}
+ */}
   <div className="flex gap-2 mt-3">
     <button
       className="p-1 rounded-full hover:bg-blue-100 text-blue-600"
@@ -304,6 +311,7 @@ const Produtos = () => {
     </button>
   </div>
 </div>
+
 
     ))
   ) : (
