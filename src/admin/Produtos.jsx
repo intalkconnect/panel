@@ -265,11 +265,11 @@ const Produtos = () => {
   <p className="text-xs text-gray-500 text-center">
     {produto.categorias?.nome || "Sem categoria"}
   </p>
-  {isMaster && (
+{/*   {isMaster && (
     <p className="text-[10px] text-gray-400 text-center">
       {produto.empresas?.nome || "—"}
     </p>
-  )}
+  )} */}
   <div className="flex gap-2 mt-3">
     <button
       className="p-1 rounded-full hover:bg-blue-100 text-blue-600"
