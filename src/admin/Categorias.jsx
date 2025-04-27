@@ -197,7 +197,7 @@ function Categorias() {
               )}
               <h3 className="text-sm font-bold text-center">{categoria.nome}</h3>
               <p className="text-xs text-gray-500 mt-1">Ativo: {categoria.ativo ? "Sim" : "Não"}</p>
-              {isMaster && <p className="text-xs text-gray-400 mt-1 text-center">Empresa: {categoria.empresas?.nome || "—"}</p>}
+{/*               {isMaster && <p className="text-xs text-gray-400 mt-1 text-center">Empresa: {categoria.empresas?.nome || "—"}</p>} */}
               <div className="flex gap-2 mt-3">
                 <button className="p-1 rounded-full hover:bg-blue-100 text-blue-600" onClick={() => { setEditando(categoria); setShowModal(true); }}>
                   <SquarePenIcon size={16} />
