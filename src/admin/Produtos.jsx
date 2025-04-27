@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { supabase } from "../data/supabaseClient";
 import { toast } from "react-toastify";
-import { Trash2, Search, Plus, Boxes, SquarePenIcon, Eye } from "lucide-react";
+import { Trash2, Search, Plus, Boxes, SquarePenIcon, Eye, Tag } from "lucide-react";
 
 const Produtos = () => {
   const [produtos, setProdutos] = useState([]);
@@ -238,23 +238,25 @@ const Produtos = () => {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
   {produtosFiltrados.length > 0 ? (
     produtosFiltrados.map((produto) => (
-      <div
-  key={produto.id}
-  className="border rounded-lg p-3 flex flex-col items-center bg-white dark:bg-gray-800 shadow-sm w-[180px]"
->
-  <div className="flex justify-center mb-3">
-    {produto.imagem_url ? (
-      <img
-        src={produto.imagem_url}
-        alt={produto.nome}
-        className="w-20 h-20 object-cover rounded-md"
-      />
-    ) : (
-      <div className="w-20 h-20 flex items-center justify-center text-gray-400 bg-gray-100 rounded-md text-xs">
-        Sem imagem
-      </div>
-    )}
-  </div>
+      <div className="relative w-20 h-20 mb-3">
+  {produto.categorias?.nome && (
+    <div className="absolute top-0 left-0 bg-blue-100 text-blue-700 text-[10px] font-semibold px-2 py-0.5 rounded-br-lg">
+      <Tag size={10} /> {produto.categorias.nome}
+    </div>
+  )}
+  {produto.imagem_url ? (
+    <img
+      src={produto.imagem_url}
+      alt={produto.nome}
+      className="w-full h-full object-cover rounded-md"
+    />
+  ) : (
+    <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-100 rounded-md text-xs">
+      Sem imagem
+    </div>
+  )}
+</div>
+
 
   <h3 className="text-sm font-bold text-center">{produto.nome}</h3>
 
