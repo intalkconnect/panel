@@ -53,7 +53,7 @@ const AdminLayout = () => {
       items: [
         {
           to: "/admin",
-          label: "Dashboard",
+          label: "Central de Dados",
           icon: <LayoutDashboard size={18} />,
         },
         {
