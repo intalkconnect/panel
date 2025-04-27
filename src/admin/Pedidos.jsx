@@ -10,7 +10,7 @@ const Pedidos = () => {
 
   useEffect(() => {
     fetchPedidos();
-    const interval = setInterval(fetchPedidos, 15000);
+    const interval = setInterval(fetchPedidos, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -143,7 +143,7 @@ const Pedidos = () => {
                             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center text-xs text-blue-600 gap-1 hover:underline"
+                            className="flex items-center text-xs text-blue-600 gap-1 hover:underline bg-blue-50 p-2 rounded-md"
                           >
                             <MapPin size={14} />
                             {pedido.clientes.endereco}
