@@ -118,7 +118,7 @@ const Pedidos = () => {
                           <Receipt size={18} className="text-gray-600" />
                           <p className="font-bold">Pedido #{pedido.id.slice(0, 8)}</p>
                         </div>
-                        <div className="flex items-center gap-1 text-gray-500 text-xs">
+                        <div className="flex items-center gap-1 text-gray-500 text-xs bg-blue-50 p-2 rounded-md">
                           <Clock3 size={14} />
                           {dayjs(pedido.created_at).format('HH:mm')}
                         </div>
@@ -127,7 +127,7 @@ const Pedidos = () => {
                         <p className="text-sm font-semibold">{pedido.nome_cliente || "Cliente não informado"}</p>
                         <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
                         <div className="flex justify-between items-center text-xs text-gray-500">
-                          <p>Pedidos:</p>
+                          <p>Pedido:</p>
                           <div
                             className={`${countPedidosCliente(pedido.whatsappId) === 1 ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-700'} font-bold px-2 py-1 rounded-full`}
                             title={countPedidosCliente(pedido.whatsappId) === 1 ? 'Primeiro pedido!' : 'Cliente frequente'}
@@ -145,7 +145,7 @@ const Pedidos = () => {
                               rel="noopener noreferrer"
                               className="flex items-center gap-1 text-blue-600 hover:underline"
                             >
-                              <LinkIcon size={14} /> {pedido.clientes.endereco}
+                               {pedido.clientes.endereco} <LinkIcon size={14} />
                             </a>
                           ) : (
                             <span>Endereço não disponível</span>
