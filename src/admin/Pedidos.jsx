@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../data/supabaseClient";
-import { Receipt, MapPin, ArrowRightCircle, Hourglass, ChefHat, Truck, Clock3 } from "lucide-react";
+import { Receipt, MapPin, ArrowRightCircle, Hourglass, ChefHat, Truck, Clock3, Link as LinkIcon } from "lucide-react";
 import dayjs from "dayjs";
 
 const Pedidos = () => {
@@ -10,7 +10,7 @@ const Pedidos = () => {
 
   useEffect(() => {
     fetchPedidos();
-    const interval = setInterval(fetchPedidos, 60000);
+    const interval = setInterval(fetchPedidos, 15000);
     return () => clearInterval(interval);
   }, []);
 
@@ -111,9 +111,7 @@ const Pedidos = () => {
                   pedidosFiltrados.map((pedido) => (
                     <div
                       key={pedido.id}
-                      className={`bg-white text-gray-800 p-4 rounded-lg shadow flex flex-col gap-3 transition ${
-    novosPedidos.includes(pedido.id) ? "ring-4 ring-green-400 animate-bounce" : ""
-  }`}
+                      className={`bg-white text-gray-800 p-4 rounded-lg shadow flex flex-col gap-3 transition ${novosPedidos.includes(pedido.id) ? "ring-4 ring-green-400 animate-bounce" : ""}`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -138,22 +136,21 @@ const Pedidos = () => {
                           </div>
                           <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2) || 0}</p>
                         </div>
-                        {pedido.clientes?.endereco ? (
-                          <a
-                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center text-xs text-blue-600 gap-1 hover:underline bg-blue-50 p-2 rounded-md"
-                          >
-                            <MapPin size={14} />
-                            {pedido.clientes.endereco}
-                          </a>
-                        ) : (
-                          <div className="flex items-center text-xs text-gray-500 gap-1">
-                            <MapPin size={14} />
-                            Endereço não disponível
-                          </div>
-                        )}
+                        <div className="flex items-center gap-1 text-xs text-gray-700 bg-blue-50 p-2 rounded-md">
+                          <MapPin size={14} />
+                          {pedido.clientes?.endereco ? (
+                            <a
+                              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1 text-blue-600 hover:underline"
+                            >
+                              <LinkIcon size={14} /> {pedido.clientes.endereco}
+                            </a>
+                          ) : (
+                            <span>Endereço não disponível</span>
+                          )}
+                        </div>
                       </div>
                       {pedido.status !== "pronto" && (
                         <button
