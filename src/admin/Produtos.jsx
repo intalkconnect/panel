@@ -239,71 +239,72 @@ const Produtos = () => {
   {produtosFiltrados.length > 0 ? (
     produtosFiltrados.map((produto) => (
       <div
-        key={produto.id}
-        className="border rounded-lg p-3 flex flex-col items-center bg-white dark:bg-gray-800 max-w-[200px] mx-auto shadow-sm"
-      >
-        <div className="flex justify-center mb-3">
-          {produto.imagem_url ? (
-            <img
-              src={produto.imagem_url}
-              alt={produto.nome}
-              className="w-20 h-20 object-cover rounded-md"
-            />
-          ) : (
-            <div className="w-20 h-20 flex items-center justify-center text-gray-400 bg-gray-100 rounded-md text-xs">
-              Sem imagem
-            </div>
-          )}
-        </div>
-        <h3 className="text-sm font-bold text-center mb-1">{produto.nome}</h3>
-        <p className="text-center text-gray-600 dark:text-gray-400 text-xs">
-          R$ {Number(produto.preco).toFixed(2)}
-        </p>
-        <p className="text-center text-xs text-gray-500 dark:text-gray-400">
-          {produto.quantidade ?? 0} unidades
-        </p>
-        <p className="text-center text-xs text-gray-500 dark:text-gray-400">
-          {produto.categorias?.nome || "Sem categoria"}
-        </p>
-        {isMaster && (
-          <p className="text-center text-[10px] text-gray-400 mt-1">
-            {produto.empresas?.nome || "—"}
-          </p>
-        )}
-        <div className="flex gap-1 mt-3">
-          <button
-            className="p-1 rounded-full hover:bg-blue-100 text-blue-600"
-            onClick={() => {
-              setNovoProduto({
-                id: produto.id,
-                nome: produto.nome,
-                preco: produto.preco,
-                quantidade: produto.quantidade ?? 0,
-                imagem_url: produto.imagem_url,
-                ativo: produto.ativo,
-                categoria_id: produto.categoria_id,
-                detalhamento: produto.detalhamento ?? null,
-              });
-              setEditando(produto);
-              setShowModal(true);
-            }}
-          >
-            <SquarePenIcon size={16} />
-          </button>
-          <button
-            className="p-1 rounded-full hover:bg-red-100 text-red-600"
-            onClick={() => setConfirmDeleteId(produto.id)}
-          >
-            <Trash2 size={16} />
-          </button>
-          <button
-            className="p-1 rounded-full hover:bg-yellow-100 text-yellow-600"
-            onClick={() => abrirDetalhamento(produto)}
-          >
-            <Eye size={16} />
-          </button>
-        </div>
+  key={produto.id}
+  className="border rounded-lg p-3 flex flex-col items-center bg-white dark:bg-gray-800 shadow-sm w-[180px]"
+>
+  <div className="flex justify-center mb-3">
+    {produto.imagem_url ? (
+      <img
+        src={produto.imagem_url}
+        alt={produto.nome}
+        className="w-20 h-20 object-cover rounded-md"
+      />
+    ) : (
+      <div className="w-20 h-20 flex items-center justify-center text-gray-400 bg-gray-100 rounded-md text-xs">
+        Sem imagem
       </div>
+    )}
+  </div>
+  <h3 className="text-sm font-bold text-center">{produto.nome}</h3>
+  <p className="text-xs text-gray-600 mt-1">
+    R$ {Number(produto.preco).toFixed(2)}
+  </p>
+  <p className="text-xs text-gray-500">
+    {produto.quantidade ?? 0} unidades
+  </p>
+  <p className="text-xs text-gray-500 text-center">
+    {produto.categorias?.nome || "Sem categoria"}
+  </p>
+  {isMaster && (
+    <p className="text-[10px] text-gray-400 text-center">
+      {produto.empresas?.nome || "—"}
+    </p>
+  )}
+  <div className="flex gap-2 mt-3">
+    <button
+      className="p-1 rounded-full hover:bg-blue-100 text-blue-600"
+      onClick={() => {
+        setNovoProduto({
+          id: produto.id,
+          nome: produto.nome,
+          preco: produto.preco,
+          quantidade: produto.quantidade ?? 0,
+          imagem_url: produto.imagem_url,
+          ativo: produto.ativo,
+          categoria_id: produto.categoria_id,
+          detalhamento: produto.detalhamento ?? null,
+        });
+        setEditando(produto);
+        setShowModal(true);
+      }}
+    >
+      <SquarePenIcon size={16} />
+    </button>
+    <button
+      className="p-1 rounded-full hover:bg-red-100 text-red-600"
+      onClick={() => setConfirmDeleteId(produto.id)}
+    >
+      <Trash2 size={16} />
+    </button>
+    <button
+      className="p-1 rounded-full hover:bg-yellow-100 text-yellow-600"
+      onClick={() => abrirDetalhamento(produto)}
+    >
+      <Eye size={16} />
+    </button>
+  </div>
+</div>
+
     ))
   ) : (
     <div className="col-span-full text-center text-gray-500">
