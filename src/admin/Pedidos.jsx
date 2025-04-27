@@ -7,12 +7,13 @@ const Pedidos = () => {
   const [pedidos, setPedidos] = useState([]);
   const [novosPedidos, setNovosPedidos] = useState([]);
   const [alertaNovoPedido, setAlertaNovoPedido] = useState(false);
+  const [autoAvancar, setAutoAvancar] = useState(false);
 
   useEffect(() => {
     fetchPedidos();
     const interval = setInterval(fetchPedidos, 15000);
     return () => clearInterval(interval);
-  }, []);
+  }, [autoAvancar]);
 
   async function fetchPedidos() {
     const empresaId = localStorage.getItem("empresa_id");
@@ -26,6 +27,13 @@ const Pedidos = () => {
     if (error) {
       console.error("Erro ao buscar pedidos:", error);
       return;
+    }
+
+    if (autoAvancar && data?.length) {
+      const pedidosEmAnalise = data.filter(p => p.status === "aguardando");
+      for (const pedido of pedidosEmAnalise) {
+        await avancarPedido(pedido.id, "aguardando", pedido.created_at, true);
+      }
     }
 
     if (pedidos.length > 0) {
@@ -43,7 +51,7 @@ const Pedidos = () => {
     setPedidos(data);
   }
 
-  async function avancarPedido(id, statusAtual, createdAt) {
+  async function avancarPedido(id, statusAtual, createdAt, silent = false) {
     let novoStatus = "";
     let updateData = {};
 
@@ -61,9 +69,9 @@ const Pedidos = () => {
       .update(updateData)
       .eq("id", id);
 
-    if (!error) {
+    if (!error && !silent) {
       fetchPedidos();
-    } else {
+    } else if (error) {
       console.error("Erro ao avançar pedido:", error);
     }
   }
@@ -86,6 +94,10 @@ const Pedidos = () => {
 
   return (
     <div className="relative">
+      <div className="absolute top-4 left-4 flex items-center gap-2">
+        <input type="checkbox" id="autoAvancar" checked={autoAvancar} onChange={() => setAutoAvancar(!autoAvancar)} />
+        <label htmlFor="autoAvancar" className="text-sm text-gray-700">Avançar automaticamente novos pedidos</label>
+      </div>
       {alertaNovoPedido && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white font-semibold px-6 py-2 rounded-full shadow-lg animate-bounce z-50">
           Novo pedido recebido!
@@ -118,7 +130,7 @@ const Pedidos = () => {
                           <Receipt size={18} className="text-gray-600" />
                           <p className="font-bold">Pedido #{pedido.id.slice(0, 8)}</p>
                         </div>
-                        <div className="flex items-center gap-1 text-gray-500 text-xs bg-blue-50 p-2 rounded-md">
+                        <div className="flex items-center gap-1 text-gray-500 text-xs">
                           <Clock3 size={14} />
                           {dayjs(pedido.created_at).format('HH:mm')}
                         </div>
@@ -127,12 +139,12 @@ const Pedidos = () => {
                         <p className="text-sm font-semibold">{pedido.nome_cliente || "Cliente não informado"}</p>
                         <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
                         <div className="flex justify-between items-center text-xs text-gray-500">
-                          <p>Pedido:</p>
+                          <p>Pedidos:</p>
                           <div
                             className={`${countPedidosCliente(pedido.whatsappId) === 1 ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-700'} font-bold px-2 py-1 rounded-full`}
                             title={countPedidosCliente(pedido.whatsappId) === 1 ? 'Primeiro pedido!' : 'Cliente frequente'}
                           >
-                            {countPedidosCliente(pedido.whatsappId)}°
+                            {countPedidosCliente(pedido.whatsappId)}
                           </div>
                           <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2) || 0}</p>
                         </div>
@@ -145,7 +157,7 @@ const Pedidos = () => {
                               rel="noopener noreferrer"
                               className="flex items-center gap-1 text-blue-600 hover:underline"
                             >
-                               {pedido.clientes.endereco} <LinkIcon size={14} />
+                              <LinkIcon size={14} /> {pedido.clientes.endereco}
                             </a>
                           ) : (
                             <span>Endereço não disponível</span>
