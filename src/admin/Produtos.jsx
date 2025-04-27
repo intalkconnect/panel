@@ -240,7 +240,7 @@ const Produtos = () => {
     produtosFiltrados.map((produto) => (
       <div
         key={produto.id}
-        className="border rounded-xl p-4 flex flex-col bg-white dark:bg-gray-800 shadow hover:shadow-lg transition"
+        className="border rounded-lg p-3 flex flex-col items-center bg-white dark:bg-gray-800 max-w-[200px] shadow-sm"
       >
         <div className="flex justify-center mb-4">
           {produto.imagem_url ? (
