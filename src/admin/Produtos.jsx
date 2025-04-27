@@ -238,77 +238,71 @@ const Produtos = () => {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
   {produtosFiltrados.length > 0 ? (
     produtosFiltrados.map((produto) => (
-      <div className="relative w-20 h-20 mb-3">
-  {produto.categorias?.nome && (
-    <div className="absolute top-0 left-0 bg-blue-100 text-blue-700 text-[10px] font-semibold px-2 py-0.5 rounded-br-lg">
-      <Tag size={10} /> {produto.categorias.nome}
+  <div className="border rounded-lg p-3 flex flex-col items-center bg-white dark:bg-gray-800 shadow-sm w-[200px]" key={produto.id}>
+    <div className="relative w-20 h-20 mb-3">
+      {produto.categorias?.nome && (
+        <div className="absolute top-0 left-0 bg-blue-100 text-blue-700 text-[10px] font-semibold px-2 py-0.5 rounded-br-lg flex items-center gap-1">
+          <Tag size={10} /> {produto.categorias.nome}
+        </div>
+      )}
+      {produto.imagem_url ? (
+        <img
+          src={produto.imagem_url}
+          alt={produto.nome}
+          className="w-full h-full object-cover rounded-md"
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-100 rounded-md text-xs">
+          Sem imagem
+        </div>
+      )}
     </div>
-  )}
-  {produto.imagem_url ? (
-    <img
-      src={produto.imagem_url}
-      alt={produto.nome}
-      className="w-full h-full object-cover rounded-md"
-    />
-  ) : (
-    <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-100 rounded-md text-xs">
-      Sem imagem
-    </div>
-  )}
-</div>
 
+    <h3 className="text-sm font-bold text-center">{produto.nome}</h3>
 
-  <h3 className="text-sm font-bold text-center">{produto.nome}</h3>
-
-  <p className="text-xs text-gray-600 mt-1">
-    R$ {Number(produto.preco).toFixed(2)}
-  </p>
-
-  <p className="text-xs text-gray-500">{produto.quantidade ?? 0} unidades</p>
-
-{/*   {isMaster && (
-    <p className="text-[10px] text-gray-400 text-center mt-1">
-      {produto.empresas?.nome || "—"}
+    <p className="text-xs text-gray-600 mt-1">
+      R$ {Number(produto.preco).toFixed(2)}
     </p>
-  )}
- */}
-  <div className="flex gap-2 mt-3">
-    <button
-      className="p-1 rounded-full hover:bg-blue-100 text-blue-600"
-      onClick={() => {
-        setNovoProduto({
-          id: produto.id,
-          nome: produto.nome,
-          preco: produto.preco,
-          quantidade: produto.quantidade ?? 0,
-          imagem_url: produto.imagem_url,
-          ativo: produto.ativo,
-          categoria_id: produto.categoria_id,
-          detalhamento: produto.detalhamento ?? null,
-        });
-        setEditando(produto);
-        setShowModal(true);
-      }}
-    >
-      <SquarePenIcon size={16} />
-    </button>
-    <button
-      className="p-1 rounded-full hover:bg-red-100 text-red-600"
-      onClick={() => setConfirmDeleteId(produto.id)}
-    >
-      <Trash2 size={16} />
-    </button>
-    <button
-      className="p-1 rounded-full hover:bg-yellow-100 text-yellow-600"
-      onClick={() => abrirDetalhamento(produto)}
-    >
-      <Eye size={16} />
-    </button>
+
+    <p className="text-xs text-gray-500">{produto.quantidade ?? 0} unidades</p>
+
+    {/* Botões */}
+    <div className="flex gap-2 mt-3">
+      <button
+        className="p-1 rounded-full hover:bg-blue-100 text-blue-600"
+        onClick={() => {
+          setNovoProduto({
+            id: produto.id,
+            nome: produto.nome,
+            preco: produto.preco,
+            quantidade: produto.quantidade ?? 0,
+            imagem_url: produto.imagem_url,
+            ativo: produto.ativo,
+            categoria_id: produto.categoria_id,
+            detalhamento: produto.detalhamento ?? null,
+          });
+          setEditando(produto);
+          setShowModal(true);
+        }}
+      >
+        <SquarePenIcon size={16} />
+      </button>
+      <button
+        className="p-1 rounded-full hover:bg-red-100 text-red-600"
+        onClick={() => setConfirmDeleteId(produto.id)}
+      >
+        <Trash2 size={16} />
+      </button>
+      <button
+        className="p-1 rounded-full hover:bg-yellow-100 text-yellow-600"
+        onClick={() => abrirDetalhamento(produto)}
+      >
+        <Eye size={16} />
+      </button>
+    </div>
   </div>
-</div>
+))
 
-
-    ))
   ) : (
     <div className="col-span-full text-center text-gray-500">
       Nenhum produto encontrado.
