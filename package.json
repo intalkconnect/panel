@@ -20,7 +20,8 @@
     "react-router-dom": "^7.5.0",
     "react-toastify": "^11.0.5",
     "recharts": "^2.15.2",
-    "swiper": "^11.2.6"
+    "swiper": "^11.2.6",
+    "dayjs": "^1.11.13"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
