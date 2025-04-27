@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../data/supabaseClient";
 import { Receipt, MapPin, ArrowRightCircle, Hourglass, ChefHat, Truck } from "lucide-react";
 
-const KanbanPedidos = () => {
+const Pedidos = () => {
   const [pedidos, setPedidos] = useState([]);
   const [novosPedidos, setNovosPedidos] = useState([]);
   const [alertaNovoPedido, setAlertaNovoPedido] = useState(false);
@@ -154,4 +154,4 @@ const KanbanPedidos = () => {
   );
 };
 
-export default KanbanPedidos;
+export default Pedidos;
