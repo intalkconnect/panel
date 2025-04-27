@@ -238,8 +238,8 @@ const Produtos = () => {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
   {produtosFiltrados.length > 0 ? (
     produtosFiltrados.map((produto) => (
-  <div className="border rounded-lg p-3 flex flex-col items-center bg-white dark:bg-gray-800 shadow-sm w-[200px]" key={produto.id}>
-    <div className="relative w-20 h-20 mb-3">
+<div className="relative border rounded-lg p-3 flex flex-col items-center bg-white dark:bg-gray-800 shadow-sm w-[200px]" key={produto.id}>
+    <div className="w-20 h-20 mb-3">
       {produto.categorias?.nome && (
 <div className="absolute -top-2 left-0 bg-blue-100 text-blue-700 text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
   <Tag size={10} /> {produto.categorias.nome}
