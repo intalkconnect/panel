@@ -266,13 +266,6 @@ const Produtos = () => {
 
   <p className="text-xs text-gray-500">{produto.quantidade ?? 0} unidades</p>
 
-  {/* Categoria como Tag */}
-  {produto.categorias?.nome && (
-    <div className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs mt-2">
-      {produto.categorias.nome}
-    </div>
-  )}
-
 {/*   {isMaster && (
     <p className="text-[10px] text-gray-400 text-center mt-1">
       {produto.empresas?.nome || "—"}
