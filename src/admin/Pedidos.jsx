@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../data/supabaseClient";
 import { Receipt, MapPin, ArrowRightCircle, Hourglass, ChefHat, Truck } from "lucide-react";
+import dayjs from "dayjs";
 
 const Pedidos = () => {
   const [pedidos, setPedidos] = useState([]);
@@ -18,7 +19,7 @@ const Pedidos = () => {
 
     const { data, error } = await supabase
       .from("pedidos")
-      .select("id, nome_cliente, whatsappId, total, status, clientes ( endereco, id )")
+      .select("id, nome_cliente, whatsappId, total, status, created_at, tempo_para_pronto, clientes ( endereco, id )")
       .eq("empresa_id", empresaId)
       .order("created_at", { ascending: false });
 
@@ -44,14 +45,22 @@ const Pedidos = () => {
     setPedidos(data);
   }
 
-  async function avancarPedido(id, statusAtual) {
+  async function avancarPedido(id, statusAtual, createdAt) {
     let novoStatus = "";
+    let updateData = {};
+
     if (statusAtual === "aguardando") novoStatus = "em_preparo";
-    else if (statusAtual === "em_preparo") novoStatus = "pronto";
+    else if (statusAtual === "em_preparo") {
+      novoStatus = "pronto";
+      const minutosDecorridos = dayjs().diff(dayjs(createdAt), 'minute');
+      updateData.tempo_para_pronto = minutosDecorridos;
+    }
+
+    updateData.status = novoStatus;
 
     const { error } = await supabase
       .from("pedidos")
-      .update({ status: novoStatus })
+      .update(updateData)
       .eq("id", id);
 
     if (!error) {
@@ -75,6 +84,10 @@ const Pedidos = () => {
 
   function countPedidosCliente(whatsappId) {
     return pedidos.filter((p) => p.whatsappId === whatsappId).length;
+  }
+
+  function calcularTempo(createdAt) {
+    return dayjs().diff(dayjs(createdAt), 'minute');
   }
 
   return (
@@ -115,6 +128,8 @@ const Pedidos = () => {
                       <p className="text-sm">{pedido.nome_cliente || "Cliente não informado"}</p>
                       <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
                       <p className="text-xs text-gray-500">Histórico: {countPedidosCliente(pedido.whatsappId)} pedidos</p>
+                      <p className="text-xs text-gray-500">Hora: {dayjs(pedido.created_at).format('HH:mm')}</p>
+                      <p className="text-xs text-gray-500">Tempo: {calcularTempo(pedido.created_at)} min</p>
                       {pedido.clientes?.endereco ? (
                         <a
                           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`}
@@ -134,7 +149,7 @@ const Pedidos = () => {
                       <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2) || 0}</p>
                       {pedido.status !== "pronto" && (
                         <button
-                          onClick={() => avancarPedido(pedido.id, pedido.status)}
+                          onClick={() => avancarPedido(pedido.id, pedido.status, pedido.created_at)}
                           className="mt-2 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-semibold transition"
                         >
                           <ArrowRightCircle size={18} /> Atualizar Status
