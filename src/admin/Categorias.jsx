@@ -190,7 +190,7 @@ function Categorias() {
        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {categoriasFiltradas.length > 0 ? (
           categoriasFiltradas.map((categoria) => (
-            <div key={categoria.id} className="border rounded-lg p-3 flex flex-col items-center bg-white dark:bg-gray-800 shadow-sm">
+            <div key={categoria.id} className="border rounded-lg p-3 flex flex-col items-center bg-white dark:bg-gray-800 max-w-[200px] shadow-sm">
               {categoria.imagem_url ? (
                 <img src={categoria.imagem_url} alt={categoria.nome} className="w-20 h-20 object-cover rounded-md mb-3" />
               ) : (
