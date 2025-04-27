@@ -94,9 +94,23 @@ const Pedidos = () => {
 
   return (
     <div className="relative">
-      <div className="absolute top-4 left-4 flex items-center gap-2">
-        <input type="checkbox" id="autoAvancar" checked={autoAvancar} onChange={() => setAutoAvancar(!autoAvancar)} />
-        <label htmlFor="autoAvancar" className="text-sm text-gray-700">Avançar automaticamente novos pedidos</label>
+      <div className="flex justify-center items-center p-4">
+        <label htmlFor="autoAvancar" className="flex items-center gap-2 text-sm text-gray-700">
+          <div className="relative">
+            <input
+              type="checkbox"
+              id="autoAvancar"
+              checked={autoAvancar}
+              onChange={() => setAutoAvancar(!autoAvancar)}
+              className="sr-only"
+            />
+            <div className={`block w-14 h-8 rounded-full ${autoAvancar ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+            <div
+              className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${autoAvancar ? 'translate-x-6' : ''}`}
+            ></div>
+          </div>
+          Avançar automaticamente novos pedidos
+        </label>
       </div>
       {alertaNovoPedido && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white font-semibold px-6 py-2 rounded-full shadow-lg animate-bounce z-50">
@@ -130,7 +144,7 @@ const Pedidos = () => {
                           <Receipt size={18} className="text-gray-600" />
                           <p className="font-bold">Pedido #{pedido.id.slice(0, 8)}</p>
                         </div>
-                        <div className="flex items-center gap-1 text-gray-500 text-xs">
+                        <div className="flex items-center gap-1 text-gray-500 text-xs bg-blue-50 rounded-m">
                           <Clock3 size={14} />
                           {dayjs(pedido.created_at).format('HH:mm')}
                         </div>
@@ -139,12 +153,12 @@ const Pedidos = () => {
                         <p className="text-sm font-semibold">{pedido.nome_cliente || "Cliente não informado"}</p>
                         <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
                         <div className="flex justify-between items-center text-xs text-gray-500">
-                          <p>Pedidos:</p>
+                          <p>Pedido:</p>
                           <div
                             className={`${countPedidosCliente(pedido.whatsappId) === 1 ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-700'} font-bold px-2 py-1 rounded-full`}
                             title={countPedidosCliente(pedido.whatsappId) === 1 ? 'Primeiro pedido!' : 'Cliente frequente'}
                           >
-                            {countPedidosCliente(pedido.whatsappId)}
+                            {countPedidosCliente(pedido.whatsappId)}°
                           </div>
                           <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2) || 0}</p>
                         </div>
