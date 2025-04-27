@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../data/supabaseClient";
-import { Receipt, MapPin, ArrowRightCircle, Hourglass, ChefHat, Truck } from "lucide-react";
+import { Receipt, MapPin, ArrowRightCircle, Hourglass, ChefHat, Truck, Clock3 } from "lucide-react";
 import dayjs from "dayjs";
 
 const Pedidos = () => {
@@ -74,12 +74,6 @@ const Pedidos = () => {
     return phone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
   }
 
-  function formatTempo(minutos) {
-    const hrs = Math.floor(minutos / 60).toString().padStart(2, '0');
-    const mins = (minutos % 60).toString().padStart(2, '0');
-    return `${hrs}:${mins}`;
-  }
-
   const statusColumns = [
     { title: "Em Análise", status: "aguardando", color: "bg-orange-500", icon: <Hourglass size={20} /> },
     { title: "Em Produção", status: "em_preparo", color: "bg-yellow-500", icon: <ChefHat size={20} /> },
@@ -88,13 +82,6 @@ const Pedidos = () => {
 
   function countPedidosCliente(whatsappId) {
     return pedidos.filter((p) => p.whatsappId === whatsappId).length;
-  }
-
-  function calcularTempo(pedido) {
-    if (pedido.status === "pronto" && pedido.tempo_para_pronto !== null) {
-      return pedido.tempo_para_pronto;
-    }
-    return dayjs().diff(dayjs(pedido.created_at), 'minute');
   }
 
   return (
@@ -133,16 +120,22 @@ const Pedidos = () => {
                           <Receipt size={18} className="text-gray-600" />
                           <p className="font-bold">Pedido #{pedido.id.slice(0, 8)}</p>
                         </div>
-                        <p className="text-xs text-gray-500">{dayjs(pedido.created_at).format('HH:mm')}</p>
-                      </div>
-                      <div className="bg-blue-100 text-blue-700 text-center text-xs font-semibold py-1 rounded">
-                        Prepare em até {formatTempo(calcularTempo(pedido))}
+                        <div className="flex items-center gap-1 text-gray-500 text-xs">
+                          <Clock3 size={14} />
+                          {dayjs(pedido.created_at).format('HH:mm')}
+                        </div>
                       </div>
                       <div className="flex flex-col gap-1 mt-2">
                         <p className="text-sm font-semibold">{pedido.nome_cliente || "Cliente não informado"}</p>
                         <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
-                        <div className="flex justify-between text-xs text-gray-500">
-                          <p>Pedidos: {countPedidosCliente(pedido.whatsappId)}</p>
+                        <div className="flex justify-between items-center text-xs text-gray-500">
+                          <p>Pedidos:</p>
+                          <div
+                            className={`${countPedidosCliente(pedido.whatsappId) === 1 ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-700'} font-bold px-2 py-1 rounded-full`}
+                            title={countPedidosCliente(pedido.whatsappId) === 1 ? 'Primeiro pedido!' : 'Cliente frequente'}
+                          >
+                            {countPedidosCliente(pedido.whatsappId)}
+                          </div>
                           <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2) || 0}</p>
                         </div>
                         {pedido.clientes?.endereco ? (
