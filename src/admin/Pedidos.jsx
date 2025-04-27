@@ -104,7 +104,6 @@ const Pedidos = () => {
   }`}
                     >
                       <div className="flex items-center gap-2">
-                        <Receipt size={18} className="text-gray-600" />
                         <p className="font-bold">Pedido #{pedido.id.slice(0, 8)}</p>
                       </div>
                       <p className="text-sm">{pedido.nome_cliente || "Cliente não informado"}</p>
