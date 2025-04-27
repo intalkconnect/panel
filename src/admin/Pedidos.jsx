@@ -132,7 +132,7 @@ const Pedidos = () => {
                             className={`${countPedidosCliente(pedido.whatsappId) === 1 ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-700'} font-bold px-2 py-1 rounded-full`}
                             title={countPedidosCliente(pedido.whatsappId) === 1 ? 'Primeiro pedido!' : 'Cliente frequente'}
                           >
-                            {countPedidosCliente(pedido.whatsappId)}
+                            {countPedidosCliente(pedido.whatsappId)}°
                           </div>
                           <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2) || 0}</p>
                         </div>
