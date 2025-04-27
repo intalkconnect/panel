@@ -135,17 +135,22 @@ const Pedidos = () => {
                         </div>
                         <p className="text-xs text-gray-500">{dayjs(pedido.created_at).format('HH:mm')}</p>
                       </div>
-                      <div className="flex flex-col gap-1">
+                      <div className="bg-blue-100 text-blue-700 text-center text-xs font-semibold py-1 rounded">
+                        Prepare em até {formatTempo(calcularTempo(pedido))}
+                      </div>
+                      <div className="flex flex-col gap-1 mt-2">
                         <p className="text-sm font-semibold">{pedido.nome_cliente || "Cliente não informado"}</p>
                         <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
-                        <p className="text-xs text-gray-500">Pedidos: {countPedidosCliente(pedido.whatsappId)}</p>
-                        <p className="text-xs text-gray-500">Tempo: {formatTempo(calcularTempo(pedido))}</p>
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <p>Pedidos: {countPedidosCliente(pedido.whatsappId)}</p>
+                          <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2) || 0}</p>
+                        </div>
                         {pedido.clientes?.endereco ? (
                           <a
                             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center text-xs text-gray-500 gap-1 hover:text-blue-600 transition"
+                            className="flex items-center text-xs text-blue-600 gap-1 hover:underline"
                           >
                             <MapPin size={14} />
                             {pedido.clientes.endereco}
@@ -157,13 +162,12 @@ const Pedidos = () => {
                           </div>
                         )}
                       </div>
-                      <p className="font-semibold text-lg">Total: R$ {pedido.total?.toFixed(2) || 0}</p>
                       {pedido.status !== "pronto" && (
                         <button
                           onClick={() => avancarPedido(pedido.id, pedido.status, pedido.created_at)}
-                          className="mt-2 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-semibold transition"
+                          className="mt-4 flex items-center justify-center gap-2 px-4 py-2 border border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-md text-sm font-semibold transition"
                         >
-                          <ArrowRightCircle size={18} /> Atualizar Status
+                          <ArrowRightCircle size={18} /> Avançar Pedido
                         </button>
                       )}
                     </div>
