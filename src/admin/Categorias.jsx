@@ -194,28 +194,16 @@ function Categorias() {
               {categoria.imagem_url ? (
                 <img src={categoria.imagem_url} alt={categoria.nome} className="w-20 h-20 object-cover rounded-md mb-3" />
               ) : (
-                <div className="w-20 h-20 flex items-center justify-center text-gray-400 bg-gray-100 rounded-md mb-3 text-xs">
-                  Sem imagem
-                </div>
+                <div className="w-20 h-20 flex items-center justify-center text-gray-400 bg-gray-100 rounded-md mb-3 text-xs">Sem imagem</div>
               )}
               <h3 className="text-sm font-bold text-center">{categoria.nome}</h3>
               <p className="text-xs text-gray-500 mt-1">Ativo: {categoria.ativo ? "Sim" : "Não"}</p>
-              {isMaster && (
-                <p className="text-xs text-gray-400 mt-1 text-center">
-                  Empresa: {categoria.empresas?.nome || "—"}
-                </p>
-              )}
+              {isMaster && <p className="text-xs text-gray-400 mt-1 text-center">Empresa: {categoria.empresas?.nome || "—"}</p>}
               <div className="flex gap-2 mt-3">
-                <button
-                  className="p-1 rounded-full hover:bg-blue-100 text-blue-600"
-                  onClick={() => { setEditando(categoria); setShowModal(true); }}
-                >
+                <button className="p-1 rounded-full hover:bg-blue-100 text-blue-600" onClick={() => { setEditando(categoria); setShowModal(true); }}>
                   <SquarePenIcon size={16} />
                 </button>
-                <button
-                  className="p-1 rounded-full hover:bg-red-100 text-red-600"
-                  onClick={() => setConfirmDeleteId(categoria.id)}
-                >
+                <button className="p-1 rounded-full hover:bg-red-100 text-red-600" onClick={() => setConfirmDeleteId(categoria.id)}>
                   <Trash2 size={16} />
                 </button>
               </div>
@@ -223,6 +211,11 @@ function Categorias() {
           ))
         ) : (
           <div className="col-span-full text-center text-gray-500">Nenhuma categoria encontrada.</div>
+        )}
+      </div>
+
+      {/* Modal de confirmação e modal de criar/editar seguem como no código anterior */}
+    </div>
         )}
       </div>
       </div>
