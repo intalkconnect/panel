@@ -10,7 +10,7 @@ const Pedidos = () => {
 
   useEffect(() => {
     fetchPedidos();
-    const interval = setInterval(fetchPedidos, 60000);
+    const interval = setInterval(fetchPedidos, 15000);
     return () => clearInterval(interval);
   }, []);
 
