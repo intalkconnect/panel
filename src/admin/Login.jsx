@@ -84,19 +84,19 @@ function Login() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center bg-white px-4 overflow-hidden">
-      {/* Marca d'água */}
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
+      {/* Logo acima do card */}
       <img
         src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logobg.png"
-        alt="Zapediu Marca D'Água"
-        className="absolute top-1/2 left-1/2 w-[900px] h-[900px] -translate-x-1/2 -translate-y-1/2 opacity-5 blur-sm pointer-events-none"
+        alt="Zapediu Logo"
+        className="w-32 h-auto mb-6"
       />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="bg-white shadow-2xl p-10 rounded-3xl w-full max-w-md border border-gray-200 relative z-10"
+        className="bg-white shadow-2xl p-10 rounded-3xl w-full max-w-md border border-gray-200"
       >
         <div className="mb-6">
           <label className="block text-sm font-semibold text-gray-700 mb-2">
