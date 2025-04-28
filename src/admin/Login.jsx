@@ -84,22 +84,19 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
-<motion.img
-  src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logobg.png"
-  alt="Zapediu Logo"
-  className="w-60 h-auto mb-8" // aumentei um pouco para ficar proporcional
-  initial={{ opacity: 0 }}
-  animate={{ opacity: 1 }}
-  transition={{ duration: 1, ease: "easeOut" }}
-/>
-
+    <div className="relative min-h-screen flex flex-col items-center justify-center bg-white px-4 overflow-hidden">
+      {/* Marca d'água */}
+      <img
+        src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logobg.png"
+        alt="Zapediu Marca D'Água"
+        className="absolute inset-0 w-full h-full object-contain opacity-5 pointer-events-none"
+      />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="bg-white shadow-2xl p-10 rounded-3xl w-full max-w-md border border-gray-200"
+        className="bg-white shadow-2xl p-10 rounded-3xl w-full max-w-md border border-gray-200 relative z-10"
       >
         <div className="mb-6">
           <label className="block text-sm font-semibold text-gray-700 mb-2">
