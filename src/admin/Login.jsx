@@ -84,66 +84,71 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
-      {/* Logo acima do card */}
-      <img
-        src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logobg.png"
-        alt="Zapediu Logo"
-        className="w-38 h-auto mb-8"
-      />
+    <div className="min-h-screen flex flex-row bg-white">
+      {/* Área esquerda com imagem de fundo */}
+      <div className="hidden md:flex w-1/2 h-screen">
+        <img
+          src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logobg.png"
+          alt="Zapediu Background"
+          className="w-full h-full object-cover"
+        />
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 30 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="bg-white shadow-2xl p-10 rounded-3xl w-full max-w-md border border-gray-200"
-      >
-        <div className="mb-6">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Email
-          </label>
-          <input
-            type="email"
-            placeholder="exemplo@empresa.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-        </div>
-
-        <div className="mb-6">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Senha
-          </label>
-          <input
-            type="password"
-            placeholder="••••••••"
-            value={senha}
-            onChange={(e) => setsenha(e.target.value)}
-            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-        </div>
-
-        <div className="flex items-center justify-between mb-6 text-sm">
-          <label className="flex items-center gap-2 text-gray-600">
-            <input
-              type="checkbox"
-              checked={lembrar}
-              onChange={() => setLembrar(!lembrar)}
-              className="rounded border-gray-300"
-            />
-            Lembrar meu email
-          </label>
-        </div>
-
-        <button
-          onClick={handleLogin}
-          disabled={loading}
-          className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold transition duration-300"
+      {/* Área direita com o login */}
+      <div className="flex flex-col items-center justify-center w-full md:w-1/2 p-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="bg-white shadow-2xl p-10 rounded-3xl w-full max-w-md border border-gray-200"
         >
-          {loading ? "Entrando..." : "Entrar"}
-        </button>
-      </motion.div>
+          <div className="mb-6">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              placeholder="exemplo@empresa.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Senha
+            </label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={senha}
+              onChange={(e) => setsenha(e.target.value)}
+              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+          </div>
+
+          <div className="flex items-center justify-between mb-6 text-sm">
+            <label className="flex items-center gap-2 text-gray-600">
+              <input
+                type="checkbox"
+                checked={lembrar}
+                onChange={() => setLembrar(!lembrar)}
+                className="rounded border-gray-300"
+              />
+              Lembrar meu email
+            </label>
+          </div>
+
+          <button
+            onClick={handleLogin}
+            disabled={loading}
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold transition duration-300"
+          >
+            {loading ? "Entrando..." : "Entrar"}
+          </button>
+        </motion.div>
+      </div>
     </div>
   );
 }
