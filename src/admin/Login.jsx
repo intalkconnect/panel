@@ -86,7 +86,7 @@ function Login() {
   return (
     <div className="min-h-screen flex flex-row bg-white">
       {/* Área esquerda com imagem de fundo */}
-      <div className="hidden md:flex w-1/2 h-screen">
+      <div className="hidden md:flex w-1/2 h-screen shadow-2xl">
         <img
           src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logobg.png"
           alt="Zapediu Background"
@@ -95,12 +95,12 @@ function Login() {
       </div>
 
       {/* Área direita com o login */}
-      <div className="flex flex-col items-center justify-center w-full md:w-1/2 p-8">
+      <div className="flex flex-col items-center justify-center w-full md:w-1/2 p-16">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 30 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="bg-white shadow-2xl p-10 rounded-3xl w-full max-w-md border border-gray-200"
+          className="w-full max-w-md"
         >
           <div className="mb-6">
             <label className="block text-sm font-semibold text-gray-700 mb-2">
