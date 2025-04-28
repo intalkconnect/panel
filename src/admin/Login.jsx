@@ -89,7 +89,7 @@ function Login() {
       <img
         src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logobg.png"
         alt="Zapediu Logo"
-        className="w-38 h-auto mb-6"
+        className="w-35 h-auto mb-6"
       />
 
       <motion.div
