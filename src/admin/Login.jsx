@@ -84,10 +84,10 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#F74036] px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
   {/* LOGO no fundo, fora do card */}
   <img
-    src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logoWP.png"
+    src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//favicon.png"
     alt="Zapediu Logo"
     className="w-28 h-auto mb-6"
   />
