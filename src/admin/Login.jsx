@@ -89,7 +89,7 @@ function Login() {
       <img
         src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logobg.png"
         alt="Zapediu Marca D'Água"
-        className="absolute inset-0 w-full h-full object-contain opacity-5 pointer-events-none"
+        className="absolute top-1/2 left-1/2 w-[600px] h-[600px] -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none"
       />
 
       <motion.div
