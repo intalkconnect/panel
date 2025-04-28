@@ -85,14 +85,15 @@ function Login() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
-      <motion.img
-        src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logobg.png"
-        alt="Zapediu Logo"
-        className="w-32 h-32 mb-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-      />
+<motion.img
+  src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logobg.png"
+  alt="Zapediu Logo"
+  className="w-40 h-auto mb-8" // aumentei um pouco para ficar proporcional
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ duration: 1, ease: "easeOut" }}
+/>
+
 
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 30 }}
