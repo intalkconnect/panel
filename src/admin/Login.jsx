@@ -88,10 +88,10 @@ function Login() {
       <motion.img
         src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//favicon.png"
         alt="Zapediu Logo"
-        className="w-24 h-24 mb-6 animate-bounce"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="w-32 h-32 mb-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, ease: "easeOut" }}
       />
 
       <motion.div
