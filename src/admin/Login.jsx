@@ -88,7 +88,7 @@ function Login() {
 <motion.img
   src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logobg.png"
   alt="Zapediu Logo"
-  className="w-90 h-auto mb-8" // aumentei um pouco para ficar proporcional
+  className="w-60 h-auto mb-8" // aumentei um pouco para ficar proporcional
   initial={{ opacity: 0 }}
   animate={{ opacity: 1 }}
   transition={{ duration: 1, ease: "easeOut" }}
