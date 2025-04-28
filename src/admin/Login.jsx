@@ -86,7 +86,7 @@ function Login() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
       <motion.img
-        src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//favicon.png"
+        src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logobg.png"
         alt="Zapediu Logo"
         className="w-32 h-32 mb-8"
         initial={{ opacity: 0 }}
