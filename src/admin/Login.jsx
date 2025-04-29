@@ -3,7 +3,7 @@ import { supabase } from "../data/supabaseClient";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LogIn, Lock } from "lucide-react";
+import { LogIn, Lock, Mail } from "lucide-react";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -101,21 +101,21 @@ function Login() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="w-full max-w-xs p-8"
+          className="w-full max-w-xs p-8 shadow-md"
         >
           <div className="mb-6">
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Email
             </label>
             <div className="relative">
+              <Mail className="absolute left-3 top-3 text-gray-400" size={18} />
               <input
                 type="email"
                 placeholder="ex: joao@zapediu.ai"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 pr-10"
+                className="w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
               />
-              <LogIn className="absolute right-3 top-3 text-gray-400" size={18} />
             </div>
           </div>
 
@@ -124,14 +124,14 @@ function Login() {
               Senha
             </label>
             <div className="relative">
+              <Lock className="absolute left-3 top-3 text-gray-400" size={18} />
               <input
                 type="password"
                 placeholder="••••••••"
                 value={senha}
                 onChange={(e) => setsenha(e.target.value)}
-                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 pr-10"
+                className="w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
               />
-              <Lock className="absolute right-3 top-3 text-gray-400" size={18} />
             </div>
           </div>
 
@@ -150,7 +150,7 @@ function Login() {
           <button
             onClick={handleLogin}
             disabled={loading}
-            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold transition duration-300 flex items-center justify-center gap-2"
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold transition duration-300 flex items-center justify-center gap-2 shadow-md"
           >
             <LogIn size={18} />
             {loading ? "Entrando..." : "Entrar"}
