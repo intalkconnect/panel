@@ -3,6 +3,7 @@ import { supabase } from "../data/supabaseClient";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { LogIn } from "lucide-react";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -95,7 +96,7 @@ function Login() {
       </div>
 
       {/* Área direita com o login */}
-      <div className="flex flex-col items-center justify-center w-full md:w-1/3 h-screen bg-white shadow-xl">
+      <div className="flex flex-col items-center justify-center w-full md:w-1/3 h-screen bg-gradient-to-r from-white to-gray-50 shadow-xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -108,7 +109,7 @@ function Login() {
             </label>
             <input
               type="email"
-              placeholder="exemplo@empresa.com"
+              placeholder="ex: joao@zapediu.ai"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
@@ -143,8 +144,9 @@ function Login() {
           <button
             onClick={handleLogin}
             disabled={loading}
-            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold transition duration-300"
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold transition duration-300 flex items-center justify-center gap-2"
           >
+            <LogIn size={18} />
             {loading ? "Entrando..." : "Entrar"}
           </button>
         </motion.div>
