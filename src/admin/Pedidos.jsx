@@ -30,7 +30,7 @@ const Pedidos = () => {
     }
 
     if (autoAvancar && data?.length) {
-      const pedidosEmAnalise = data.filter(p => p.status === "aguardando");
+      const pedidosEmAnalise = data.filter((p) => p.status === "aguardando");
       for (const pedido of pedidosEmAnalise) {
         await avancarPedido(pedido.id, "aguardando", pedido.created_at, true);
       }
@@ -53,21 +53,18 @@ const Pedidos = () => {
 
   async function avancarPedido(id, statusAtual, createdAt, silent = false) {
     let novoStatus = "";
+    let updateData = {};
 
     if (statusAtual === "aguardando") novoStatus = "em_preparo";
     else if (statusAtual === "em_preparo") {
       novoStatus = "pronto";
+      const minutosDecorridos = dayjs().diff(dayjs(createdAt), "minute");
+      updateData.tempo_para_pronto = minutosDecorridos;
     }
 
-    const updateData = {
-      status: novoStatus,
-      ...(novoStatus === "pronto" && { tempo_para_pronto: dayjs().diff(dayjs(createdAt), 'minute') }),
-    };
+    updateData.status = novoStatus;
 
-    const { error } = await supabase
-      .from("pedidos")
-      .update(updateData)
-      .eq("id", id);
+    const { error } = await supabase.from("pedidos").update(updateData).eq("id", id);
 
     if (!error && !silent) {
       fetchPedidos();
@@ -93,13 +90,12 @@ const Pedidos = () => {
   }
 
   const totalReceita = pedidos.reduce((acc, curr) => acc + (curr.total || 0), 0);
-  const totalAguardando = pedidos.filter(p => p.status === "aguardando").length;
-  const totalEmProducao = pedidos.filter(p => p.status === "em_preparo").length;
-  const totalPronto = pedidos.filter(p => p.status === "pronto").length;
+  const totalAguardando = pedidos.filter((p) => p.status === "aguardando").length;
+  const totalEmProducao = pedidos.filter((p) => p.status === "em_preparo").length;
+  const totalPronto = pedidos.filter((p) => p.status === "pronto").length;
 
   return (
-    <div className="relative min-h-screen flex flex-col">
-      {/* Cards de resumo + botão auto-avançar */}
+    <div className="relative flex flex-col min-h-screen overflow-hidden">
       <div className="flex flex-wrap justify-center items-center gap-4 px-4 py-2 bg-gray-100 shadow-md">
         <div className="flex-1 bg-white p-4 rounded-lg shadow text-center">
           <h2 className="text-sm font-semibold text-gray-500">Aguardando</h2>
@@ -117,104 +113,82 @@ const Pedidos = () => {
           <h2 className="text-sm font-semibold text-gray-500">Receita Total</h2>
           <p className="text-xl font-bold text-indigo-600">R$ {totalReceita.toFixed(2)}</p>
         </div>
-
-        {/* Switch Avançar Automaticamente */}
-        <label htmlFor="autoAvancar" className="flex items-center gap-2 text-sm text-gray-700 bg-white p-3 rounded-lg shadow">
+        <label htmlFor="autoAvancar" className="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 rounded-lg shadow">
           <div className="relative">
-            <input
-              type="checkbox"
-              id="autoAvancar"
-              checked={autoAvancar}
-              onChange={() => setAutoAvancar(!autoAvancar)}
-              className="sr-only"
-            />
-            <div className={`block w-14 h-8 rounded-full transition-all ${autoAvancar ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-            <div className={`dot absolute top-1 left-1 bg-white w-6 h-6 rounded-full transition-all ${autoAvancar ? 'translate-x-6' : ''}`}></div>
+            <input type="checkbox" id="autoAvancar" checked={autoAvancar} onChange={() => setAutoAvancar(!autoAvancar)} className="sr-only" />
+            <div className={`block w-14 h-8 rounded-full transition-all duration-300 ${autoAvancar ? "bg-green-500" : "bg-gray-300"}`}></div>
+            <div className={`dot absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-all duration-300 ${autoAvancar ? "translate-x-6" : ""}`}></div>
           </div>
           {autoAvancar ? (
             <span className="flex items-center gap-1 text-green-600 font-semibold animate-pulse">
               <Rocket size={16} /> Avançando...
             </span>
           ) : (
-            <span>Avançar automaticamente</span>
+            <span className="text-gray-600">Avançar automaticamente</span>
           )}
         </label>
       </div>
 
-      {/* Alerta novo pedido */}
       {alertaNovoPedido && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white font-semibold px-6 py-2 rounded-full shadow-lg animate-bounce z-50">
           Novo pedido recebido!
         </div>
       )}
 
-      {/* Kanbans */}
-      <div className="flex gap-4 p-6 overflow-x-auto flex-1">
+      <div className="flex gap-4 p-4 flex-1 overflow-hidden">
         {statusColumns.map((column) => {
           const pedidosFiltrados = pedidos.filter((p) => p.status === column.status);
           return (
-            <div
-              key={column.status}
-              className={`flex-1 min-w-[300px] flex flex-col rounded-t-md shadow-lg ${column.color}`}
-            >
-              {/* Header centralizado */}
+            <div key={column.status} className={`flex-1 rounded-t-md shadow-lg ${column.color} min-h-[calc(100vh-150px)] flex flex-col overflow-hidden`}>
               <div className="flex flex-col items-center justify-center bg-black/20 px-4 py-2">
                 <h2 className="text-white text-lg font-bold flex items-center gap-2">
                   {column.icon}
                   {column.title}
                 </h2>
               </div>
-              {/* Lista de pedidos */}
-              <div className="p-4 overflow-y-auto flex-1 space-y-4">
-                {pedidosFiltrados.length > 0 ? pedidosFiltrados.map((pedido) => (
-                  <div
-                    key={pedido.id}
-                    className={`bg-white p-4 rounded-lg shadow text-gray-800 flex flex-col gap-3 ${novosPedidos.includes(pedido.id) ? "ring-4 ring-green-400 animate-bounce" : ""}`}
-                  >
-                    <div className="flex justify-between items-center">
-                      <div className="flex gap-2 items-center">
-                        <Receipt size={18} className="text-gray-600" />
-                        <p className="font-bold">Pedido #{pedido.numero_pedido}</p>
+              <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+                {pedidosFiltrados.length > 0 ? (
+                  pedidosFiltrados.map((pedido) => (
+                    <div key={pedido.id} className={`bg-white text-gray-800 p-4 rounded-lg shadow flex flex-col gap-3 transition ${novosPedidos.includes(pedido.id) ? "ring-4 ring-green-400 animate-bounce" : ""}`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Receipt size={18} className="text-gray-600" />
+                          <p className="font-bold">Pedido #{pedido.numero_pedido}</p>
+                        </div>
+                        <div className="flex items-center gap-1 text-gray-500 text-xs bg-blue-50 rounded-m">
+                          <Clock3 size={14} />
+                          {dayjs(pedido.created_at).format("HH:mm")}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1 bg-blue-50 text-xs text-gray-500 p-1 rounded-md">
-                        <Clock3 size={14} />
-                        {dayjs(pedido.created_at).format('HH:mm')}
+                      <div className="flex flex-col gap-1 mt-2">
+                        <p className="text-sm font-semibold">{pedido.nome_cliente || "Cliente não informado"}</p>
+                        <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
+                        <div className="flex justify-between items-center text-xs text-gray-500">
+                          <p>Pedido:</p>
+                          <div className={`${countPedidosCliente(pedido.whatsappId) === 1 ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-700"} font-bold px-2 py-1 rounded-full`} title={countPedidosCliente(pedido.whatsappId) === 1 ? "Primeiro pedido!" : "Cliente frequente"}>
+                            {countPedidosCliente(pedido.whatsappId)}°
+                          </div>
+                          <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2) || 0}</p>
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-gray-700 bg-blue-50 p-2 rounded-md">
+                          <MapPin size={14} />
+                          {pedido.clientes?.endereco ? (
+                            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-blue-600 hover:underline">
+                              <LinkIcon size={14} /> {pedido.clientes.endereco}
+                            </a>
+                          ) : (
+                            <span>Endereço não disponível</span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <p className="text-sm font-semibold">{pedido.nome_cliente || "Cliente não informado"}</p>
-                    <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
-
-                    <div className="flex justify-between items-center text-xs">
-                      <p>Pedido:</p>
-                      <div
-                        className={`${countPedidosCliente(pedido.whatsappId) === 1 ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-700'} px-2 py-1 rounded-full font-bold`}
-                      >
-                        {countPedidosCliente(pedido.whatsappId)}°
-                      </div>
-                      <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2)}</p>
-                    </div>
-
-                    <div className="flex items-center gap-1 bg-blue-50 text-xs text-gray-700 p-2 rounded-md">
-                      <MapPin size={14} />
-                      {pedido.clientes?.endereco ? (
-                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                          <LinkIcon size={14} /> {pedido.clientes.endereco}
-                        </a>
-                      ) : (
-                        <span>Endereço não disponível</span>
+                      {pedido.status !== "pronto" && (
+                        <button onClick={() => avancarPedido(pedido.id, pedido.status, pedido.created_at)} className="mt-4 flex items-center justify-center gap-2 px-4 py-2 border border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-md text-sm font-semibold transition">
+                          <ArrowRightCircle size={18} /> Avançar Pedido
+                        </button>
                       )}
                     </div>
-
-                    {pedido.status !== "pronto" && (
-                      <button
-                        onClick={() => avancarPedido(pedido.id, pedido.status, pedido.created_at)}
-                        className="mt-2 flex items-center justify-center gap-2 px-4 py-2 border border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-md text-sm font-semibold transition"
-                      >
-                        <ArrowRightCircle size={18} /> Avançar Pedido
-                      </button>
-                    )}
-                  </div>
-                )) : (
+                  ))
+                ) : (
                   <div className="text-white text-center text-sm">Nenhum pedido aqui ainda 😴</div>
                 )}
               </div>
