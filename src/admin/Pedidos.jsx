@@ -304,27 +304,44 @@ const Pedidos = () => {
                   <p className="text-sm">Quantidade: {item.quantidade}</p>
                   <p className="text-sm">Subtotal: R$ {item.subtotal?.toFixed(2)}</p>
 
-                  {item.extras && Object.keys(item.extras).length > 0 && (
-                    <div className="text-sm mt-1 text-green-700">
-                      <p className="font-medium">Extras:</p>
-                      <ul className="list-disc list-inside">
-                        {Object.entries(item.extras).map(([key, val]) => (
-                          <li key={key}>{key}{val !== true ? `: ${val}` : ""}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+{item.extras && (
+  <div className="text-sm mt-1 text-green-700">
+    <p className="font-medium">Extras:</p>
+    <ul className="list-disc list-inside">
+      {Array.isArray(item.extras)
+        ? item.extras.map((extra, index) => (
+            <li key={index}>
+              {typeof extra === "object"
+                ? Object.keys(extra).map((key) => key).join(", ")
+                : extra}
+            </li>
+          ))
+        : Object.keys(item.extras).map((key) => (
+            <li key={key}>{key}</li>
+          ))}
+    </ul>
+  </div>
+)}
 
-                  {item.remover && Object.keys(item.remover).length > 0 && (
-                    <div className="text-sm mt-1 text-red-700">
-                      <p className="font-medium">Remover:</p>
-                      <ul className="list-disc list-inside">
-                        {Object.keys(item.remover).map((key) => (
-                          <li key={key}>{key}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+{item.remover && (
+  <div className="text-sm mt-1 text-red-700">
+    <p className="font-medium">Remover:</p>
+    <ul className="list-disc list-inside">
+      {Array.isArray(item.remover)
+        ? item.remover.map((rem, index) => (
+            <li key={index}>
+              {typeof rem === "object"
+                ? Object.keys(rem).map((key) => key).join(", ")
+                : rem}
+            </li>
+          ))
+        : Object.keys(item.remover).map((key) => (
+            <li key={key}>{key}</li>
+          ))}
+    </ul>
+  </div>
+)}
+
                 </div>
               ))
             ) : (
