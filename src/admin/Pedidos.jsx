@@ -92,38 +92,45 @@ const Pedidos = () => {
     return pedidos.filter((p) => p.whatsappId === whatsappId).length;
   }
 
+  const totalReceita = pedidos.reduce((acc, curr) => acc + (curr.total || 0), 0);
+  const totalAguardando = pedidos.filter(p => p.status === "aguardando").length;
+  const totalEmProducao = pedidos.filter(p => p.status === "em_preparo").length;
+  const totalPronto = pedidos.filter(p => p.status === "pronto").length;
+
   return (
-    <div className="relative">
-      <div className="flex justify-center items-center p-4">
-        <label htmlFor="autoAvancar" className="flex items-center gap-2 text-sm text-gray-700">
-          <div className="relative">
-            <input
-              type="checkbox"
-              id="autoAvancar"
-              checked={autoAvancar}
-              onChange={() => setAutoAvancar(!autoAvancar)}
-              className="sr-only"
-            />
-            <div className={`block w-14 h-8 rounded-full ${autoAvancar ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-            <div
-              className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${autoAvancar ? 'translate-x-6' : ''}`}
-            ></div>
-          </div>
-          Avançar automaticamente novos pedidos
-        </label>
+    <div className="relative min-h-screen flex flex-col">
+      <div className="flex flex-wrap gap-4 p-4 bg-gray-100 shadow-md">
+        <div className="flex-1 bg-white p-4 rounded-lg shadow text-center">
+          <h2 className="text-sm font-semibold text-gray-500">Aguardando</h2>
+          <p className="text-xl font-bold text-orange-500">{totalAguardando}</p>
+        </div>
+        <div className="flex-1 bg-white p-4 rounded-lg shadow text-center">
+          <h2 className="text-sm font-semibold text-gray-500">Em Produção</h2>
+          <p className="text-xl font-bold text-yellow-500">{totalEmProducao}</p>
+        </div>
+        <div className="flex-1 bg-white p-4 rounded-lg shadow text-center">
+          <h2 className="text-sm font-semibold text-gray-500">Pronto</h2>
+          <p className="text-xl font-bold text-green-500">{totalPronto}</p>
+        </div>
+        <div className="flex-1 bg-white p-4 rounded-lg shadow text-center">
+          <h2 className="text-sm font-semibold text-gray-500">Receita Total</h2>
+          <p className="text-xl font-bold text-indigo-600">R$ {totalReceita.toFixed(2)}</p>
+        </div>
       </div>
+
       {alertaNovoPedido && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white font-semibold px-6 py-2 rounded-full shadow-lg animate-bounce z-50">
           Novo pedido recebido!
         </div>
       )}
-      <div className="flex gap-4 p-6 overflow-x-auto min-h-screen">
+
+      <div className="flex gap-4 p-6 overflow-x-auto flex-1">
         {statusColumns.map((column) => {
           const pedidosFiltrados = pedidos.filter((p) => p.status === column.status);
           return (
             <div
               key={column.status}
-              className={`flex-1 rounded-t-md shadow-lg ${column.color} min-w-[300px] overflow-hidden`}
+              className={`flex-1 rounded-t-md shadow-lg ${column.color} min-w-[300px] flex flex-col`}
             >
               <div className="flex items-center justify-between bg-black/20 px-4 py-2">
                 <h2 className="text-white text-lg font-bold flex items-center gap-2">
@@ -132,7 +139,7 @@ const Pedidos = () => {
                 </h2>
                 <span className="text-white font-semibold">{pedidosFiltrados.length}</span>
               </div>
-              <div className="p-4 space-y-4">
+              <div className="p-4 space-y-4 overflow-y-auto flex-1">
                 {pedidosFiltrados.length > 0 ? (
                   pedidosFiltrados.map((pedido) => (
                     <div
