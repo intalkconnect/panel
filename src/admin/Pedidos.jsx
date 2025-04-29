@@ -73,30 +73,29 @@ const Pedidos = () => {
 
     
       const novosPedidosData = data.filter(
-        (pedido) => !pedidos.some((p) => p.id === pedido.id))
-      
+  (pedido) => !pedidos.some((p) => p.id === pedido.id)
+);
 
-      if (novosPedidosData.length > 0) {
-        setNovosPedidos(novosPedidosData.map((p) => p.id));
-        setAlertaNovoPedido(true);
-        setTimeout(() => {
-          setNovosPedidos([]);
-          setAlertaNovoPedido(false);
-        }, 4000);
+if (novosPedidosData.length > 0) {
+  setNovosPedidos(novosPedidosData.map((p) => p.id));
+  setAlertaNovoPedido(true);
+  setTimeout(() => {
+    setNovosPedidos([]);
+    setAlertaNovoPedido(false);
+  }, 4000);
 
-        for (const pedido of novosPedidosData) {
-          if (pedido.status === "aguardando") {
-            await enviarPost("http://localhost:9123/pedido", {
-              type: "notification",
-              numero_pedido: pedido.numero_pedido,
-              nome_cliente: pedido.nome_cliente,
-            });
-          } else if (pedido.status === "em_preparo") {
-            await enviarPost("http://localhost:9123/pedido", pedido);
-          }
-        }
-      }
+  for (const pedido of novosPedidosData) {
+    if (pedido.status === "aguardando") {
+      await enviarPost("http://localhost:9123/pedido", {
+        type: "notification",
+        numero_pedido: pedido.numero_pedido,
+        nome_cliente: pedido.nome_cliente,
+      });
+    } else if (pedido.status === "em_preparo") {
+      await enviarPost("http://localhost:9123/pedido", pedido);
     }
+  }
+}
 
     setPedidos(data);
   }
