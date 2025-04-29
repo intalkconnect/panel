@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../data/supabaseClient";
-import { Receipt, MapPin, ArrowRightCircle, Hourglass, ChefHat, Truck, Clock3, Link as LinkIcon } from "lucide-react";
+import { Receipt, MapPin, ArrowRightCircle, Hourglass, ChefHat, Truck, Clock3, Link as LinkIcon, Rocket } from "lucide-react";
 import dayjs from "dayjs";
 
 const Pedidos = () => {
@@ -99,26 +99,7 @@ const Pedidos = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col">
-      <div className="flex justify-center items-center p-4">
-        <label htmlFor="autoAvancar" className="flex items-center gap-2 text-sm text-gray-700">
-          <div className="relative">
-            <input
-              type="checkbox"
-              id="autoAvancar"
-              checked={autoAvancar}
-              onChange={() => setAutoAvancar(!autoAvancar)}
-              className="sr-only"
-            />
-            <div className={`block w-14 h-8 rounded-full ${autoAvancar ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-            <div
-              className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${autoAvancar ? 'translate-x-6' : ''}`}
-            ></div>
-          </div>
-          Avançar automaticamente novos pedidos
-        </label>
-      </div>
-
-      <div className="flex flex-wrap gap-4 p-4 bg-gray-100 shadow-md">
+      <div className="flex flex-wrap justify-center items-center gap-4 p-4 bg-gray-100 shadow-md">
         <div className="flex-1 bg-white p-4 rounded-lg shadow text-center">
           <h2 className="text-sm font-semibold text-gray-500">Aguardando</h2>
           <p className="text-xl font-bold text-orange-500">{totalAguardando}</p>
@@ -135,6 +116,28 @@ const Pedidos = () => {
           <h2 className="text-sm font-semibold text-gray-500">Receita Total</h2>
           <p className="text-xl font-bold text-indigo-600">R$ {totalReceita.toFixed(2)}</p>
         </div>
+        <label htmlFor="autoAvancar" className="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 rounded-lg shadow">
+          <div className="relative">
+            <input
+              type="checkbox"
+              id="autoAvancar"
+              checked={autoAvancar}
+              onChange={() => setAutoAvancar(!autoAvancar)}
+              className="sr-only"
+            />
+            <div className={`block w-14 h-8 rounded-full transition-all duration-300 ${autoAvancar ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+            <div
+              className={`dot absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-all duration-300 ${autoAvancar ? 'translate-x-6' : ''}`}
+            ></div>
+          </div>
+          {autoAvancar ? (
+            <span className="flex items-center gap-1 text-green-600 font-semibold animate-pulse">
+              <Rocket size={16} /> Avançando...
+            </span>
+          ) : (
+            <span className="text-gray-600">Avançar automaticamente</span>
+          )}
+        </label>
       </div>
 
       {alertaNovoPedido && (
@@ -151,7 +154,7 @@ const Pedidos = () => {
               key={column.status}
               className={`flex-1 rounded-t-md shadow-lg ${column.color} min-w-[300px] flex flex-col`}
             >
-              <div className="flex items-center justify-between bg-black/20 px-4 py-2">
+              <div className="flex flex-col items-center justify-center bg-black/20 px-4 py-2">
                 <h2 className="text-white text-lg font-bold flex items-center gap-2">
                   {column.icon}
                   {column.title}
@@ -208,7 +211,7 @@ const Pedidos = () => {
                           onClick={() => avancarPedido(pedido.id, pedido.status, pedido.created_at)}
                           className="mt-4 flex items-center justify-center gap-2 px-4 py-2 border border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-md text-sm font-semibold transition"
                         >
-                          <ArrowRightCircle size={18} /> Avançar
+                          <ArrowRightCircle size={18} /> Avançar Pedido
                         </button>
                       )}
                     </div>
