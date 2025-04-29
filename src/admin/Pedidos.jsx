@@ -73,7 +73,7 @@ const Pedidos = () => {
 
     
       const novosPedidosData = data.filter(
-        (pedido) => !pedidos.some((p) => p.id === pedido.id)
+        (pedido) => !pedidos.some((p) => p.id === pedido.id))
       
 
       if (novosPedidosData.length > 0) {
