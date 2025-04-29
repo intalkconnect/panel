@@ -128,7 +128,7 @@ const Pedidos = () => {
         </div>
       )}
 
-      <div className="flex flex-1 overflow-x-auto p-4 gap-4">
+      <div className="flex flex-1 overflow-x-auto p-6 gap-4">
         {statusColumns.map((column) => {
           const pedidosFiltrados = pedidos.filter((p) => p.status === column.status);
           return (
@@ -139,7 +139,7 @@ const Pedidos = () => {
               <div className="flex-1 p-4 overflow-y-auto">
                 {pedidosFiltrados.length > 0 ? (
                   pedidosFiltrados.map((pedido) => (
-                    <div key={pedido.id} className={`bg-white p-4 rounded-lg shadow mb-4 ${novosPedidos.includes(pedido.id) ? "ring-4 ring-green-400 animate-bounce" : ""}`}>
+                    <div key={pedido.id} className={`bg-white p-4 rounded-lg shadow mb-2 ${novosPedidos.includes(pedido.id) ? "ring-4 ring-green-400 animate-bounce" : ""}`}>
                       <div className="flex justify-between">
                         <div className="flex items-center gap-2">
                           <Receipt size={18} className="text-gray-600" />
