@@ -9,7 +9,8 @@ import {
   Truck,
   Clock3,
   Link as LinkIcon,
-  Rocket
+  Rocket,
+  Info
 } from "lucide-react";
 import dayjs from "dayjs";
 
@@ -18,6 +19,7 @@ const Pedidos = () => {
   const [novosPedidos, setNovosPedidos] = useState([]);
   const [alertaNovoPedido, setAlertaNovoPedido] = useState(false);
   const [autoAvancar, setAutoAvancar] = useState(false);
+  const [pedidoSelecionado, setPedidoSelecionado] = useState(null); // Novo: para modal de detalhes
 
   useEffect(() => {
     fetchPedidos();
@@ -156,6 +158,7 @@ const Pedidos = () => {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
+      {/* Cabeçalho */}
       <div className="flex flex-wrap justify-center items-center gap-4 px-4 py-2 bg-gray-100 shadow-md">
         <div className="flex-1 bg-white p-4 rounded-lg shadow text-center">
           <h2 className="text-sm font-semibold text-gray-500">Aguardando</h2>
@@ -173,6 +176,8 @@ const Pedidos = () => {
           <h2 className="text-sm font-semibold text-gray-500">Receita Total</h2>
           <p className="text-xl font-bold text-indigo-600">R$ {totalReceita.toFixed(2)}</p>
         </div>
+
+        {/* Botão Auto-Avançar */}
         <label htmlFor="autoAvancar" className="flex items-center gap-2 text-sm text-gray-700 bg-white p-3 rounded-lg shadow">
           <div className="relative">
             <input
@@ -195,12 +200,14 @@ const Pedidos = () => {
         </label>
       </div>
 
+      {/* Alerta Novo Pedido */}
       {alertaNovoPedido && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white font-semibold px-6 py-2 rounded-full shadow-lg animate-bounce z-50">
           Novo pedido recebido!
         </div>
       )}
 
+      {/* Colunas de pedidos */}
       <div className="flex flex-1 overflow-x-auto p-6 gap-4">
         {statusColumns.map((column) => {
           const pedidosFiltrados = pedidos.filter((p) => p.status === column.status);
@@ -220,40 +227,41 @@ const Pedidos = () => {
                         novosPedidos.includes(pedido.id) ? "ring-4 ring-green-400 animate-bounce" : ""
                       }`}
                     >
-                      <div className="flex justify-between">
-                        <div className="flex items-center gap-2">
-                          <Receipt size={18} className="text-gray-600" />
-                          <p className="font-bold">Pedido #{pedido.numero_pedido}</p>
+                      <div className="flex justify-between items-start">
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-2">
+                            <Receipt size={18} className="text-gray-600" />
+                            <p className="font-bold">Pedido #{pedido.numero_pedido}</p>
+                          </div>
+                          <p className="mt-2 text-sm font-semibold">{pedido.nome_cliente || "Cliente não informado"}</p>
+                          <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
+                          <div className="flex justify-between items-center text-xs mt-2">
+                            <p>Pedido:</p>
+                            <div className={`${countPedidosCliente(pedido.whatsappId) === 1 ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-700"} px-2 py-1 rounded-full font-bold`}>
+                              {countPedidosCliente(pedido.whatsappId)}º
+                            </div>
+                            <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2)}</p>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1 text-xs text-gray-500 bg-blue-50 p-1 rounded-md">
-                          <Clock3 size={14} />
-                          {dayjs(pedido.created_at).format("HH:mm")}
+                        <div className="flex flex-col items-end gap-2">
+                          <button
+                            onClick={() => setPedidoSelecionado(pedido)}
+                            className="text-blue-600 hover:underline text-xs flex items-center gap-1"
+                          >
+                            <Info size={14} /> Ver Detalhes
+                          </button>
+                          <div className="flex items-center gap-1 text-xs text-gray-500 bg-blue-50 p-1 rounded-md">
+                            <Clock3 size={14} />
+                            {dayjs(pedido.created_at).format("HH:mm")}
+                          </div>
                         </div>
                       </div>
-                      <p className="mt-2 text-sm font-semibold">
-                        {pedido.nome_cliente || "Cliente não informado"}
-                      </p>
-                      <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
-                      <div className="flex justify-between items-center text-xs mt-2">
-                        <p>Pedido:</p>
-                        <div
-                          className={`${
-                            countPedidosCliente(pedido.whatsappId) === 1
-                              ? "bg-green-100 text-green-700"
-                              : "bg-gray-200 text-gray-700"
-                          } px-2 py-1 rounded-full font-bold`}
-                        >
-                          {countPedidosCliente(pedido.whatsappId)}º
-                        </div>
-                        <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2)}</p>
-                      </div>
+
                       <div className="flex items-center gap-1 text-xs text-gray-700 bg-blue-50 p-2 rounded-md mt-2">
                         <MapPin size={14} />
                         {pedido.clientes?.endereco ? (
                           <a
-                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                              pedido.clientes.endereco
-                            )}`}
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-600 hover:underline"
@@ -264,6 +272,7 @@ const Pedidos = () => {
                           <span>Endereço não disponível</span>
                         )}
                       </div>
+
                       {pedido.status !== "pronto" && (
                         <button
                           onClick={() => avancarPedido(pedido.id, pedido.status, pedido.created_at)}
@@ -282,6 +291,55 @@ const Pedidos = () => {
           );
         })}
       </div>
+
+      {/* Modal de Detalhes */}
+      {pedidoSelecionado && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-bold mb-4">Detalhes do Pedido #{pedidoSelecionado.numero_pedido}</h2>
+            {pedidoSelecionado.pedido_itens?.length > 0 ? (
+              pedidoSelecionado.pedido_itens.map((item) => (
+                <div key={item.id} className="border-b border-gray-300 pb-2 mb-2">
+                  <p className="font-semibold">{item.produtos?.nome || "Produto"}</p>
+                  <p className="text-sm">Quantidade: {item.quantidade}</p>
+                  <p className="text-sm">Subtotal: R$ {item.subtotal?.toFixed(2)}</p>
+
+                  {item.extras && Object.keys(item.extras).length > 0 && (
+                    <div className="text-sm mt-1 text-green-700">
+                      <p className="font-medium">Extras:</p>
+                      <ul className="list-disc list-inside">
+                        {Object.entries(item.extras).map(([key, val]) => (
+                          <li key={key}>{key}{val !== true ? `: ${val}` : ""}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {item.remover && Object.keys(item.remover).length > 0 && (
+                    <div className="text-sm mt-1 text-red-700">
+                      <p className="font-medium">Remover:</p>
+                      <ul className="list-disc list-inside">
+                        {Object.keys(item.remover).map((key) => (
+                          <li key={key}>{key}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-500">Nenhum item neste pedido.</p>
+            )}
+
+            <button
+              onClick={() => setPedidoSelecionado(null)}
+              className="mt-4 w-full bg-gray-800 text-white py-2 rounded hover:bg-gray-700"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
