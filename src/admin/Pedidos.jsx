@@ -99,6 +99,25 @@ const Pedidos = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col">
+      <div className="flex justify-center items-center p-4">
+        <label htmlFor="autoAvancar" className="flex items-center gap-2 text-sm text-gray-700">
+          <div className="relative">
+            <input
+              type="checkbox"
+              id="autoAvancar"
+              checked={autoAvancar}
+              onChange={() => setAutoAvancar(!autoAvancar)}
+              className="sr-only"
+            />
+            <div className={`block w-14 h-8 rounded-full ${autoAvancar ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+            <div
+              className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition ${autoAvancar ? 'translate-x-6' : ''}`}
+            ></div>
+          </div>
+          Avançar automaticamente novos pedidos
+        </label>
+      </div>
+
       <div className="flex flex-wrap gap-4 p-4 bg-gray-100 shadow-md">
         <div className="flex-1 bg-white p-4 rounded-lg shadow text-center">
           <h2 className="text-sm font-semibold text-gray-500">Aguardando</h2>
