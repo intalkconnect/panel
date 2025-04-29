@@ -85,13 +85,13 @@ const Pedidos = () => {
 
         for (const pedido of novosPedidosData) {
           if (pedido.status === "aguardando") {
-            await enviarPost("http://localhost:3000/pedido", {
+            await enviarPost("http://localhost:9123/pedido", {
               type: "notification",
               numero_pedido: pedido.numero_pedido,
               nome_cliente: pedido.nome_cliente,
             });
           } else if (pedido.status === "em_preparo") {
-            await enviarPost("http://localhost:3000/pedido", pedido);
+            await enviarPost("http://localhost:9123/pedido", pedido);
           }
         }
       }
