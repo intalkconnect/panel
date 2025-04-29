@@ -88,7 +88,7 @@ function Login() {
       {/* Área esquerda com imagem de fundo */}
       <div className="hidden md:flex w-2/3 h-screen">
         <img
-          src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//logobg.png"
+          src="https://onyedkfjdkplbaxpetln.supabase.co/storage/v1/object/public/zapediu//bglogin.png"
           alt="Zapediu Background"
           className="w-full h-full object-cover"
         />
