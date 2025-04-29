@@ -304,43 +304,32 @@ const Pedidos = () => {
                   <p className="text-sm">Quantidade: {item.quantidade}</p>
                   <p className="text-sm">Subtotal: R$ {item.subtotal?.toFixed(2)}</p>
 
-{item.extras && (
+{item.extras && Array.isArray(item.extras) && item.extras.length > 0 && (
   <div className="text-sm mt-1 text-green-700">
     <p className="font-medium">Extras:</p>
     <ul className="list-disc list-inside">
-      {Array.isArray(item.extras)
-        ? item.extras.map((extra, index) => (
-            <li key={index}>
-              {typeof extra === "object"
-                ? Object.keys(extra).map((key) => key).join(", ")
-                : extra}
-            </li>
-          ))
-        : Object.keys(item.extras).map((key) => (
-            <li key={key}>{key}</li>
-          ))}
+      {item.extras.map((extra, index) => (
+        <li key={index}>
+          {typeof extra === "object" && extra.label ? extra.label : JSON.stringify(extra)}
+        </li>
+      ))}
     </ul>
   </div>
 )}
 
-{item.remover && (
+{item.remover && Array.isArray(item.remover) && item.remover.length > 0 && (
   <div className="text-sm mt-1 text-red-700">
     <p className="font-medium">Remover:</p>
     <ul className="list-disc list-inside">
-      {Array.isArray(item.remover)
-        ? item.remover.map((rem, index) => (
-            <li key={index}>
-              {typeof rem === "object"
-                ? Object.keys(rem).map((key) => key).join(", ")
-                : rem}
-            </li>
-          ))
-        : Object.keys(item.remover).map((key) => (
-            <li key={key}>{key}</li>
-          ))}
+      {item.remover.map((rem, index) => (
+        <li key={index}>
+          {typeof rem === "object" && rem.label ? rem.label : JSON.stringify(rem)}
+        </li>
+      ))}
     </ul>
   </div>
 )}
+
 
                 </div>
               ))
