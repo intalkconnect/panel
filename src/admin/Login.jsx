@@ -3,7 +3,7 @@ import { supabase } from "../data/supabaseClient";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LogIn } from "lucide-react";
+import { LogIn, Lock } from "lucide-react";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -107,26 +107,32 @@ function Login() {
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Email
             </label>
-            <input
-              type="email"
-              placeholder="ex: joao@zapediu.ai"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
+            <div className="relative">
+              <input
+                type="email"
+                placeholder="ex: joao@zapediu.ai"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 pr-10"
+              />
+              <LogIn className="absolute right-3 top-3 text-gray-400" size={18} />
+            </div>
           </div>
 
           <div className="mb-6">
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Senha
             </label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={senha}
-              onChange={(e) => setsenha(e.target.value)}
-              className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
+            <div className="relative">
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={senha}
+                onChange={(e) => setsenha(e.target.value)}
+                className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 pr-10"
+              />
+              <Lock className="absolute right-3 top-3 text-gray-400" size={18} />
+            </div>
           </div>
 
           <div className="flex items-center justify-between mb-6 text-sm">
