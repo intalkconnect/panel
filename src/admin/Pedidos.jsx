@@ -156,7 +156,6 @@ const Pedidos = () => {
                   {column.icon}
                   {column.title}
                 </h2>
-                <span className="text-white font-semibold">{pedidosFiltrados.length}</span>
               </div>
               <div className="p-4 space-y-4 overflow-y-auto flex-1">
                 {pedidosFiltrados.length > 0 ? (
@@ -209,7 +208,7 @@ const Pedidos = () => {
                           onClick={() => avancarPedido(pedido.id, pedido.status, pedido.created_at)}
                           className="mt-4 flex items-center justify-center gap-2 px-4 py-2 border border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-md text-sm font-semibold transition"
                         >
-                          <ArrowRightCircle size={18} /> Avançar Pedido
+                          <ArrowRightCircle size={18} /> Avançar
                         </button>
                       )}
                     </div>
