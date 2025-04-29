@@ -15,6 +15,21 @@ const Pedidos = () => {
     return () => clearInterval(interval);
   }, [autoAvancar]);
 
+  async function enviarPost(endpoint, payload) {
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        throw new Error(`Erro na requisição: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Erro ao enviar POST:", error);
+    }
+  }
+
   async function fetchPedidos() {
     const empresaId = localStorage.getItem("empresa_id");
 
@@ -37,14 +52,27 @@ const Pedidos = () => {
     }
 
     if (pedidos.length > 0) {
-      const novos = data.filter((pedido) => !pedidos.some((p) => p.id === pedido.id)).map((pedido) => pedido.id);
-      if (novos.length > 0) {
-        setNovosPedidos(novos);
+      const novosPedidosData = data.filter((pedido) => !pedidos.some((p) => p.id === pedido.id));
+
+      if (novosPedidosData.length > 0) {
+        setNovosPedidos(novosPedidosData.map((p) => p.id));
         setAlertaNovoPedido(true);
         setTimeout(() => {
           setNovosPedidos([]);
           setAlertaNovoPedido(false);
         }, 4000);
+
+        for (const pedido of novosPedidosData) {
+          if (pedido.status === "aguardando") {
+            await enviarPost("http://localhost:3000/pedido", {
+              type: "notification",
+              numero_pedido: pedido.numero_pedido,
+              nome_cliente: pedido.nome_cliente,
+            });
+          } else if (pedido.status === "em_preparo") {
+            await enviarPost("http://localhost:3000/pedido", pedido);
+          }
+        }
       }
     }
 
