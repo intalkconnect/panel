@@ -100,7 +100,7 @@ const Pedidos = () => {
   return (
     <div className="relative min-h-screen flex flex-col">
       {/* Cards de resumo + botão auto-avançar */}
-      <div className="flex flex-wrap justify-center items-center gap-4 p-4 bg-gray-100 shadow-md">
+      <div className="flex flex-wrap justify-center items-center gap-4 px-4 py-2 bg-gray-100 shadow-md">
         <div className="flex-1 bg-white p-4 rounded-lg shadow text-center">
           <h2 className="text-sm font-semibold text-gray-500">Aguardando</h2>
           <p className="text-xl font-bold text-orange-500">{totalAguardando}</p>
