@@ -128,7 +128,7 @@ const Pedidos = () => {
         </div>
       )}
 
-      <div className="flex flex-1 overflow-x-auto p-6 gap-4">
+      <div className="flex flex-1 overflow-x-auto p-4 gap-4">
         {statusColumns.map((column) => {
           const pedidosFiltrados = pedidos.filter((p) => p.status === column.status);
           return (
