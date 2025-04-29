@@ -20,7 +20,7 @@ const Pedidos = () => {
 
     const { data, error } = await supabase
       .from("pedidos")
-      .select("id, nome_cliente, whatsappId, total, status, created_at, tempo_para_pronto, clientes ( endereco, id )")
+      .select("id, nome_cliente, whatsappId, total, status, created_at, tempo_para_pronto, clientes ( endereco, id ), numero_pedido")
       .eq("empresa_id", empresaId)
       .order("created_at", { ascending: false });
 
@@ -83,7 +83,7 @@ const Pedidos = () => {
   }
 
   const statusColumns = [
-    { title: "Em Análise", status: "aguardando", color: "bg-orange-500", icon: <Hourglass size={20} /> },
+    { title: "Aguardando", status: "aguardando", color: "bg-orange-500", icon: <Hourglass size={20} /> },
     { title: "Em Produção", status: "em_preparo", color: "bg-yellow-500", icon: <ChefHat size={20} /> },
     { title: "Pronto para Entrega", status: "pronto", color: "bg-green-500", icon: <Truck size={20} /> },
   ];
@@ -142,7 +142,7 @@ const Pedidos = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Receipt size={18} className="text-gray-600" />
-                          <p className="font-bold">Pedido #{pedido.id.slice(0, 8)}</p>
+                          <p className="font-bold">Pedido #{pedido.numero_pedido}</p>
                         </div>
                         <div className="flex items-center gap-1 text-gray-500 text-xs bg-blue-50 rounded-m">
                           <Clock3 size={14} />
