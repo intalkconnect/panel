@@ -34,6 +34,7 @@ const Pedidos = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      console.log("Enviando POST para", endpoint, "com payload:", payload);
       if (!response.ok) {
         throw new Error(`Erro na requisição: ${response.status}`);
       }
@@ -70,10 +71,10 @@ const Pedidos = () => {
       }
     }
 
-    if (pedidos.length > 0) {
+    
       const novosPedidosData = data.filter(
         (pedido) => !pedidos.some((p) => p.id === pedido.id)
-      );
+      
 
       if (novosPedidosData.length > 0) {
         setNovosPedidos(novosPedidosData.map((p) => p.id));
