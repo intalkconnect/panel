@@ -229,12 +229,6 @@ const Pedidos = () => {
   </div>
   <span className="font-semibold">Total: R$ {pedido.total?.toFixed(2)}</span>
 </div>
-                        <span className="font-semibold">Total: R$ {pedido.total?.toFixed(2)}</span>
-                      </div>
-
-                            <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2)}</p>
-                          </div>
-                        </div>
 
                         </div>
                       </div>
