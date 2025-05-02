@@ -231,9 +231,7 @@ const Pedidos = () => {
 </div>
 
                         </div>
-                      </div>
-
-                      <div className="flex items-center gap-1 text-xs text-gray-700 bg-blue-50 p-2 rounded-md mt-2">
+<div className="flex items-center gap-1 text-xs text-gray-700 bg-blue-50 p-2 rounded-md mt-2">
                         <MapPin size={14} />
                         {pedido.clientes?.endereco ? (
                           <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
