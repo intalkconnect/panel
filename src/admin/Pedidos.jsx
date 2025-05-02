@@ -223,30 +223,19 @@ const Pedidos = () => {
                       </div>
 
                       <div className="mt-2 flex justify-between items-center text-xs">
-                        <span className="font-medium">Pedido:</span>
-                        <div className={`${countPedidosCliente(pedido.whatsappId) === 1 ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-700"} px-2 py-1 rounded-full font-bold`}>
-                          {countPedidosCliente(pedido.whatsappId)}º
-                        </div>
+  <span className="font-medium">Pedido:</span>
+  <div className={`${countPedidosCliente(pedido.whatsappId) === 1 ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-700"} px-2 py-1 rounded-full font-bold`}>
+    {countPedidosCliente(pedido.whatsappId)}º
+  </div>
+  <span className="font-semibold">Total: R$ {pedido.total?.toFixed(2)}</span>
+</div>
                         <span className="font-semibold">Total: R$ {pedido.total?.toFixed(2)}</span>
                       </div>
-                          <p className="mt-2 text-sm font-semibold">{pedido.nome_cliente || "Cliente não informado"}</p>
-                          <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
-                          <div className="flex justify-between items-center text-xs mt-2">
-                            <p>Pedido:</p>
-                            <div className={`${countPedidosCliente(pedido.whatsappId) === 1 ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-700"} px-2 py-1 rounded-full font-bold`}>
-                              {countPedidosCliente(pedido.whatsappId)}º
-                            </div>
+
                             <p className="font-semibold">Total: R$ {pedido.total?.toFixed(2)}</p>
                           </div>
                         </div>
-                        <div className="flex flex-col items-end gap-2">
-                          <button onClick={() => setPedidoSelecionado(pedido)} className="text-blue-600 hover:underline text-xs flex items-center gap-1">
-                            <Info size={14} /> Ver Detalhes
-                          </button>
-                          <div className="flex items-center gap-1 text-xs text-gray-500 bg-blue-50 p-1 rounded-md">
-                            <Clock3 size={14} />
-                            {dayjs(pedido.created_at).format("HH:mm")}
-                          </div>
+
                         </div>
                       </div>
 
