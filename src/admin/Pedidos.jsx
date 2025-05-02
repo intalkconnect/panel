@@ -27,10 +27,8 @@ const Pedidos = () => {
     fetchPedidos();
     const interval = setInterval(fetchPedidos, 15000);
 
-    if ("Notification" in window) {
-      if (Notification.permission === "default") {
-        Notification.requestPermission();
-      }
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
     }
 
     return () => clearInterval(interval);
@@ -210,7 +208,6 @@ const Pedidos = () => {
                           <p className="text-sm font-semibold">{pedido.nome_cliente || "Cliente não informado"}</p>
                           <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
                         </div>
-
                         <div className="flex flex-col sm:items-end gap-1 mt-2 sm:mt-0">
                           <button onClick={() => setPedidoSelecionado(pedido)} className="text-blue-600 hover:underline text-xs flex items-center gap-1">
                             <Info size={14} /> Ver Detalhes
@@ -223,15 +220,14 @@ const Pedidos = () => {
                       </div>
 
                       <div className="mt-2 flex justify-between items-center text-xs">
-  <span className="font-medium">Pedido:</span>
-  <div className={`${countPedidosCliente(pedido.whatsappId) === 1 ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-700"} px-2 py-1 rounded-full font-bold`}>
-    {countPedidosCliente(pedido.whatsappId)}º
-  </div>
-  <span className="font-semibold">Total: R$ {pedido.total?.toFixed(2)}</span>
-</div>
-
+                        <span className="font-medium">Pedido:</span>
+                        <div className={`${countPedidosCliente(pedido.whatsappId) === 1 ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-700"} px-2 py-1 rounded-full font-bold`}>
+                          {countPedidosCliente(pedido.whatsappId)}º
                         </div>
-<div className="flex items-center gap-1 text-xs text-gray-700 bg-blue-50 p-2 rounded-md mt-2">
+                        <span className="font-semibold">Total: R$ {pedido.total?.toFixed(2)}</span>
+                      </div>
+
+                      <div className="flex items-center gap-1 text-xs text-gray-700 bg-blue-50 p-2 rounded-md mt-2">
                         <MapPin size={14} />
                         {pedido.clientes?.endereco ? (
                           <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pedido.clientes.endereco)}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
