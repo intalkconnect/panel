@@ -28,8 +28,16 @@ const Pedidos = () => {
     fetchPedidos();
     const interval = setInterval(fetchPedidos, 15000);
 
-    if ("Notification" in window && Notification.permission !== "granted") {
-      Notification.requestPermission();
+    if ("Notification" in window) {
+      if (Notification.permission === "default") {
+        Notification.requestPermission().then((permission) => {
+          if (permission !== "granted") {
+            console.warn("Notificações do sistema não foram autorizadas.");
+          }
+        });
+      } else if (Notification.permission === "denied") {
+        console.warn("Notificações do sistema estão bloqueadas pelo usuário.");
+      }
     }
 
     return () => clearInterval(interval);
@@ -40,11 +48,14 @@ const Pedidos = () => {
   }
 
   function notificarNovoPedido(pedido) {
-    if (Notification.permission === "granted") {
+    if ("Notification" in window && Notification.permission === "granted") {
       new Notification("Novo Pedido Recebido", {
         body: `Pedido #${pedido.numero_pedido} de ${pedido.nome_cliente}`,
         icon: "/logo192.png",
       });
+    } else {
+      setAlertaNovoPedido(true);
+      setTimeout(() => setAlertaNovoPedido(false), 5000);
     }
   }
 
@@ -80,21 +91,18 @@ const Pedidos = () => {
       (pedido) => !pedidos.some((p) => p.id === pedido.id)
     );
 
-    if (novosPedidosData.length > 0) {
-      setNovosPedidos(novosPedidosData.map((p) => p.id));
-      setAlertaNovoPedido(true);
-      setTimeout(() => {
-        setNovosPedidos([]);
-        setAlertaNovoPedido(false);
-      }, 4000);
+    const pedidosNaoNotificados = novosPedidosData.filter(
+      (pedido) => !idsNotificados.has(pedido.id)
+    );
 
-      for (const pedido of novosPedidosData) {
-        if (!idsNotificados.has(pedido.id)) {
-          tocarSomAlerta();
-          notificarNovoPedido(pedido);
-          setIdsNotificados((prev) => new Set(prev).add(pedido.id));
-        }
-      }
+    if (pedidosNaoNotificados.length > 0) {
+      tocarSomAlerta();
+      notificarNovoPedido(pedidosNaoNotificados[0]); // Notifica um dos novos pedidos
+      setIdsNotificados((prev) => {
+        const novoSet = new Set(prev);
+        pedidosNaoNotificados.forEach((p) => novoSet.add(p.id));
+        return novoSet;
+      });
     }
 
     setPedidos(data);
@@ -158,7 +166,12 @@ const Pedidos = () => {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      {/* Cabeçalho */}
+      {alertaNovoPedido && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white font-semibold px-6 py-2 rounded-full shadow-lg z-50">
+          Novo pedido recebido!
+        </div>
+      )}
+
       <div className="flex flex-wrap justify-center items-center gap-4 px-4 py-2 bg-gray-100 shadow-md">
         <div className="flex-1 bg-white p-4 rounded-lg shadow text-center">
           <h2 className="text-sm font-semibold text-gray-500">Aguardando</h2>
@@ -176,38 +189,8 @@ const Pedidos = () => {
           <h2 className="text-sm font-semibold text-gray-500">Receita Total</h2>
           <p className="text-xl font-bold text-indigo-600">R$ {totalReceita.toFixed(2)}</p>
         </div>
-
-        {/* Botão Auto-Avançar */}
-        <label htmlFor="autoAvancar" className="flex items-center gap-2 text-sm text-gray-700 bg-white p-3 rounded-lg shadow">
-          <div className="relative">
-            <input
-              type="checkbox"
-              id="autoAvancar"
-              checked={autoAvancar}
-              onChange={() => setAutoAvancar(!autoAvancar)}
-              className="sr-only"
-            />
-            <div className={`block w-14 h-8 rounded-full transition-all ${autoAvancar ? "bg-green-500" : "bg-gray-300"}`}></div>
-            <div className={`dot absolute top-1 left-1 bg-white w-6 h-6 rounded-full transition-all ${autoAvancar ? "translate-x-6" : ""}`}></div>
-          </div>
-          {autoAvancar ? (
-            <span className="flex items-center gap-1 text-green-600 font-semibold animate-pulse">
-              <Rocket size={16} /> Avançando...
-            </span>
-          ) : (
-            <span>Avançar automaticamente</span>
-          )}
-        </label>
       </div>
 
-      {/* Alerta Novo Pedido */}
-      {alertaNovoPedido && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white font-semibold px-6 py-2 rounded-full shadow-lg animate-bounce z-50">
-          Novo pedido recebido!
-        </div>
-      )}
-
-      {/* Colunas de pedidos */}
       <div className="flex flex-1 overflow-x-auto p-6 gap-4">
         {statusColumns.map((column) => {
           const pedidosFiltrados = pedidos.filter((p) => p.status === column.status);
@@ -223,9 +206,7 @@ const Pedidos = () => {
                   pedidosFiltrados.map((pedido) => (
                     <div
                       key={pedido.id}
-                      className={`bg-white p-4 rounded-lg shadow mb-2 ${
-                        novosPedidos.includes(pedido.id) ? "ring-4 ring-green-400 animate-bounce" : ""
-                      }`}
+                      className="bg-white p-4 rounded-lg shadow mb-2"
                     >
                       <div className="flex justify-between items-start">
                         <div className="flex flex-col">
@@ -291,61 +272,6 @@ const Pedidos = () => {
           );
         })}
       </div>
-
-      {/* Modal de Detalhes */}
-      {pedidoSelecionado && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">Detalhes do Pedido #{pedidoSelecionado.numero_pedido}</h2>
-            {pedidoSelecionado.pedido_itens?.length > 0 ? (
-              pedidoSelecionado.pedido_itens.map((item) => (
-                <div key={item.id} className="border-b border-gray-300 pb-2 mb-2">
-                  <p className="font-semibold">{item.produtos?.nome || "Produto"}</p>
-                  <p className="text-sm">Quantidade: {item.quantidade}</p>
-                  <p className="text-sm">Subtotal: R$ {item.subtotal?.toFixed(2)}</p>
-
-{item.extras && Array.isArray(item.extras) && item.extras.length > 0 && (
-  <div className="text-sm mt-1 text-green-700">
-    <p className="font-medium">Extras:</p>
-    <ul className="list-disc list-inside">
-      {item.extras.map((extra, index) => (
-        <li key={index}>
-          {typeof extra === "object" && extra.label ? extra.label : JSON.stringify(extra)}
-        </li>
-      ))}
-    </ul>
-  </div>
-)}
-
-{item.remover && Array.isArray(item.remover) && item.remover.length > 0 && (
-  <div className="text-sm mt-1 text-red-700">
-    <p className="font-medium">Remover:</p>
-    <ul className="list-disc list-inside">
-      {item.remover.map((rem, index) => (
-        <li key={index}>
-          {typeof rem === "object" && rem.label ? rem.label : JSON.stringify(rem)}
-        </li>
-      ))}
-    </ul>
-  </div>
-)}
-
-
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-gray-500">Nenhum item neste pedido.</p>
-            )}
-
-            <button
-              onClick={() => setPedidoSelecionado(null)}
-              className="mt-4 w-full bg-gray-800 text-white py-2 rounded hover:bg-gray-700"
-            >
-              Fechar
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
