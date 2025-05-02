@@ -102,8 +102,6 @@ const Pedidos = () => {
       pedidosNaoNotificados.forEach((p) => novosIds.add(p.id));
       setIdsNotificados(novosIds);
     }
-    }
-
     setPedidos(data);
   }
 
