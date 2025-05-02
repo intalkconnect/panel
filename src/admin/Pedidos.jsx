@@ -98,11 +98,10 @@ const Pedidos = () => {
     if (pedidosNaoNotificados.length > 0) {
       tocarSomAlerta();
       notificarNovoPedido(pedidosNaoNotificados[0]); // Notifica um dos novos pedidos
-      setIdsNotificados((prev) => {
-        const novoSet = new Set(prev);
-        pedidosNaoNotificados.forEach((p) => novoSet.add(p.id));
-        return novoSet;
-      });
+      const novosIds = new Set(idsNotificados);
+      pedidosNaoNotificados.forEach((p) => novosIds.add(p.id));
+      setIdsNotificados(novosIds);
+    }
     }
 
     setPedidos(data);
