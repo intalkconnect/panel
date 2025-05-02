@@ -60,60 +60,54 @@ const Pedidos = () => {
   }
 
   async function fetchPedidos() {
-    const empresaId = localStorage.getItem("empresa_id");
+  const empresaId = localStorage.getItem("empresa_id");
 
-    const { data, error } = await supabase
+  const { data, error } = await supabase
+    .from("pedidos")
+    .select(`
+      id, nome_cliente, whatsappId, total, status, created_at, tempo_para_pronto, numero_pedido, notificado,
+      clientes ( endereco, id ),
+      pedido_itens (
+        id, quantidade, subtotal, extras, remover,
+        produtos ( nome )
+      )
+    `)
+    .eq("empresa_id", empresaId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Erro ao buscar pedidos:", error);
+    return;
+  }
+
+  if (autoAvancar && data?.length) {
+    const pedidosEmAnalise = data.filter((p) => p.status === "aguardando");
+    for (const pedido of pedidosEmAnalise) {
+      await avancarPedido(pedido.id, "aguardando", pedido.created_at, true);
+    }
+  }
+
+  const novosPedidosData = data.filter(
+    (pedido) => !pedidos.some((p) => p.id === pedido.id)
+  );
+
+  const pedidosNaoNotificados = novosPedidosData.filter(
+    (pedido) => pedido.status === "aguardando" && !pedido.notificado
+  );
+
+  if (pedidosNaoNotificados.length > 0) {
+    tocarSomAlerta();
+    notificarNovoPedido(pedidosNaoNotificados[0]);
+
+    const idsParaAtualizar = pedidosNaoNotificados.map((p) => p.id);
+    await supabase
       .from("pedidos")
-      .select(`
-        id, nome_cliente, whatsappId, total, status, created_at, tempo_para_pronto, numero_pedido, notificado,
-        clientes ( endereco, id ),
-        pedido_itens (
-          id, quantidade, subtotal, extras, remover,
-          produtos ( nome )
-        )
-      `)
-        id, nome_cliente, whatsappId, total, status, created_at, tempo_para_pronto, numero_pedido,
-        clientes ( endereco, id ),
-        pedido_itens (
-          id, quantidade, subtotal, extras, remover,
-          produtos ( nome )
-        )
-      `)
-      .eq("empresa_id", empresaId)
-      .order("created_at", { ascending: false });
+      .update({ notificado: true })
+      .in("id", idsParaAtualizar);
+  }
 
-    if (error) {
-      console.error("Erro ao buscar pedidos:", error);
-      return;
-    }
-
-    if (autoAvancar && data?.length) {
-      const pedidosEmAnalise = data.filter((p) => p.status === "aguardando");
-      for (const pedido of pedidosEmAnalise) {
-        await avancarPedido(pedido.id, "aguardando", pedido.created_at, true);
-      }
-    }
-
-    const novosPedidosData = data.filter(
-      (pedido) => !pedidos.some((p) => p.id === pedido.id)
-    );
-
-    const pedidosNaoNotificados = novosPedidosData.filter(
-      (pedido) => pedido.status === "aguardando" && !pedido.notificado
-    );
-
-    if (pedidosNaoNotificados.length > 0) {
-      tocarSomAlerta();
-      notificarNovoPedido(pedidosNaoNotificados[0]);
-
-      const idsParaAtualizar = pedidosNaoNotificados.map((p) => p.id);
-      await supabase
-        .from("pedidos")
-        .update({ notificado: true })
-        .in("id", idsParaAtualizar);
-    }
-    }
-    setPedidos(data);
+  setPedidos(data);
+}
 
     // Atualiza o estado de novosPedidos apenas com os IDs ainda não notificados
     const novosIds = novosPedidosData.map((p) => p.id);
