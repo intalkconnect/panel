@@ -201,12 +201,34 @@ const Pedidos = () => {
                 {pedidosFiltrados.length > 0 ? (
                   pedidosFiltrados.map((pedido) => (
                     <div key={pedido.id} className="bg-white p-4 rounded-lg shadow mb-2">
-                      <div className="flex justify-between items-start">
-                        <div className="flex flex-col">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
+                        <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-2">
                             <Receipt size={18} className="text-gray-600" />
                             <p className="font-bold">Pedido #{pedido.numero_pedido}</p>
                           </div>
+                          <p className="text-sm font-semibold">{pedido.nome_cliente || "Cliente não informado"}</p>
+                          <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
+                        </div>
+
+                        <div className="flex flex-col sm:items-end gap-1 mt-2 sm:mt-0">
+                          <button onClick={() => setPedidoSelecionado(pedido)} className="text-blue-600 hover:underline text-xs flex items-center gap-1">
+                            <Info size={14} /> Ver Detalhes
+                          </button>
+                          <div className="flex items-center gap-1 text-xs text-gray-500 bg-blue-50 p-1 rounded-md">
+                            <Clock3 size={14} />
+                            {dayjs(pedido.created_at).format("HH:mm")}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-2 flex justify-between items-center text-xs">
+                        <span className="font-medium">Pedido:</span>
+                        <div className={`${countPedidosCliente(pedido.whatsappId) === 1 ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-700"} px-2 py-1 rounded-full font-bold`}>
+                          {countPedidosCliente(pedido.whatsappId)}º
+                        </div>
+                        <span className="font-semibold">Total: R$ {pedido.total?.toFixed(2)}</span>
+                      </div>
                           <p className="mt-2 text-sm font-semibold">{pedido.nome_cliente || "Cliente não informado"}</p>
                           <p className="text-xs text-gray-500">{formatPhone(pedido.whatsappId)}</p>
                           <div className="flex justify-between items-center text-xs mt-2">
