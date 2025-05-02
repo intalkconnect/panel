@@ -14,32 +14,37 @@ import {
 } from "lucide-react";
 import dayjs from "dayjs";
 
+const alertaAudio = new Audio("/alerta.mp3");
+
 const Pedidos = () => {
   const [pedidos, setPedidos] = useState([]);
   const [novosPedidos, setNovosPedidos] = useState([]);
   const [alertaNovoPedido, setAlertaNovoPedido] = useState(false);
   const [autoAvancar, setAutoAvancar] = useState(false);
-  const [pedidoSelecionado, setPedidoSelecionado] = useState(null); // Novo: para modal de detalhes
+  const [pedidoSelecionado, setPedidoSelecionado] = useState(null);
+  const [idsNotificados, setIdsNotificados] = useState(new Set());
 
   useEffect(() => {
     fetchPedidos();
     const interval = setInterval(fetchPedidos, 15000);
+
+    if ("Notification" in window && Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+
     return () => clearInterval(interval);
   }, [autoAvancar]);
 
-  async function enviarPost(endpoint, payload) {
-    try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+  function tocarSomAlerta() {
+    alertaAudio.play().catch((err) => console.error("Erro ao tocar som:", err));
+  }
+
+  function notificarNovoPedido(pedido) {
+    if (Notification.permission === "granted") {
+      new Notification("Novo Pedido Recebido", {
+        body: `Pedido #${pedido.numero_pedido} de ${pedido.nome_cliente}`,
+        icon: "/logo192.png",
       });
-      console.log("Enviando POST para", endpoint, "com payload:", payload);
-      if (!response.ok) {
-        throw new Error(`Erro na requisição: ${response.status}`);
-      }
-    } catch (error) {
-      console.error("Erro ao enviar POST:", error);
     }
   }
 
@@ -71,31 +76,26 @@ const Pedidos = () => {
       }
     }
 
-    
-      const novosPedidosData = data.filter(
-  (pedido) => !pedidos.some((p) => p.id === pedido.id)
-);
+    const novosPedidosData = data.filter(
+      (pedido) => !pedidos.some((p) => p.id === pedido.id)
+    );
 
-if (novosPedidosData.length > 0) {
-  setNovosPedidos(novosPedidosData.map((p) => p.id));
-  setAlertaNovoPedido(true);
-  setTimeout(() => {
-    setNovosPedidos([]);
-    setAlertaNovoPedido(false);
-  }, 4000);
+    if (novosPedidosData.length > 0) {
+      setNovosPedidos(novosPedidosData.map((p) => p.id));
+      setAlertaNovoPedido(true);
+      setTimeout(() => {
+        setNovosPedidos([]);
+        setAlertaNovoPedido(false);
+      }, 4000);
 
-  for (const pedido of novosPedidosData) {
-    if (pedido.status === "aguardando") {
-      await enviarPost("http://localhost:9123/pedido", {
-        type: "notification",
-        numero_pedido: pedido.numero_pedido,
-        nome_cliente: pedido.nome_cliente,
-      });
-    } else if (pedido.status === "em_preparo") {
-      await enviarPost("http://localhost:9123/pedido", pedido);
+      for (const pedido of novosPedidosData) {
+        if (!idsNotificados.has(pedido.id)) {
+          tocarSomAlerta();
+          notificarNovoPedido(pedido);
+          setIdsNotificados((prev) => new Set(prev).add(pedido.id));
+        }
+      }
     }
-  }
-}
 
     setPedidos(data);
   }
