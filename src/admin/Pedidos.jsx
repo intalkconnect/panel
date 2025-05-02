@@ -65,6 +65,13 @@ const Pedidos = () => {
     const { data, error } = await supabase
       .from("pedidos")
       .select(`
+        id, nome_cliente, whatsappId, total, status, created_at, tempo_para_pronto, numero_pedido, notificado,
+        clientes ( endereco, id ),
+        pedido_itens (
+          id, quantidade, subtotal, extras, remover,
+          produtos ( nome )
+        )
+      `)
         id, nome_cliente, whatsappId, total, status, created_at, tempo_para_pronto, numero_pedido,
         clientes ( endereco, id ),
         pedido_itens (
@@ -92,15 +99,19 @@ const Pedidos = () => {
     );
 
     const pedidosNaoNotificados = novosPedidosData.filter(
-      (pedido) => !idsNotificados.has(pedido.id)
+      (pedido) => pedido.status === "aguardando" && !pedido.notificado
     );
 
     if (pedidosNaoNotificados.length > 0) {
       tocarSomAlerta();
-      notificarNovoPedido(pedidosNaoNotificados[0]); // Notifica um dos novos pedidos
-      const novosIds = new Set(idsNotificados);
-      pedidosNaoNotificados.forEach((p) => novosIds.add(p.id));
-      setIdsNotificados(novosIds);
+      notificarNovoPedido(pedidosNaoNotificados[0]);
+
+      const idsParaAtualizar = pedidosNaoNotificados.map((p) => p.id);
+      await supabase
+        .from("pedidos")
+        .update({ notificado: true })
+        .in("id", idsParaAtualizar);
+    }
     }
     setPedidos(data);
 
