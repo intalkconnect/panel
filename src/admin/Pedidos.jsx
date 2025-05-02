@@ -103,6 +103,15 @@ const Pedidos = () => {
       setIdsNotificados(novosIds);
     }
     setPedidos(data);
+
+    // Atualiza o estado de novosPedidos apenas com os IDs ainda não notificados
+    const novosIds = novosPedidosData.map((p) => p.id);
+    const idsNaoNotificados = novosIds.filter(id => !idsNotificados.has(id));
+    if (idsNaoNotificados.length > 0) {
+      setNovosPedidos(idsNaoNotificados);
+      setAlertaNovoPedido(true);
+      setTimeout(() => setAlertaNovoPedido(false), 5000);
+    }
   }
 
   async function avancarPedido(id, statusAtual, createdAt, silent = false) {
