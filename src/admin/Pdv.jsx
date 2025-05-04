@@ -9,7 +9,10 @@ const Pdv = () => {
   const [categorias, setCategorias] = useState([]);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
   const [mesas, setMesas] = useState([]);
+  const [clientes, setClientes] = useState([]);
   const [mesaSelecionada, setMesaSelecionada] = useState("");
+  const [clienteSelecionado, setClienteSelecionado] = useState("");
+  const [modoConsumo, setModoConsumo] = useState("mesa");
   const [carrinho, setCarrinho] = useState([]);
   const [horaAtual, setHoraAtual] = useState(dayjs().format("HH:mm:ss"));
 
@@ -32,6 +35,22 @@ const Pdv = () => {
         .eq("empresa_id", empresaId)
         .eq("ativo", true);
 
+      const produtosTratados = (produtosData || []).map((p) => {
+        let detalhamento = {};
+        try {
+          detalhamento = JSON.parse(p.detalhamento || "{}");
+        } catch {
+          detalhamento = {};
+        }
+
+        return {
+          ...p,
+          descricao: detalhamento.descricao || "",
+          extras: detalhamento.extras?.map((e) => e.label) || [],
+          remover: detalhamento.remover?.map((r) => r.label) || [],
+        };
+      });
+
       const { data: categoriasData } = await supabase
         .from("categorias")
         .select("*")
@@ -42,19 +61,22 @@ const Pdv = () => {
         .select("*")
         .eq("empresa_id", empresaId);
 
-      setProdutos(produtosData || []);
+      const { data: clientesData } = await supabase
+        .from("clientes")
+        .select("*")
+        .eq("empresaId", empresaId);
+
+      setProdutos(produtosTratados);
       setCategorias(categoriasData || []);
       setMesas(mesasData || []);
+      setClientes(clientesData || []);
     };
 
     carregarDados();
   }, [empresaId]);
 
   const abrirModalOuAdicionar = (produto) => {
-    if (
-      (produto.extras && Array.isArray(produto.extras)) ||
-      (produto.remover && Array.isArray(produto.remover))
-    ) {
+    if ((produto.extras?.length || 0) > 0 || (produto.remover?.length || 0) > 0) {
       setExtrasSelecionados([]);
       setRemoverSelecionados([]);
       setModalProduto(produto);
@@ -125,25 +147,55 @@ const Pdv = () => {
       <aside className="w-1/3 bg-gray-100 border-r p-4 flex flex-col justify-between">
         <div>
           <h2 className="text-xl font-bold mb-4">Carrinho</h2>
-          <select
-            value={mesaSelecionada}
-            onChange={(e) => setMesaSelecionada(e.target.value)}
-            className="w-full mb-4 p-2 border rounded"
-          >
-            <option value="">Selecione uma mesa</option>
-            {mesas.map((mesa) => (
-              <option key={mesa.id} value={mesa.id}>
-                Mesa {mesa.numero}
-              </option>
-            ))}
-          </select>
 
+          {/* Seletor de consumo */}
+          <div className="mb-4 space-y-2">
+            <label className="block font-semibold text-sm">Modo de consumo</label>
+            <select
+              value={modoConsumo}
+              onChange={(e) => setModoConsumo(e.target.value)}
+              className="w-full p-2 border rounded"
+            >
+              <option value="mesa">Mesa</option>
+              <option value="balcao">Balcão</option>
+              <option value="delivery">Delivery</option>
+            </select>
+
+            {modoConsumo === "mesa" && (
+              <select
+                value={mesaSelecionada}
+                onChange={(e) => setMesaSelecionada(e.target.value)}
+                className="w-full p-2 border rounded"
+              >
+                <option value="">Selecione uma mesa</option>
+                {mesas.map((mesa) => (
+                  <option key={mesa.id} value={mesa.id}>
+                    Mesa {mesa.numero}
+                  </option>
+                ))}
+              </select>
+            )}
+
+            {modoConsumo === "delivery" && (
+              <select
+                value={clienteSelecionado}
+                onChange={(e) => setClienteSelecionado(e.target.value)}
+                className="w-full p-2 border rounded"
+              >
+                <option value="">Selecione o cliente</option>
+                {clientes.map((c) => (
+                  <option key={c.id} value={c.nome}>
+                    {c.nome} - {c.endereco}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+
+          {/* Lista de itens no carrinho */}
           <ul className="space-y-2 max-h-64 overflow-y-auto mb-4">
             {carrinho.map((item, index) => (
-              <li
-                key={index}
-                className="flex flex-col bg-white rounded shadow px-2 py-1"
-              >
+              <li key={index} className="flex flex-col bg-white rounded shadow px-2 py-1">
                 <div className="flex justify-between items-center">
                   <span className="font-medium">
                     {item.nome} x{item.quantidade}
@@ -163,20 +215,30 @@ const Pdv = () => {
                     </button>
                   </div>
                 </div>
+
+                {item.descricao && (
+                  <div className="text-xs italic text-gray-500 ml-1">{item.descricao}</div>
+                )}
+
                 {(item.extrasSelecionados?.length > 0 ||
                   item.removerSelecionados?.length > 0) && (
-                  <div className="text-xs text-gray-500 mt-1 ml-1">
+                  <div className="text-xs text-gray-600 ml-1">
                     {item.extrasSelecionados?.map((e) => `+${e}`).join(", ")}{" "}
-                    {item.removerSelecionados
-                      ?.map((r) => `–${r}`)
-                      .join(", ")}
+                    {item.removerSelecionados?.map((r) => `–${r}`).join(", ")}
                   </div>
                 )}
+
+                <div className="text-right text-sm font-medium text-gray-700">
+                  R$ {parseFloat(item.preco).toFixed(2)} × {item.quantidade} ={" "}
+                  <span className="font-bold">
+                    R$ {(item.quantidade * parseFloat(item.preco)).toFixed(2)}
+                  </span>
+                </div>
               </li>
             ))}
           </ul>
 
-          <div className="mt-2 text-right font-bold text-lg">
+          <div className="mt-2 text-right font-bold text-xl">
             Total: R$ {total.toFixed(2)}
           </div>
         </div>
@@ -193,10 +255,10 @@ const Pdv = () => {
               try {
                 await registrarPedido({
                   carrinho,
-                  mesaId: mesaSelecionada,
-                  modoConsumo: "mesa",
+                  mesaId: modoConsumo === "mesa" ? mesaSelecionada : null,
+                  modoConsumo,
                   formaPagamento: "dinheiro",
-                  nomeCliente: "",
+                  nomeCliente: modoConsumo === "delivery" ? clienteSelecionado : "",
                 });
                 setCarrinho([]);
                 alert("Pedido registrado com sucesso!");
@@ -262,11 +324,15 @@ const Pdv = () => {
         </div>
       </main>
 
-      {/* Modal de seleção de extras/remover */}
+      {/* Modal de opções */}
       {modalProduto && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-4 w-96 shadow-lg">
             <h2 className="text-lg font-bold mb-2">{modalProduto.nome}</h2>
+
+            {modalProduto.descricao && (
+              <p className="text-sm italic text-gray-600 mb-2">{modalProduto.descricao}</p>
+            )}
 
             {modalProduto.extras?.length > 0 && (
               <div className="mb-4">
