@@ -84,112 +84,114 @@ const AdminLayout = () => {
   if (loading) return null;
 
   return (
-    <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <aside
         className={clsx(
-          "h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm overflow-y-auto transition-all duration-300 flex flex-col items-center",
-          collapsed ? "w-20 px-2" : "w-64 px-4"
+          "h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300 flex flex-col justify-between fixed z-30",
+          collapsed ? "w-16" : "w-64"
         )}
       >
-        <div className="flex items-center justify-between w-full min-h-[3rem] mb-6">
-          {!collapsed && (
-            <span className="text-lg font-semibold text-gray-700 dark:text-white">
-              {empresaNome || "Sistema"}
-            </span>
-          )}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="text-gray-600 dark:text-gray-300"
-          >
-            <Menu size={20} />
-          </button>
-        </div>
+        <div className="flex flex-col items-center w-full py-4">
+          <div className="flex items-center justify-between w-full px-4 mb-6">
+            {!collapsed && (
+              <span className="text-lg font-semibold text-gray-700 dark:text-white truncate">
+                {empresaNome || "Sistema"}
+              </span>
+            )}
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className="text-gray-600 dark:text-gray-300"
+            >
+              <Menu size={20} />
+            </button>
+          </div>
 
-        <nav className="space-y-6 text-sm flex-1 w-full">
-          {menuSections.map((section) => (
-            <div key={section.title}>
-              {!collapsed && (
-                <h4 className="text-xs text-gray-400 uppercase mb-2 tracking-wide">{section.title}</h4>
-              )}
-              <div className="space-y-1">
-                {section.items.map((item) => {
-                  if (item.requiredProfile && item.requiredProfile !== userProfile?.perfilNome) return null;
+          <nav className="flex flex-col gap-4 w-full px-2">
+            {menuSections.map((section) => (
+              <div key={section.title} className="w-full">
+                {!collapsed && (
+                  <h4 className="text-xs text-gray-400 uppercase mb-1 px-2">{section.title}</h4>
+                )}
+                <div className="flex flex-col gap-1">
+                  {section.items.map((item) => {
+                    if (item.requiredProfile && item.requiredProfile !== userProfile?.perfilNome) return null;
 
-                  if (item.children) {
-                    const isOpen = openMenus[item.label];
+                    if (item.children) {
+                      const isOpen = openMenus[item.label];
+                      return (
+                        <div key={item.label} className="w-full">
+                          <button
+                            onClick={() => toggleMenu(item.label)}
+                            className="flex items-center justify-between w-full py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                          >
+                            <div className="flex items-center gap-3">
+                              {item.icon}
+                              {!collapsed && <span>{item.label}</span>}
+                            </div>
+                            {!collapsed && (isOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />)}
+                          </button>
+                          {!collapsed && isOpen && (
+                            <div className="ml-6 mt-1 space-y-1">
+                              {item.children.map((child) => (
+                                <Link
+                                  key={child.to}
+                                  to={child.to}
+                                  className={clsx(
+                                    "flex items-center gap-2 px-2 py-1 rounded-md text-sm font-medium transition",
+                                    location.pathname === child.to
+                                      ? "bg-gray-100 dark:bg-gray-700 text-blue-600"
+                                      : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                                  )}
+                                >
+                                  {child.icon}
+                                  {child.label}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+
                     return (
-                      <div key={item.label}>
-                        <button
-                          onClick={() => toggleMenu(item.label)}
-                          className="flex items-center justify-between w-full py-2 px-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
-                          <div className="flex items-center gap-3">
-                            {item.icon}
-                            {!collapsed && <span>{item.label}</span>}
-                          </div>
-                          {!collapsed && (isOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />)}
-                        </button>
-                        {!collapsed && isOpen && (
-                          <div className="ml-6 mt-1 space-y-1">
-                            {item.children.map((child) => (
-                              <Link
-                                key={child.to}
-                                to={child.to}
-                                className={clsx(
-                                  "flex items-center gap-2 px-2 py-1 rounded-md text-sm font-medium transition",
-                                  location.pathname === child.to
-                                    ? "bg-gray-100 dark:bg-gray-700 text-blue-600"
-                                    : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                                )}
-                              >
-                                {child.icon}
-                                {child.label}
-                              </Link>
-                            ))}
-                          </div>
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        className={clsx(
+                          "flex items-center gap-3 py-2 px-3 rounded-md text-sm font-medium transition",
+                          location.pathname === item.to
+                            ? "bg-gray-100 dark:bg-gray-700 text-blue-600"
+                            : "hover:bg-gray-100 dark:hover:bg-gray-700"
                         )}
-                      </div>
+                      >
+                        {item.icon}
+                        {!collapsed && item.label}
+                      </Link>
                     );
-                  }
-
-                  return (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      className={clsx(
-                        "flex items-center gap-3 py-2 px-2 rounded-md text-sm font-medium transition",
-                        location.pathname === item.to
-                          ? "bg-gray-100 dark:bg-gray-700 text-blue-600"
-                          : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                      )}
-                    >
-                      {item.icon}
-                      {!collapsed && item.label}
-                    </Link>
-                  );
-                })}
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
 
-          {!collapsed && (
-            <div className="mt-6 w-full">
-              <button
-                onClick={() => setShowLogoutModal(true)}
-                className="flex items-center gap-2 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md justify-center"
-              >
-                <LogOut size={18} />
-                Sair
-              </button>
-            </div>
-          )}
-        </nav>
+            {!collapsed && (
+              <div className="mt-6 w-full px-2">
+                <button
+                  onClick={() => setShowLogoutModal(true)}
+                  className="flex items-center gap-2 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md justify-center"
+                >
+                  <LogOut size={18} />
+                  Sair
+                </button>
+              </div>
+            )}
+          </nav>
+        </div>
       </aside>
 
       <main
         className={clsx(
-          "flex-1 min-h-screen transition-all duration-300",
-          collapsed ? "ml-20 px-4 py-4" : "ml-64 px-6 py-4"
+          "flex-1 min-h-screen transition-all duration-300 pl-16 pt-4 pr-4 md:pt-6 md:pr-6",
+          !collapsed && "pl-64"
         )}
       >
         <AnimatePresence mode="wait">
