@@ -14,7 +14,7 @@ import {
   ChevronRight,
   Receipt,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import clsx from "clsx";
 
 const AdminLayout = () => {
@@ -188,24 +188,19 @@ const AdminLayout = () => {
         </div>
       </aside>
 
-      <main
+      <motion.main
         className={clsx(
           "flex-1 min-h-screen transition-all duration-300 pl-16 pt-4 pr-4 md:pt-6 md:pr-6",
           !collapsed && "pl-64"
         )}
+        key={location.pathname}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.3 }}
       >
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Outlet />
-          </motion.div>
-        </AnimatePresence>
-      </main>
+        <Outlet />
+      </motion.main>
 
       {showLogoutModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
