@@ -286,7 +286,7 @@ const Dashboard = () => {
     }));
 
   return (
-  <div className="p-6 max-w-screen-xl mx-auto space-y-12">
+  <div className="px-4 md:px-8 lg:px-12 py-6 w-full max-w-[1600px] mx-auto space-y-12">
     {/* Filtros */}
     <div className="flex gap-3 flex-wrap items-center">
       {["hoje", "7dias", "30dias", "personalizado"].map((f) => (
