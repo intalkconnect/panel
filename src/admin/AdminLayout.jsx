@@ -87,11 +87,13 @@ const AdminLayout = () => {
   return (
     <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Sidebar */}
-      <motion.aside
-        animate={{ width: collapsed ? 80 : 256 }}
-        className="h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 shadow-sm overflow-y-auto transition-all duration-300"
+      <aside
+        className={clsx(
+          "h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 shadow-sm overflow-y-auto transition-all duration-300",
+          collapsed ? "w-20" : "w-64"
+        )}
       >
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 min-h-[3rem]">
           {!collapsed && (
             <span className="text-lg font-semibold text-gray-700 dark:text-white">
               {empresaNome || "Sistema"}
@@ -184,10 +186,10 @@ const AdminLayout = () => {
             </div>
           )}
         </nav>
-      </motion.aside>
+      </aside>
 
       {/* Conteúdo principal */}
-      <main className={clsx("flex-1 min-h-screen p-6 transition-all", collapsed ? "pl-20" : "pl-64")}>        
+      <main className={clsx("flex-1 min-h-screen p-6 transition-all duration-300", collapsed ? "ml-20" : "ml-64")}>        
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
