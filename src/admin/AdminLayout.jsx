@@ -31,13 +31,12 @@ const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isDesktop, setIsDesktop] = useState(true);
 
-  // Detecta se é desktop e atualiza dinamicamente
   useEffect(() => {
     const handleResize = () => {
       setIsDesktop(window.innerWidth >= 1024);
     };
 
-    handleResize(); // detectar no primeiro render
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -111,10 +110,14 @@ const AdminLayout = () => {
         {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      {/* Sidebar com animação */}
+      {/* Sidebar animada e invisível ao recolher */}
       <motion.aside
         initial={false}
-        animate={{ x: isSidebarOpen ? 0 : -260 }}
+        animate={{
+          x: isSidebarOpen ? 0 : -260,
+          opacity: isSidebarOpen ? 1 : 0,
+          pointerEvents: isSidebarOpen ? "auto" : "none",
+        }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className="fixed top-0 left-0 h-screen w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-5 shadow-md z-30 overflow-y-auto"
       >
