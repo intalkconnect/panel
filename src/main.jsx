@@ -15,6 +15,7 @@ import Categorias from "./admin/Categorias";
 import Pedidos from "./admin/Pedidos";
 import Usuarios from "./admin/Usuarios";
 import Configuracoes from "./admin/Configuracoes";
+import Pdv from "./admin/Pdv";
 import Padrao from "./components/telas/Padrao";
 import DarkWrapper from "./components/layout/DarkWrapper"; // 👈 aqui
 
@@ -31,6 +32,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route path="empresas" element={<Empresas />} />
             <Route path="produtos" element={<Produtos />} />
             <Route path="categorias" element={<Categorias />} />
+            <Route path="pdv" element={<Pdv />} />
             <Route path="pedidos" element={<Pedidos />} />
             <Route path="usuarios" element={<Usuarios />} />
             <Route path="configuracoes" element={<Configuracoes />} />
