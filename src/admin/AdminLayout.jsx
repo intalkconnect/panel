@@ -29,11 +29,21 @@ const AdminLayout = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [openMenus, setOpenMenus] = useState({});
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isDesktop, setIsDesktop] = useState(true);
 
-  // Detecta tamanho inicial da tela
+  // Detecta se é desktop e atualiza dinamicamente
   useEffect(() => {
-    const isMobile = window.innerWidth < 1024;
-    setIsSidebarOpen(!isMobile); // abre no desktop, fechado no mobile
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+
+    handleResize(); // detectar no primeiro render
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    setIsSidebarOpen(window.innerWidth >= 1024);
   }, []);
 
   useEffect(() => {
@@ -93,15 +103,15 @@ const AdminLayout = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      {/* Botão de menu */}
+      {/* Toggle menu */}
       <button
-        className="fixed top-4 left-4 z-40 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-2 shadow-md lg:top-6 lg:left-6"
+        className="fixed top-4 left-4 z-40 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-2 shadow-md"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
         {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      {/* Sidebar animado */}
+      {/* Sidebar com animação */}
       <motion.aside
         initial={false}
         animate={{ x: isSidebarOpen ? 0 : -260 }}
@@ -192,7 +202,7 @@ const AdminLayout = () => {
       <main
         className={clsx(
           "flex-1 min-h-screen p-6 transition-all",
-          isSidebarOpen && "pl-64"
+          isSidebarOpen && isDesktop && "pl-64"
         )}
       >
         <Outlet />
