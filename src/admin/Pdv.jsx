@@ -1,15 +1,16 @@
-// src/admin/Pdv.jsx
 import React, { useEffect, useState } from "react";
 import { supabase } from "../data/supabaseClient";
+import { registrarPedido } from "../services/pedidoService";
 import dayjs from "dayjs";
 
 const Pdv = () => {
   const empresaId = localStorage.getItem("empresa_id");
   const [produtos, setProdutos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
   const [mesas, setMesas] = useState([]);
   const [mesaSelecionada, setMesaSelecionada] = useState("");
   const [carrinho, setCarrinho] = useState([]);
-  const [busca, setBusca] = useState("");
   const [horaAtual, setHoraAtual] = useState(dayjs().format("HH:mm:ss"));
 
   useEffect(() => {
@@ -27,12 +28,18 @@ const Pdv = () => {
         .eq("empresa_id", empresaId)
         .eq("ativo", true);
 
+      const { data: categoriasData } = await supabase
+        .from("categorias")
+        .select("*")
+        .eq("empresa_id", empresaId);
+
       const { data: mesasData } = await supabase
         .from("mesas")
         .select("*")
         .eq("empresa_id", empresaId);
 
       setProdutos(produtosData || []);
+      setCategorias(categoriasData || []);
       setMesas(mesasData || []);
     };
 
@@ -64,21 +71,23 @@ const Pdv = () => {
     });
   };
 
+  const limparCarrinho = () => setCarrinho([]);
+
   const total = carrinho.reduce(
     (acc, item) => acc + item.quantidade * parseFloat(item.preco),
     0
   );
 
-  const produtosFiltrados = produtos.filter((p) =>
-    p.nome.toLowerCase().includes(busca.toLowerCase())
-  );
+  const produtosFiltrados = categoriaSelecionada
+    ? produtos.filter((p) => p.categoria_id === categoriaSelecionada)
+    : produtos;
 
   return (
     <div className="flex h-screen bg-white text-gray-800">
       {/* Carrinho */}
       <aside className="w-1/3 bg-gray-100 border-r p-4 flex flex-col justify-between">
         <div>
-          <h2 className="text-lg font-bold mb-2">Pedido</h2>
+          <h2 className="text-xl font-bold mb-4">Carrinho</h2>
           <select
             value={mesaSelecionada}
             onChange={(e) => setMesaSelecionada(e.target.value)}
@@ -92,7 +101,7 @@ const Pdv = () => {
             ))}
           </select>
 
-          <ul className="space-y-2 max-h-64 overflow-y-auto">
+          <ul className="space-y-2 max-h-64 overflow-y-auto mb-4">
             {carrinho.map((item) => (
               <li
                 key={item.id}
@@ -119,20 +128,38 @@ const Pdv = () => {
             ))}
           </ul>
 
-          <div className="mt-4 text-right font-bold text-lg">
+          <div className="mt-2 text-right font-bold text-lg">
             Total: R$ {total.toFixed(2)}
           </div>
         </div>
 
         <div className="space-y-2">
-          <button className="w-full bg-yellow-500 py-2 rounded text-white font-bold">
-            Aguardar
+          <button
+            onClick={limparCarrinho}
+            className="w-full bg-red-500 py-2 rounded text-white font-bold"
+          >
+            Cancelar Pedido
           </button>
-          <button className="w-full bg-red-500 py-2 rounded text-white font-bold">
-            Cancelar
-          </button>
-          <button className="w-full bg-green-600 py-2 rounded text-white font-bold">
-            Pagamento
+          <button
+            onClick={async () => {
+              try {
+                await registrarPedido({
+                  carrinho,
+                  mesaId: mesaSelecionada,
+                  modoConsumo: "mesa",
+                  formaPagamento: "dinheiro",
+                  nomeCliente: "",
+                });
+                setCarrinho([]);
+                alert("Pedido registrado com sucesso!");
+              } catch (err) {
+                console.error(err);
+                alert("Erro ao registrar pedido.");
+              }
+            }}
+            className="w-full bg-green-600 py-2 rounded text-white font-bold"
+          >
+            Finalizar Pagamento
           </button>
         </div>
       </aside>
@@ -140,13 +167,27 @@ const Pdv = () => {
       {/* Produtos */}
       <main className="flex-1 p-4 overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
-          <input
-            type="text"
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            placeholder="Buscar produto..."
-            className="border px-3 py-2 rounded w-1/2"
-          />
+          <div className="flex gap-2 overflow-x-auto">
+            <button
+              className={`px-3 py-1 rounded border ${
+                categoriaSelecionada === null ? "bg-black text-white" : ""
+              }`}
+              onClick={() => setCategoriaSelecionada(null)}
+            >
+              Todas
+            </button>
+            {categorias.map((cat) => (
+              <button
+                key={cat.id}
+                className={`px-3 py-1 rounded border ${
+                  categoriaSelecionada === cat.id ? "bg-black text-white" : ""
+                }`}
+                onClick={() => setCategoriaSelecionada(cat.id)}
+              >
+                {cat.nome}
+              </button>
+            ))}
+          </div>
           <div className="text-sm text-gray-500">Hora: {horaAtual}</div>
         </div>
 
