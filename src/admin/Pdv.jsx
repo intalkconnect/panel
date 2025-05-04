@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../data/supabaseClient";
 import { registrarPedido } from "../services/pedidoService";
 import dayjs from "dayjs";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 const Pdv = () => {
   const empresaId = localStorage.getItem("empresa_id");
