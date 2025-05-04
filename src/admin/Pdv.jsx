@@ -1,6 +1,6 @@
 // src/admin/Pdv.jsx
 import React, { useEffect, useState } from "react";
-import { supabase } from "../../data/supabaseClient";
+import { supabase } from "../data/supabaseClient";
 import dayjs from "dayjs";
 
 const Pdv = () => {
