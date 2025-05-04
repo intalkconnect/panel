@@ -1,5 +1,5 @@
 import React from "react";
-import CaixaStatus from "../components/admin/pdv/CaixaStatus";
+import CaixaStatus from "../components/admin/CaixaStatus";
 
 function Pdv() {
   return (
