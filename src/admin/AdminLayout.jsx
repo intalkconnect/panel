@@ -91,8 +91,13 @@ const AdminLayout = () => {
           collapsed ? "w-16" : "w-64"
         )}
       >
-        <div className="flex flex-col items-center w-full py-4">
-          <div className="flex items-center justify-between w-full px-4 mb-6">
+        <div className="flex flex-col w-full py-4">
+          <div
+            className={clsx(
+              "w-full mb-6",
+              collapsed ? "flex justify-center" : "flex items-center justify-between px-4"
+            )}
+          >
             {!collapsed && (
               <span className="text-lg font-semibold text-gray-700 dark:text-white truncate">
                 {empresaNome || "Sistema"}
@@ -100,7 +105,7 @@ const AdminLayout = () => {
             )}
             <button
               onClick={() => setCollapsed(!collapsed)}
-              className="text-gray-600 dark:text-gray-300"
+              className={clsx("text-gray-600 dark:text-gray-300", collapsed && "mt-1")}
             >
               <Menu size={20} />
             </button>
