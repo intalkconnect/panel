@@ -13,6 +13,10 @@ const Pdv = () => {
   const [carrinho, setCarrinho] = useState([]);
   const [horaAtual, setHoraAtual] = useState(dayjs().format("HH:mm:ss"));
 
+  const [modalProduto, setModalProduto] = useState(null);
+  const [extrasSelecionados, setExtrasSelecionados] = useState([]);
+  const [removerSelecionados, setRemoverSelecionados] = useState([]);
+
   useEffect(() => {
     const intervalo = setInterval(() => {
       setHoraAtual(dayjs().format("HH:mm:ss"));
@@ -46,27 +50,60 @@ const Pdv = () => {
     carregarDados();
   }, [empresaId]);
 
+  const abrirModalOuAdicionar = (produto) => {
+    if (
+      (produto.extras && Array.isArray(produto.extras)) ||
+      (produto.remover && Array.isArray(produto.remover))
+    ) {
+      setExtrasSelecionados([]);
+      setRemoverSelecionados([]);
+      setModalProduto(produto);
+    } else {
+      adicionarProduto(produto);
+    }
+  };
+
+  const confirmarAdicaoComOpcoes = () => {
+    adicionarProduto({
+      ...modalProduto,
+      extrasSelecionados,
+      removerSelecionados,
+    });
+    setModalProduto(null);
+  };
+
   const adicionarProduto = (produto) => {
     setCarrinho((prev) => {
-      const existente = prev.find((p) => p.id === produto.id);
+      const existente = prev.find(
+        (p) =>
+          p.id === produto.id &&
+          JSON.stringify(p.extrasSelecionados || []) ===
+            JSON.stringify(produto.extrasSelecionados || []) &&
+          JSON.stringify(p.removerSelecionados || []) ===
+            JSON.stringify(produto.removerSelecionados || [])
+      );
+
       if (existente) {
         return prev.map((p) =>
-          p.id === produto.id ? { ...p, quantidade: p.quantidade + 1 } : p
+          p === existente ? { ...p, quantidade: p.quantidade + 1 } : p
         );
       }
+
       return [...prev, { ...produto, quantidade: 1 }];
     });
   };
 
-  const removerProduto = (produtoId) => {
+  const removerProduto = (produtoIndex) => {
     setCarrinho((prev) => {
-      const item = prev.find((p) => p.id === produtoId);
+      const item = prev[produtoIndex];
       if (!item) return prev;
+
       if (item.quantidade === 1) {
-        return prev.filter((p) => p.id !== produtoId);
+        return prev.filter((_, i) => i !== produtoIndex);
       }
-      return prev.map((p) =>
-        p.id === produtoId ? { ...p, quantidade: p.quantidade - 1 } : p
+
+      return prev.map((p, i) =>
+        i === produtoIndex ? { ...p, quantidade: p.quantidade - 1 } : p
       );
     });
   };
@@ -102,28 +139,39 @@ const Pdv = () => {
           </select>
 
           <ul className="space-y-2 max-h-64 overflow-y-auto mb-4">
-            {carrinho.map((item) => (
+            {carrinho.map((item, index) => (
               <li
-                key={item.id}
-                className="flex justify-between items-center bg-white rounded shadow px-2 py-1"
+                key={index}
+                className="flex flex-col bg-white rounded shadow px-2 py-1"
               >
-                <span className="font-medium">
-                  {item.nome} x{item.quantidade}
-                </span>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => removerProduto(item.id)}
-                    className="bg-red-500 text-white w-6 h-6 rounded"
-                  >
-                    –
-                  </button>
-                  <button
-                    onClick={() => adicionarProduto(item)}
-                    className="bg-green-500 text-white w-6 h-6 rounded"
-                  >
-                    +
-                  </button>
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">
+                    {item.nome} x{item.quantidade}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => removerProduto(index)}
+                      className="bg-red-500 text-white w-6 h-6 rounded"
+                    >
+                      –
+                    </button>
+                    <button
+                      onClick={() => adicionarProduto(item)}
+                      className="bg-green-500 text-white w-6 h-6 rounded"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
+                {(item.extrasSelecionados?.length > 0 ||
+                  item.removerSelecionados?.length > 0) && (
+                  <div className="text-xs text-gray-500 mt-1 ml-1">
+                    {item.extrasSelecionados?.map((e) => `+${e}`).join(", ")}{" "}
+                    {item.removerSelecionados
+                      ?.map((r) => `–${r}`)
+                      .join(", ")}
+                  </div>
+                )}
               </li>
             ))}
           </ul>
@@ -195,7 +243,7 @@ const Pdv = () => {
           {produtosFiltrados.map((produto) => (
             <button
               key={produto.id}
-              onClick={() => adicionarProduto(produto)}
+              onClick={() => abrirModalOuAdicionar(produto)}
               className="border p-4 rounded hover:bg-gray-100 text-center"
             >
               {produto.imagem_url && (
@@ -213,6 +261,80 @@ const Pdv = () => {
           ))}
         </div>
       </main>
+
+      {/* Modal de seleção de extras/remover */}
+      {modalProduto && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-4 w-96 shadow-lg">
+            <h2 className="text-lg font-bold mb-2">{modalProduto.nome}</h2>
+
+            {modalProduto.extras?.length > 0 && (
+              <div className="mb-4">
+                <h3 className="font-semibold text-sm mb-1">Adicionar:</h3>
+                {modalProduto.extras.map((extra) => (
+                  <label key={extra} className="block text-sm">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      value={extra}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setExtrasSelecionados((prev) => [...prev, extra]);
+                        } else {
+                          setExtrasSelecionados((prev) =>
+                            prev.filter((ex) => ex !== extra)
+                          );
+                        }
+                      }}
+                    />
+                    {extra}
+                  </label>
+                ))}
+              </div>
+            )}
+
+            {modalProduto.remover?.length > 0 && (
+              <div className="mb-4">
+                <h3 className="font-semibold text-sm mb-1">Remover:</h3>
+                {modalProduto.remover.map((item) => (
+                  <label key={item} className="block text-sm">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      value={item}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setRemoverSelecionados((prev) => [...prev, item]);
+                        } else {
+                          setRemoverSelecionados((prev) =>
+                            prev.filter((r) => r !== item)
+                          );
+                        }
+                      }}
+                    />
+                    {item}
+                  </label>
+                ))}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2">
+              <button
+                className="bg-gray-400 text-white px-3 py-1 rounded"
+                onClick={() => setModalProduto(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                className="bg-green-600 text-white px-3 py-1 rounded"
+                onClick={confirmarAdicaoComOpcoes}
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
