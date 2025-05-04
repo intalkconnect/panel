@@ -156,7 +156,7 @@ const Pdv = () => {
     : produtos;
 
   return (
-       <div className="flex h-[95vh] max-h-[95vh] bg-white text-gray-800 border border-gray-300 rounded-xl shadow-xl overflow-hidden mx-[3px]">
+       <div className="flex h-[95vh] max-h-[95vh] bg-white text-gray-800 border border-gray-300 rounded-xl shadow-xl overflow-hidden mx-[6px]">
       {/* Carrinho */}
       <aside className="w-1/3 bg-gray-100 border-r p-4 flex flex-col justify-between">
         <div>
