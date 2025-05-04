@@ -3,7 +3,6 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   LogOut,
   Menu,
-  X,
   User,
   LayoutDashboard,
   Building,
@@ -16,7 +15,7 @@ import {
   ChevronRight,
   Receipt,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
 
 const AdminLayout = () => {
@@ -28,22 +27,7 @@ const AdminLayout = () => {
   const [loading, setLoading] = useState(true);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [openMenus, setOpenMenus] = useState({});
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isDesktop, setIsDesktop] = useState(true);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth >= 1024);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    setIsSidebarOpen(window.innerWidth >= 1024);
-  }, []);
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     const empresaId = localStorage.getItem("empresa_id");
@@ -102,35 +86,31 @@ const AdminLayout = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      {/* Toggle menu */}
-      <button
-        className="fixed top-4 left-4 z-40 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-2 shadow-md"
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-      >
-        {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
-      </button>
-
-      {/* Sidebar animada e invisível ao recolher */}
+      {/* Sidebar */}
       <motion.aside
-        initial={false}
-        animate={{
-          x: isSidebarOpen ? 0 : -260,
-          opacity: isSidebarOpen ? 1 : 0,
-          pointerEvents: isSidebarOpen ? "auto" : "none",
-        }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed top-0 left-0 h-screen w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-5 shadow-md z-30 overflow-y-auto"
+        animate={{ width: collapsed ? 80 : 256 }}
+        className="h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 shadow-sm overflow-y-auto transition-all duration-300"
       >
-        <div className="mb-6 flex items-center justify-center">
-          <span className="text-lg font-semibold text-gray-700 dark:text-white">
-            {empresaNome || "Sistema"}
-          </span>
+        <div className="flex items-center justify-between mb-6">
+          {!collapsed && (
+            <span className="text-lg font-semibold text-gray-700 dark:text-white">
+              {empresaNome || "Sistema"}
+            </span>
+          )}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="text-gray-600 dark:text-gray-300"
+          >
+            <Menu size={20} />
+          </button>
         </div>
 
         <nav className="space-y-6 text-sm">
           {menuSections.map((section) => (
             <div key={section.title}>
-              <h4 className="text-xs text-gray-400 uppercase mb-2 tracking-wide">{section.title}</h4>
+              {!collapsed && (
+                <h4 className="text-xs text-gray-400 uppercase mb-2 tracking-wide">{section.title}</h4>
+              )}
               <div className="space-y-1">
                 {section.items.map((item) => {
                   if (item.requiredProfile && item.requiredProfile !== userProfile?.perfilNome) return null;
@@ -141,19 +121,22 @@ const AdminLayout = () => {
                       <div key={item.label}>
                         <button
                           onClick={() => toggleMenu(item.label)}
-                          className="flex w-full items-center justify-between px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                          className="flex items-center justify-between w-full px-2 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
-                          <div className="flex items-center gap-3">{item.icon}<span>{item.label}</span></div>
-                          {isOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+                          <div className="flex items-center gap-3">
+                            {item.icon}
+                            {!collapsed && <span>{item.label}</span>}
+                          </div>
+                          {!collapsed && (isOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />)}
                         </button>
-                        {isOpen && (
-                          <div className="ml-4 mt-1 space-y-1">
+                        {!collapsed && isOpen && (
+                          <div className="ml-6 mt-1 space-y-1">
                             {item.children.map((child) => (
                               <Link
                                 key={child.to}
                                 to={child.to}
                                 className={clsx(
-                                  "flex items-center gap-2 px-3 py-1 rounded-md text-sm font-medium transition",
+                                  "flex items-center gap-2 px-2 py-1 rounded-md text-sm font-medium transition",
                                   location.pathname === child.to
                                     ? "bg-gray-100 dark:bg-gray-700 text-blue-600"
                                     : "hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -174,44 +157,51 @@ const AdminLayout = () => {
                       key={item.to}
                       to={item.to}
                       className={clsx(
-                        "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition",
+                        "flex items-center gap-3 px-2 py-2 rounded-md text-sm font-medium transition",
                         location.pathname === item.to
                           ? "bg-gray-100 dark:bg-gray-700 text-blue-600"
                           : "hover:bg-gray-100 dark:hover:bg-gray-700"
                       )}
                     >
                       {item.icon}
-                      {item.label}
+                      {!collapsed && item.label}
                     </Link>
                   );
                 })}
               </div>
             </div>
           ))}
-        </nav>
 
-        <div className="mt-6">
-          <button
-            onClick={() => setShowLogoutModal(true)}
-            className="flex items-center gap-2 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md justify-center"
-          >
-            <LogOut size={18} />
-            Sair
-          </button>
-        </div>
+          {!collapsed && (
+            <div className="mt-6">
+              <button
+                onClick={() => setShowLogoutModal(true)}
+                className="flex items-center gap-2 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md justify-center"
+              >
+                <LogOut size={18} />
+                Sair
+              </button>
+            </div>
+          )}
+        </nav>
       </motion.aside>
 
-      {/* Conteúdo principal com padding condicional */}
-      <main
-        className={clsx(
-          "flex-1 min-h-screen p-6 transition-all",
-          isSidebarOpen && isDesktop && "pl-64"
-        )}
-      >
-        <Outlet />
+      {/* Conteúdo principal */}
+      <main className={clsx("flex-1 min-h-screen p-6 transition-all", collapsed ? "pl-20" : "pl-64")}>        
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
-      {/* Modal de logout */}
+      {/* Modal logout */}
       {showLogoutModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl w-full max-w-sm shadow-xl text-center">
