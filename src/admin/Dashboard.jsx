@@ -286,365 +286,270 @@ const Dashboard = () => {
     }));
 
   return (
-    <div className="p-6 max-w-screen-xl mx-auto space-y-12">
-      {/* Filtros */}
-      <div className="flex gap-3 flex-wrap items-center">
-        {["hoje", "7dias", "30dias", "personalizado"].map((f) => (
-          <button
-            key={f}
-            onClick={() => setFiltro(f)}
-            className={`px-4 py-2 rounded-lg font-medium border ${
-              filtro === f
-                ? "bg-blue-600 text-white"
-                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
-            }`}
-          >
-            {f === "hoje"
-              ? "Hoje"
-              : f === "7dias"
-              ? "Últimos 7 dias"
-              : f === "30dias"
-              ? "Últimos 30 dias"
-              : "Personalizado"}
-          </button>
-        ))}
+  <div className="p-6 max-w-screen-xl mx-auto space-y-12">
+    {/* Filtros */}
+    <div className="flex gap-3 flex-wrap items-center">
+      {["hoje", "7dias", "30dias", "personalizado"].map((f) => (
+        <button
+          key={f}
+          onClick={() => setFiltro(f)}
+          className={`px-4 py-2 rounded-lg font-medium border transition ${
+            filtro === f
+              ? "bg-blue-600 text-white"
+              : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+          }`}
+        >
+          {f === "hoje"
+            ? "Hoje"
+            : f === "7dias"
+            ? "Últimos 7 dias"
+            : f === "30dias"
+            ? "Últimos 30 dias"
+            : "Personalizado"}
+        </button>
+      ))}
+      {filtro === "personalizado" && (
+        <>
+          <input
+            type="date"
+            className="border rounded-lg px-3 py-2"
+            value={dataInicioPersonalizado}
+            onChange={(e) => setDataInicioPersonalizado(e.target.value)}
+          />
+          <input
+            type="date"
+            className="border rounded-lg px-3 py-2"
+            value={dataFimPersonalizado}
+            onChange={(e) => setDataFimPersonalizado(e.target.value)}
+          />
+        </>
+      )}
+    </div>
 
-        {filtro === "personalizado" && (
-          <>
-            <input
-              type="date"
-              className="border rounded-lg px-3 py-2"
-              value={dataInicioPersonalizado}
-              onChange={(e) => setDataInicioPersonalizado(e.target.value)}
-            />
-            <input
-              type="date"
-              className="border rounded-lg px-3 py-2"
-              value={dataFimPersonalizado}
-              onChange={(e) => setDataFimPersonalizado(e.target.value)}
-            />
-          </>
-        )}
+    {/* Métricas principais */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Total Vendido */}
+      <div className="flex items-center bg-blue-50 dark:bg-blue-900 p-4 rounded-xl shadow-md">
+        <div className="p-3 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-800">💰</div>
+        <div className="ml-4">
+          <p className="text-sm text-gray-500 dark:text-gray-300">Total Vendido</p>
+          <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+            {totalVendido.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+          </p>
+        </div>
       </div>
 
-      {/* Seção: Visão Geral */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold">📊 Visão Geral</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Total Vendido */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow text-center">
-            <h3 className="text-lg font-bold">Total Vendido</h3>
-            <p className="text-2xl text-green-600 dark:text-green-400">
-              {totalVendido.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </p>
-          </div>
-
-          {/* Ticket Médio */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow text-center">
-            <h3 className="text-lg font-bold">Ticket Médio</h3>
-            <p className="text-2xl text-blue-500">
-              {ticketMedio.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </p>
-          </div>
-
-          {/* Total de Pedidos */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow text-center">
-            <h3 className="text-lg font-bold">Total de Pedidos</h3>
-            <p className="text-2xl text-purple-500">{totalPedidos}</p>
-          </div>
+      {/* Ticket Médio */}
+      <div className="flex items-center bg-green-50 dark:bg-green-900 p-4 rounded-xl shadow-md">
+        <div className="p-3 rounded-full bg-green-100 text-green-600 dark:bg-green-800">🎟️</div>
+        <div className="ml-4">
+          <p className="text-sm text-gray-500 dark:text-gray-300">Ticket Médio</p>
+          <p className="text-2xl font-bold text-green-700 dark:text-green-300">
+            {ticketMedio.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+          </p>
         </div>
-      </section>
+      </div>
 
-      {/* Seção: Comportamento de Consumo */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold">🍽️ Comportamento de Consumo</h2>
+      {/* Total de Pedidos */}
+      <div className="flex items-center bg-purple-50 dark:bg-purple-900 p-4 rounded-xl shadow-md">
+        <div className="p-3 rounded-full bg-purple-100 text-purple-600 dark:bg-purple-800">🧾</div>
+        <div className="ml-4">
+          <p className="text-sm text-gray-500 dark:text-gray-300">Total de Pedidos</p>
+          <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{totalPedidos}</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Seções gráficas e de produtos */}
+    <section className="space-y-12">
+      {/* Comportamento de Consumo */}
+      <div>
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <span>🍽️</span> Comportamento de Consumo
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Formas de Pagamento */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow">
-            <h3 className="text-lg font-bold mb-2">Formas de Pagamento (%)</h3>
-            {pagamentoData.length === 0 ? (
-              <p className="text-center text-gray-500">
-                Nenhum dado disponível.
-              </p>
-            ) : (
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie
-                    data={pagamentoData}
-                    dataKey="value"
-                    nameKey="name"
-                    label
-                    isAnimationActive
-                  >
-                    {pagamentoData.map((entry, i) => (
-                      <Cell key={i} fill={entry.fill} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-
-          {/* Modo de Consumo */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow">
-            <h3 className="text-lg font-bold mb-2">Forma de Consumo (%)</h3>
-            {consumoData.length === 0 ? (
-              <p className="text-center text-gray-500">
-                Nenhum dado disponível.
-              </p>
-            ) : (
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie
-                    data={consumoData
-                      .filter(
-                        (item) => item.name !== "delivery" || item.value > 0
-                      )
-                      .map((item) => ({
+          {/* Gráficos de pagamento e consumo */}
+          {[{
+            title: "Formas de Pagamento (%)",
+            data: pagamentoData,
+            key: "pagamento"
+          }, {
+            title: "Forma de Consumo (%)",
+            data: consumoData,
+            key: "consumo"
+          }].map(({ title, data, key }, idx) => (
+            <div
+              key={key}
+              className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md"
+            >
+              <h3 className="text-base font-bold mb-2">{title}</h3>
+              {data.length === 0 ? (
+                <p className="text-center text-gray-500">Nenhum dado disponível.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={data.map((item) => ({
                         ...item,
-                        name:
-                          item.name === "comer_aqui"
-                            ? "Comer aqui"
-                            : item.name === "para_levar"
-                            ? "Levar para Casa"
-                            : item.name === "delivery"
-                            ? "Delivery"
-                            : item.name,
+                        name: item.name === "comer_aqui"
+                          ? "Comer aqui"
+                          : item.name === "para_levar"
+                          ? "Levar para Casa"
+                          : item.name === "delivery"
+                          ? "Delivery"
+                          : item.name,
                       }))}
-                    dataKey="value"
-                    nameKey="name"
-                    label
-                    isAnimationActive
-                  >
-                    {consumoData
-                      .filter(
-                        (item) => item.name !== "delivery" || item.value > 0
-                      )
-                      .map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={
-                            entry.fill || `hsl(${(index * 60) % 360}, 70%, 60%)`
-                          }
-                        />
+                      dataKey="value"
+                      nameKey="name"
+                      label
+                      isAnimationActive
+                    >
+                      {data.map((entry, i) => (
+                        <Cell key={i} fill={entry.fill} />
                       ))}
-                  </Pie>
-                  <Tooltip formatter={(value) => `${value}%`} />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-
-          {/* Receita por Consumo */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow col-span-2">
-            <h3 className="text-lg font-bold mb-2">
-              🧾 Receita por Forma de Consumo
-            </h3>
-            {receitaTratada.length === 0 ? (
-              <p className="text-center text-gray-500">
-                Nenhum dado disponível.
-              </p>
-            ) : (
-              <ResponsiveContainer width="100%" height={180}>
-                <BarChart
-                  data={receitaTratada}
-                  margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
-                  barCategoryGap="30%"
-                  barGap={5}
-                >
-                  <XAxis dataKey="modo" />
-                  <YAxis />
-                  <Tooltip
-                    formatter={(v) =>
-                      `${v.toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}`
-                    }
-                  />
-                  <Legend />
-                  <Bar
-                    dataKey="valor"
-                    name="Receita"
-                    barSize={28}
-                    isAnimationActive
-                  >
-                    {receitaTratada.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={
-                          entry.fill || `hsl(${(index * 60) % 360}, 65%, 60%)`
-                        }
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </div>
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          ))}
         </div>
-      </section>
+      </div>
 
-      {/* Seção: Produtos em Destaque */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold">🛒 Produtos em Destaque</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Produtos Mais Pedidos */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow">
-            <h3 className="text-lg font-bold mb-2">🏆 Top 5 Mais Pedidos</h3>
-            {produtosMaisPedidos.length === 0 ? (
-              <p className="text-center text-gray-500">
-                Nenhum dado disponível.
-              </p>
-            ) : (
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart
-                  data={[...produtosMaisPedidos].sort((a, b) => b.qtd - a.qtd)}
-                  layout="vertical"
-                  margin={{ top: 10, right: 20, left: 60, bottom: 10 }}
-                  barCategoryGap={8}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis type="category" dataKey="nome" />
-                  <Tooltip />
-                  <Bar
-                    dataKey="qtd"
-                    fill="#60a5fa"
-                    name="Quantidade"
-                    barSize={18}
-                    isAnimationActive
-                  >
-                    {produtosMaisPedidos.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={index === 0 ? "#34d399" : "#60a5fa"}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-
-          {/* Produtos com Maior Receita */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow">
-            <h3 className="text-lg font-bold mb-2">
-              💸 Top 5 com Maior Receita
-            </h3>
-            {produtosMaisLucrativos.length === 0 ? (
-              <p className="text-center text-gray-500">
-                Nenhum dado disponível.
-              </p>
-            ) : (
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart
-                  data={[...produtosMaisLucrativos].sort(
-                    (a, b) => b.valor - a.valor
-                  )}
-                  layout="vertical"
-                  margin={{ top: 10, right: 20, left: 60, bottom: 10 }}
-                  barCategoryGap={8}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis type="category" dataKey="nome" />
-                  <Tooltip
-                    formatter={(v) =>
-                      `${v.toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}`
-                    }
-                  />
-                  <Bar
-                    dataKey="valor"
-                    name="Receita"
-                    barSize={18}
-                    isAnimationActive
-                  >
-                    {produtosMaisLucrativos.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={index === 0 ? "#f59e0b" : "#34d399"}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Seção: Movimento por Dia */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold">
-          📈 Movimento por Dia (últimos 3 meses)
+      {/* Receita por Consumo */}
+      <div>
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <span>🧾</span> Receita por Forma de Consumo
         </h2>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow">
-          {dmmData.length === 0 ? (
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md">
+          {receitaTratada.length === 0 ? (
             <p className="text-center text-gray-500">Nenhum dado disponível.</p>
           ) : (
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={dmmData} isAnimationActive>
-                <XAxis dataKey="dia" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="comer_aqui" fill="#60a5fa" name="Comer aqui" />
-                <Bar
-                  dataKey="para_levar"
-                  fill="#fbbf24"
-                  name="Levar para Casa"
-                />
-                {dmmData.some((item) => item.delivery > 0) && (
-                  <Bar dataKey="delivery" fill="#34d399" name="Delivery" />
-                )}
-              </BarChart>
-            </ResponsiveContainer>
-          )}
-        </div>
-      </section>
-      {/* Seção: Média de Receita por Dia */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold">
-          💰 Receita por Dia da Semana (últimos 3 meses)
-        </h2>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow">
-          {mediaReceitaPorDia.length === 0 ? (
-            <p className="text-center text-gray-500">Nenhum dado disponível.</p>
-          ) : (
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={mediaReceitaPorDia} isAnimationActive>
-                <XAxis dataKey="dia" />
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={receitaTratada} barCategoryGap="30%">
+                <XAxis dataKey="modo" />
                 <YAxis />
                 <Tooltip
-                  formatter={(value) =>
-                    value.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })
+                  formatter={(v) =>
+                    `${v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`
                   }
                 />
                 <Legend />
-                <Bar dataKey="media" fill="#f87171" name="Média Receita" />
+                <Bar dataKey="valor" name="Receita">
+                  {receitaTratada.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={entry.fill || `hsl(${(index * 60) % 360}, 65%, 60%)`}
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           )}
         </div>
-      </section>
-    </div>
-  );
+      </div>
+
+      {/* Produtos em Destaque */}
+      <div>
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <span>🛒</span> Produtos em Destaque
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {[{
+            title: "🏆 Top 5 Mais Pedidos",
+            data: produtosMaisPedidos,
+            dataKey: "qtd",
+            color: "#60a5fa",
+            highlight: "#34d399"
+          }, {
+            title: "💸 Top 5 com Maior Receita",
+            data: produtosMaisLucrativos,
+            dataKey: "valor",
+            color: "#34d399",
+            highlight: "#f59e0b"
+          }].map(({ title, data, dataKey, color, highlight }, idx) => (
+            <div key={idx} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md">
+              <h3 className="text-base font-bold mb-2">{title}</h3>
+              {data.length === 0 ? (
+                <p className="text-center text-gray-500">Nenhum dado disponível.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart
+                    data={data.sort((a, b) => b[dataKey] - a[dataKey])}
+                    layout="vertical"
+                    margin={{ top: 10, right: 20, left: 60, bottom: 10 }}
+                  >
+                    <XAxis type="number" />
+                    <YAxis type="category" dataKey="nome" />
+                    <Tooltip />
+                    <Bar dataKey={dataKey} barSize={18}>
+                      {data.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={index === 0 ? highlight : color}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* DMM + Média de Receita por Dia */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {[{
+          title: "📈 Movimento por Dia",
+          data: dmmData,
+          bars: [
+            { key: "comer_aqui", name: "Comer aqui", fill: "#60a5fa" },
+            { key: "para_levar", name: "Levar para Casa", fill: "#fbbf24" },
+            { key: "delivery", name: "Delivery", fill: "#34d399" }
+          ]
+        }, {
+          title: "💰 Receita por Dia da Semana",
+          data: mediaReceitaPorDia,
+          bars: [
+            { key: "media", name: "Média Receita", fill: "#f87171" }
+          ]
+        }].map(({ title, data, bars }, idx) => (
+          <div key={idx} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md">
+            <h3 className="text-base font-bold mb-2">{title}</h3>
+            {data.length === 0 ? (
+              <p className="text-center text-gray-500">Nenhum dado disponível.</p>
+            ) : (
+              <ResponsiveContainer width="100%" height={240}>
+                <BarChart data={data}>
+                  <XAxis dataKey="dia" />
+                  <YAxis />
+                  <Tooltip
+                    formatter={(value) =>
+                      typeof value === "number"
+                        ? value.toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })
+                        : value
+                    }
+                  />
+                  <Legend />
+                  {bars.map((bar) => (
+                    <Bar key={bar.key} dataKey={bar.key} name={bar.name} fill={bar.fill} />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  </div>
+);
+
 };
 
 export default Dashboard;
