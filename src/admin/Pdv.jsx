@@ -2,23 +2,30 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../data/supabaseClient";
 import { registrarPedido } from "../services/pedidoService";
 import dayjs from "dayjs";
+import toast from "react-hot-toast";
 
 const Pdv = () => {
   const empresaId = localStorage.getItem("empresa_id");
+
   const [produtos, setProdutos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
   const [mesas, setMesas] = useState([]);
   const [clientes, setClientes] = useState([]);
+
   const [mesaSelecionada, setMesaSelecionada] = useState("");
   const [clienteSelecionado, setClienteSelecionado] = useState("");
   const [modoConsumo, setModoConsumo] = useState("mesa");
+
   const [carrinho, setCarrinho] = useState([]);
   const [horaAtual, setHoraAtual] = useState(dayjs().format("HH:mm:ss"));
 
   const [modalProduto, setModalProduto] = useState(null);
   const [extrasSelecionados, setExtrasSelecionados] = useState([]);
   const [removerSelecionados, setRemoverSelecionados] = useState([]);
+
+  const [showModalCancelar, setShowModalCancelar] = useState(false);
+  const [showModalFinalizar, setShowModalFinalizar] = useState(false);
 
   useEffect(() => {
     const intervalo = setInterval(() => {
@@ -75,6 +82,15 @@ const Pdv = () => {
     carregarDados();
   }, [empresaId]);
 
+  const resetarPedido = () => {
+    setCarrinho([]);
+    setMesaSelecionada("");
+    setClienteSelecionado("");
+    setModoConsumo("mesa");
+    setExtrasSelecionados([]);
+    setRemoverSelecionados([]);
+  };
+
   const abrirModalOuAdicionar = (produto) => {
     if ((produto.extras?.length || 0) > 0 || (produto.remover?.length || 0) > 0) {
       setExtrasSelecionados([]);
@@ -130,8 +146,6 @@ const Pdv = () => {
     });
   };
 
-  const limparCarrinho = () => setCarrinho([]);
-
   const total = carrinho.reduce(
     (acc, item) => acc + item.quantidade * parseFloat(item.preco),
     0
@@ -148,7 +162,7 @@ const Pdv = () => {
         <div>
           <h2 className="text-xl font-bold mb-4">Carrinho</h2>
 
-          {/* Seletor de consumo */}
+          {/* Modo de Consumo + Seleções */}
           <div className="mb-4 space-y-2">
             <label className="block font-semibold text-sm">Modo de consumo</label>
             <select
@@ -192,7 +206,7 @@ const Pdv = () => {
             )}
           </div>
 
-          {/* Lista de itens no carrinho */}
+          {/* Itens do carrinho */}
           <ul className="space-y-2 max-h-64 overflow-y-auto mb-4">
             {carrinho.map((item, index) => (
               <li key={index} className="flex flex-col bg-white rounded shadow px-2 py-1">
@@ -220,8 +234,7 @@ const Pdv = () => {
                   <div className="text-xs italic text-gray-500 ml-1">{item.descricao}</div>
                 )}
 
-                {(item.extrasSelecionados?.length > 0 ||
-                  item.removerSelecionados?.length > 0) && (
+                {(item.extrasSelecionados?.length || item.removerSelecionados?.length) > 0 && (
                   <div className="text-xs text-gray-600 ml-1">
                     {item.extrasSelecionados?.map((e) => `+${e}`).join(", ")}{" "}
                     {item.removerSelecionados?.map((r) => `–${r}`).join(", ")}
@@ -243,30 +256,16 @@ const Pdv = () => {
           </div>
         </div>
 
+        {/* Ações */}
         <div className="space-y-2">
           <button
-            onClick={limparCarrinho}
+            onClick={() => setShowModalCancelar(true)}
             className="w-full bg-red-500 py-2 rounded text-white font-bold"
           >
             Cancelar Pedido
           </button>
           <button
-            onClick={async () => {
-              try {
-                await registrarPedido({
-                  carrinho,
-                  mesaId: modoConsumo === "mesa" ? mesaSelecionada : null,
-                  modoConsumo,
-                  formaPagamento: "dinheiro",
-                  nomeCliente: modoConsumo === "delivery" ? clienteSelecionado : "",
-                });
-                setCarrinho([]);
-                alert("Pedido registrado com sucesso!");
-              } catch (err) {
-                console.error(err);
-                alert("Erro ao registrar pedido.");
-              }
-            }}
+            onClick={() => setShowModalFinalizar(true)}
             className="w-full bg-green-600 py-2 rounded text-white font-bold"
           >
             Finalizar Pagamento
@@ -323,6 +322,73 @@ const Pdv = () => {
           ))}
         </div>
       </main>
+
+      {/* Modal de Cancelar */}
+      {showModalCancelar && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-80 shadow">
+            <h2 className="text-lg font-semibold mb-4 text-center">Cancelar Pedido?</h2>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowModalCancelar(false)}
+                className="px-4 py-2 bg-gray-300 rounded text-sm"
+              >
+                Voltar
+              </button>
+              <button
+                onClick={() => {
+                  resetarPedido();
+                  setShowModalCancelar(false);
+                  toast("Pedido cancelado");
+                }}
+                className="px-4 py-2 bg-red-500 text-white rounded text-sm"
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Finalizar */}
+      {showModalFinalizar && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-80 shadow">
+            <h2 className="text-lg font-semibold mb-4 text-center">Finalizar Pedido?</h2>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowModalFinalizar(false)}
+                className="px-4 py-2 bg-gray-300 rounded text-sm"
+              >
+                Voltar
+              </button>
+              <button
+                onClick={async () => {
+                  try {
+                    await registrarPedido({
+                      carrinho,
+                      mesaId: modoConsumo === "mesa" ? mesaSelecionada : null,
+                      modoConsumo,
+                      formaPagamento: "dinheiro",
+                      nomeCliente: modoConsumo === "delivery" ? clienteSelecionado : "",
+                    });
+                    resetarPedido();
+                    toast.success("Pedido registrado com sucesso!");
+                  } catch (err) {
+                    console.error(err);
+                    toast.error("Erro ao registrar pedido.");
+                  } finally {
+                    setShowModalFinalizar(false);
+                  }
+                }}
+                className="px-4 py-2 bg-green-600 text-white rounded text-sm"
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de opções */}
       {modalProduto && (
