@@ -70,6 +70,12 @@ const AdminLayout = () => {
               label: "Categorias",
               icon: <Tags size={16} />,
             },
+            {
+              to: "/admin/pdv",
+              label: "PDV",
+              icon: <LayoutDashboard size={18} />,
+            }
+
           ],
 
         },
