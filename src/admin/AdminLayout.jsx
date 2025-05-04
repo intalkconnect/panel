@@ -87,11 +87,11 @@ const AdminLayout = () => {
     <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <aside
         className={clsx(
-          "h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm overflow-y-auto transition-all duration-300 flex flex-col",
+          "h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm overflow-y-auto transition-all duration-300 flex flex-col items-center",
           collapsed ? "w-20 px-2" : "w-64 px-4"
         )}
       >
-        <div className="flex items-center justify-between min-h-[3rem] mb-6">
+        <div className="flex items-center justify-between w-full min-h-[3rem] mb-6">
           {!collapsed && (
             <span className="text-lg font-semibold text-gray-700 dark:text-white">
               {empresaNome || "Sistema"}
@@ -105,7 +105,7 @@ const AdminLayout = () => {
           </button>
         </div>
 
-        <nav className="space-y-6 text-sm flex-1">
+        <nav className="space-y-6 text-sm flex-1 w-full">
           {menuSections.map((section) => (
             <div key={section.title}>
               {!collapsed && (
@@ -121,7 +121,7 @@ const AdminLayout = () => {
                       <div key={item.label}>
                         <button
                           onClick={() => toggleMenu(item.label)}
-                          className="flex items-center justify-between w-full py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+                          className="flex items-center justify-between w-full py-2 px-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           <div className="flex items-center gap-3">
                             {item.icon}
@@ -157,7 +157,7 @@ const AdminLayout = () => {
                       key={item.to}
                       to={item.to}
                       className={clsx(
-                        "flex items-center gap-3 py-2 rounded-md text-sm font-medium transition",
+                        "flex items-center gap-3 py-2 px-2 rounded-md text-sm font-medium transition",
                         location.pathname === item.to
                           ? "bg-gray-100 dark:bg-gray-700 text-blue-600"
                           : "hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -173,7 +173,7 @@ const AdminLayout = () => {
           ))}
 
           {!collapsed && (
-            <div className="mt-6">
+            <div className="mt-6 w-full">
               <button
                 onClick={() => setShowLogoutModal(true)}
                 className="flex items-center gap-2 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md justify-center"
@@ -189,7 +189,7 @@ const AdminLayout = () => {
       <main
         className={clsx(
           "flex-1 min-h-screen transition-all duration-300",
-          collapsed ? "ml-20 p-4" : "ml-64 p-6"
+          collapsed ? "ml-20 px-4 py-4" : "ml-64 px-6 py-4"
         )}
       >
         <AnimatePresence mode="wait">
